@@ -1,0 +1,29 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Upewnij się, że Twój główny branch to 'main' (czasem jest to 'master')
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Install and Build 🔧
+        run: |
+          npm install
+          npm run build
+        # Jeśli używasz yarn, zamień powyższe na:
+        # yarn install
+        # yarn build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # Jeśli używasz Vite, zostaw 'dist'. Jeśli Create React App, zmień na 'build'
