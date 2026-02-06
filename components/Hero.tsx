@@ -91,11 +91,33 @@ export const Hero: React.FC = () => {
       <div className="w-full h-full flex flex-col font-sans relative">
         
         {/* Status Bar */}
-        <div className="px-8 pt-5 pb-2 flex justify-between items-center relative z-30">
-            <span className="text-[11px] font-bold text-gray-400">12:32</span>
-            <div className="flex gap-1.5 items-center">
-                 {/* Ikony systemowe (Bateria/WiFi) */}
-                 <div className="w-4 h-2 rounded-[2px] border border-gray-600 relative after:content-[''] after:absolute after:right-[-3px] after:top-1/2 after:-translate-y-1/2 after:w-1 after:h-1 after:bg-gray-600"></div>
+        <div className="px-8 pt-5 pb-2 flex justify-between items-center relative z-30 text-white">
+            <span className="text-[12px] font-bold tracking-wide">12:32</span>
+            
+            <div className="flex items-center gap-2">
+                {/* Signal Bars */}
+                <div className="flex items-end gap-[2px] h-3">
+                    <div className="w-1 h-1 bg-white/50 rounded-[1px]"></div>
+                    <div className="w-1 h-2 bg-white/50 rounded-[1px]"></div>
+                    <div className="w-1 h-2.5 bg-white rounded-[1px]"></div>
+                    <div className="w-1 h-3.5 bg-white rounded-[1px]"></div>
+                </div>
+
+                {/* WiFi */}
+                <div className="relative">
+                    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 11L0.5 2.5C2.5 0.5 5 0 7 0C9 0 11.5 0.5 13.5 2.5L7 11Z" fill="white"/>
+                    </svg>
+                </div>
+
+                {/* Full Battery */}
+                <div className="w-6 h-3 rounded-[3px] border border-gray-400 relative flex items-center p-[1px] ml-1">
+                    {/* Wypełnienie baterii (100%) */}
+                    <div className="w-full h-full bg-white rounded-[1px]"></div>
+                    
+                    {/* Ten "cycek" od baterii */}
+                    <div className="absolute -right-[3px] top-1/2 -translate-y-1/2 w-[2px] h-1.5 bg-gray-400 rounded-r-[1px]"></div>
+                </div>
             </div>
         </div>
 
