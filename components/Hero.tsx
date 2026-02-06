@@ -1,8 +1,10 @@
 import React from 'react';
 import { Apple, Play, TrendingUp, ShieldCheck, Globe, ArrowUpRight, Bell, BarChart2, LayoutDashboard, History, User, Plus, Package, Calendar } from 'lucide-react';
 import { Button } from './Button';
+import { useWeeklyReset } from '@/utils/utils';
 
 export const Hero: React.FC = () => {
+    const resetTimer = useWeeklyReset();
   return (
     <section className="relative min-h-[95vh] flex items-center pt-32 pb-24 overflow-hidden bg-[#0B0D12]">
       
@@ -70,7 +72,7 @@ export const Hero: React.FC = () => {
               </div>
               <div>
                   <div className="text-[10px] text-gray-400 font-bold uppercase">Weekly Drop</div>
-                  <div className="text-sm font-bold text-white">Reset in 1d</div>
+                  <div className="text-sm font-bold text-white">Reset in {resetTimer}</div>
               </div>
           </div>
       </div>
@@ -182,7 +184,7 @@ export const Hero: React.FC = () => {
                                 </div>
                                 <div>
                                     <div className="font-bold text-white">Weekly Drop</div>
-                                    <div className="text-xs text-gray-400">Resets in <span className="text-red-400 font-bold">1 day</span></div>
+                                    <div className="text-xs text-gray-400">Resets in <span className="text-red-400 font-bold">{resetTimer}</span></div>
                                 </div>
                             </div>
                             

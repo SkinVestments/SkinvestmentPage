@@ -6,6 +6,9 @@ import Home from './pages/Home';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import { FullFeaturesPage } from './pages/FullFeatures';
 import { ScrollToTop } from './components/ScrollToTop';
+import { PricingPage } from './pages/PricingPage';
+import { FAQPage } from './pages/FAQPage';
+import { RoadmapPage } from './pages/RoadmapPage';
 
 function App() {
   return (
@@ -19,6 +22,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/features" element={<FullFeaturesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/faq" element={<FAQPage />} />
+            <Route path="/roadmap" element={<RoadmapPage />} />
           </Routes>
         </main>
 

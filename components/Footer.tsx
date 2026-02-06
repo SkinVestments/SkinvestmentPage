@@ -34,12 +34,15 @@ export const Footer: React.FC = () => {
               <li><Link to="/features" className="text-gray-500 hover:text-steam-accent transition-colors">Features</Link></li>
               <li><span className="text-gray-600 cursor-not-allowed">Web Dashboard (Beta)</span></li>
               <li><span className="text-gray-600 cursor-not-allowed">API Access</span></li>
+              <li><Link to="/pricing" className="text-gray-500 hover:text-steam-accent transition-colors">Pricing</Link></li>
+              <li><Link to="/roadmap" className="text-gray-500 hover:text-steam-accent transition-colors">Roadmap</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-white font-bold uppercase text-xs tracking-wider mb-6">Legal & Support</h4>
             <ul className="space-y-3 text-sm">
+              <li><Link to="/faq" className="text-gray-500 hover:text-steam-accent transition-colors">FAQ</Link></li>
               <li><Link to="/privacy" className="text-gray-500 hover:text-steam-accent transition-colors">Privacy Policy</Link></li>
               <li><Link to="/privacy" className="text-gray-500 hover:text-steam-accent transition-colors">Terms of Service</Link></li>
               <li><a href="mailto:kjlabs.studio@gmail.com" className="text-gray-500 hover:text-steam-accent transition-colors">Contact Support</a></li>
