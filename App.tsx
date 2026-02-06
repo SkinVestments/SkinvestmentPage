@@ -1,33 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { DeepDive } from './components/DeepDive';
-import { Features } from './components/Features';
 import { Footer } from './components/Footer';
-import { PrivacyPolicy } from './components/PrivacyPolicy';
-import { ViewState } from './types';
+import Home from './pages/Home';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 function App() {
-  const [view, setView] = useState<ViewState>('home');
-
   return (
-    <div className="min-h-screen bg-[#14171D] text-white selection:bg-steam-accent selection:text-white font-sans">
-      <Navbar currentView={view} setView={setView} />
-      
-      <main>
-        {view === 'home' ? (
-          <>
-            <Hero setView={setView} />
-            <DeepDive />
-            <Features />
-          </>
-        ) : (
-          <PrivacyPolicy />
-        )}
-      </main>
+    <BrowserRouter>
+      <div className="min-h-screen bg-[#14171D] text-white selection:bg-steam-accent selection:text-white font-sans">
+        <Navbar />
+        
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          </Routes>
+        </main>
 
-      <Footer setView={setView} />
-    </div>
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
 

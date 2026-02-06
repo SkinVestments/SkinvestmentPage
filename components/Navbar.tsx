@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Rocket } from 'lucide-react';
-import { ViewState } from '../types';
+import { Menu, X } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
-interface NavbarProps {
-  currentView: ViewState;
-  setView: (view: ViewState) => void;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
+export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,8 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNav = (view: ViewState) => {
-    setView(view);
+  const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -31,8 +26,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
     }`}>
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
         {/* Logo */}
-        <div 
-          onClick={() => handleNav('home')}
+        <Link
+          to="/"
+          onClick={closeMobileMenu}
           className="flex items-center gap-3 cursor-pointer group"
         >
           <div className="w-10 h-10 rounded bg-white from-steam-accent to-blue-600 flex items-center justify-center shadow-lg group-hover:shadow-steam-accent/20 transition-all">
@@ -50,22 +46,22 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
           <span className="text-2xl font-bold tracking-tight text-white uppercase">
             Skin<span className="text-steam-accent">vestments</span>
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
-          <button 
-            onClick={() => handleNav('home')}
-            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${currentView === 'home' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
+          <Link
+            to="/"
+            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
           >
             Home
-          </button>
-          <button 
-            onClick={() => handleNav('privacy')}
-            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${currentView === 'privacy' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
+          </Link>
+          <Link
+            to="/privacy"
+            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/privacy' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
           >
             Privacy
-          </button>
+          </Link>
           <a 
             href="mailto:kjlabs.studio@gmail.com"
             className="text-sm font-semibold uppercase tracking-wider text-gray-400 hover:text-white transition-colors"
@@ -89,12 +85,20 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, setView }) => {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="absolute top-full left-0 right-0 bg-[#171a21] border-b border-white/10 p-6 flex flex-col gap-4 md:hidden animate-fade-in shadow-2xl">
-          <button onClick={() => handleNav('home')} className="text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent">
+          <Link 
+            to="/" 
+            onClick={closeMobileMenu}
+            className="text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent"
+          >
             Home
-          </button>
-          <button onClick={() => handleNav('privacy')} className="text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent">
+          </Link>
+          <Link 
+            to="/privacy" 
+            onClick={closeMobileMenu}
+            className="text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent"
+          >
             Privacy Policy
-          </button>
+          </Link>
           <button className="w-full py-3 mt-2 rounded bg-steam-accent text-white font-bold uppercase tracking-wider">
             Download Now
           </button>

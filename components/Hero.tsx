@@ -1,13 +1,8 @@
 import React from 'react';
 import { Apple, Play, TrendingUp, ShieldCheck, Globe, ArrowUpRight, Bell, BarChart2, LayoutDashboard, History, User, Plus, Package, Calendar } from 'lucide-react';
 import { Button } from './Button';
-import { ViewState } from '../types';
 
-interface HeroProps {
-    setView: (view: ViewState) => void;
-}
-
-export const Hero: React.FC<HeroProps> = ({ setView }) => {
+export const Hero: React.FC = () => {
   return (
     <section className="relative min-h-[95vh] flex items-center pt-32 pb-24 overflow-hidden bg-[#0B0D12]">
       

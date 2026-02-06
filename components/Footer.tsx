@@ -1,12 +1,8 @@
 import React from 'react';
 import { Github, Twitter, Mail, MessageSquare } from 'lucide-react';
-import { ViewState } from '../types';
+import { Link } from 'react-router-dom';
 
-interface FooterProps {
-    setView: (view: ViewState) => void;
-}
-
-export const Footer: React.FC<FooterProps> = ({ setView }) => {
+export const Footer: React.FC = () => {
   return (
     <footer className="bg-[#14171D] border-t border-white/5 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-6">
@@ -35,7 +31,7 @@ export const Footer: React.FC<FooterProps> = ({ setView }) => {
           <div>
             <h4 className="text-white font-bold uppercase text-xs tracking-wider mb-6">Product</h4>
             <ul className="space-y-3 text-sm">
-              <li><button onClick={() => setView('home')} className="text-gray-500 hover:text-steam-accent transition-colors">Features</button></li>
+              <li><Link to="/" className="text-gray-500 hover:text-steam-accent transition-colors">Features</Link></li>
               <li><span className="text-gray-600 cursor-not-allowed">Web Dashboard (Beta)</span></li>
               <li><span className="text-gray-600 cursor-not-allowed">API Access</span></li>
             </ul>
@@ -44,8 +40,8 @@ export const Footer: React.FC<FooterProps> = ({ setView }) => {
           <div>
             <h4 className="text-white font-bold uppercase text-xs tracking-wider mb-6">Legal & Support</h4>
             <ul className="space-y-3 text-sm">
-              <li><button onClick={() => setView('privacy')} className="text-gray-500 hover:text-steam-accent transition-colors">Privacy Policy</button></li>
-              <li><button onClick={() => setView('privacy')} className="text-gray-500 hover:text-steam-accent transition-colors">Terms of Service</button></li>
+              <li><Link to="/privacy" className="text-gray-500 hover:text-steam-accent transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/privacy" className="text-gray-500 hover:text-steam-accent transition-colors">Terms of Service</Link></li>
               <li><a href="mailto:kjlabs.studio@gmail.com" className="text-gray-500 hover:text-steam-accent transition-colors">Contact Support</a></li>
             </ul>
           </div>
