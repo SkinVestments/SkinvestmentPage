@@ -59,87 +59,88 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* Right Column: 3D Composition */}
-        <div className="relative flex justify-center lg:justify-end mt-12 lg:mt-0 perspective-1000 group">
-          
-          {/* Floating Market Cards (3D Effect) */}
-          <div className="absolute top-[15%] right-[-10%] z-30 animate-float-delayed hidden md:block">
-             <div className="glass-panel p-4 rounded-xl border-l-4 border-l-steam-profit shadow-2xl backdrop-blur-xl">
-                 <div className="flex items-center gap-3 mb-2">
-                     <div className="w-10 h-10 rounded-full bg-steam-profit/20 flex items-center justify-center text-steam-profit font-bold text-lg">
-                        <Package size={20} />
-                     </div>
-                     <div>
-                         <div className="text-[10px] text-gray-400 font-bold uppercase">Weekly Drop</div>
-                         <div className="text-sm font-bold text-white">Reset in 1d</div>
-                     </div>
-                 </div>
-             </div>
+<div className="relative flex justify-center lg:justify-end mt-12 lg:mt-0 perspective-1000 group">
+  
+  {/* Floating Market Cards (3D Effect) */}
+  <div className="absolute top-[15%] right-[-10%] z-30 animate-float-delayed hidden md:block">
+      <div className="glass-panel p-4 rounded-xl border-l-4 border-l-steam-profit shadow-2xl backdrop-blur-xl">
+          <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-full bg-steam-profit/20 flex items-center justify-center text-steam-profit font-bold text-lg">
+                <Package size={20} />
+              </div>
+              <div>
+                  <div className="text-[10px] text-gray-400 font-bold uppercase">Weekly Drop</div>
+                  <div className="text-sm font-bold text-white">Reset in 1d</div>
+              </div>
           </div>
+      </div>
+  </div>
 
-          {/* The Phone */}
-          <div className="relative w-[340px] h-[680px] bg-[#000] rounded-[3.5rem] border-[6px] border-[#1F2937] shadow-[0_0_50px_rgba(59,130,246,0.15)] z-20 overflow-hidden ring-1 ring-white/10 transform transition-transform duration-500 rotate-y-12 group-hover:rotate-y-0 group-hover:scale-[1.02]">
-             
-             {/* Glossy Reflection */}
-             <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent z-30 pointer-events-none rounded-[3rem]"></div>
+  {/* The Phone */}
+  <div className="relative w-[340px] h-[680px] bg-[#0B0D12] rounded-[3.5rem] border-[6px] border-[#1F2937] shadow-[0_0_50px_rgba(59,130,246,0.15)] z-20 overflow-hidden ring-1 ring-white/10 transform transition-transform duration-500 rotate-y-12 group-hover:rotate-y-0 group-hover:scale-[1.02]">
+      
+      {/* Glossy Reflection */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent z-40 pointer-events-none rounded-[3rem]"></div>
 
-             {/* Dynamic Notch */}
-             <div className="absolute top-0 w-full px-8 pt-6 pb-2 z-20 flex justify-between items-end">
-                <span className="text-xs font-bold text-gray-400">12:32</span>
-                <div className="flex gap-1.5">
-                    <div className="w-full h-7 absolute top-0 left-1/2 -translate-x-1/2 bg-black rounded-b-2xl w-[120px]"></div>
+      {/* Notch - Teraz jako stały element nad zawartością */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-7 bg-[#1F2937] rounded-b-2xl z-50"></div>
+
+      {/* Screen Content */}
+      <div className="w-full h-full flex flex-col font-sans relative">
+        
+        {/* Status Bar */}
+        <div className="px-8 pt-5 pb-2 flex justify-between items-center relative z-30">
+            <span className="text-[11px] font-bold text-gray-400">12:32</span>
+            <div className="flex gap-1.5 items-center">
+                 {/* Ikony systemowe (Bateria/WiFi) */}
+                 <div className="w-4 h-2 rounded-[2px] border border-gray-600 relative after:content-[''] after:absolute after:right-[-3px] after:top-1/2 after:-translate-y-1/2 after:w-1 after:h-1 after:bg-gray-600"></div>
+            </div>
+        </div>
+
+        {/* App Header */}
+        <div className="px-5 mt-4 mb-6 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
+                    <BarChart2 size={16} />
                 </div>
-                <div className="flex gap-1">
-                     <div className="w-4 h-4 rounded-full border border-gray-600"></div>
-                </div>
-             </div>
+                <span className="font-bold text-white text-lg">Hello, kdfjgh</span>
+            </div>
+            <Bell size={20} className="text-gray-400" />
+        </div>
 
-             {/* Screen Content - Replicating User Screenshot */}
-             <div className="w-full h-full bg-[#0B0D12] pt-14 flex flex-col font-sans relative">
-                
-                {/* App Header */}
-                <div className="px-5 mb-6 flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
-                            <BarChart2 size={16} />
-                        </div>
-                        <span className="font-bold text-white text-lg">Witaj, kdfjgh</span>
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto px-5 pb-24 scrollbar-hide">
+            {/* ... reszta twojego contentu (Portfolio Card, Stats, etc.) ... */}
+            
+            {/* Main Portfolio Card */}
+            <div className="bg-[#161B24] rounded-2xl p-5 border border-white/5 mb-4 shadow-lg">
+                <div className="flex justify-between items-start mb-1">
+                    <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Portfolio Value</div>
+                    <div className="flex items-center gap-1 bg-green-500/10 px-2 py-0.5 rounded text-xs font-bold text-steam-profit">
+                        <TrendingUp size={10} /> +77.5%
                     </div>
-                    <Bell size={20} className="text-gray-400" />
                 </div>
-
-                {/* Scrollable Content Area */}
-                <div className="flex-1 overflow-y-auto px-5 pb-24 scrollbar-hide">
-                    
-                    {/* Main Portfolio Card */}
-                    <div className="bg-[#161B24] rounded-2xl p-5 border border-white/5 mb-4 shadow-lg">
-                        <div className="flex justify-between items-start mb-1">
-                            <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Portfolio Value</div>
-                            <div className="flex items-center gap-1 bg-green-500/10 px-2 py-0.5 rounded text-xs font-bold text-steam-profit">
-                                <TrendingUp size={10} /> +77.5%
-                            </div>
-                        </div>
-                        <div className="text-3xl font-bold text-white font-display mb-6">$110.91</div>
-                        
-                        {/* The Chart (Red Line like screenshot) */}
-                        <div className="h-24 w-full mb-4 relative flex items-end">
-                             <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible">
-                                <path d="M0,38 L5,38 L10,37 L15,37 L20,32 L25,30 L30,35 L35,35 L40,36 L45,35 L50,30 L55,28 L60,32 L65,30 L70,25 L75,22 L80,24 L85,15 L90,18 L95,12 L100,10" 
-                                    fill="none" 
-                                    stroke="#F87171" 
-                                    strokeWidth="2" 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                />
-                                <defs>
-                                    <linearGradient id="redGradient" x1="0" x2="0" y1="0" y2="1">
-                                        <stop offset="0%" stopColor="#F87171" stopOpacity="0.2"/>
-                                        <stop offset="100%" stopColor="#F87171" stopOpacity="0"/>
-                                    </linearGradient>
-                                </defs>
-                                <path d="M0,38 L5,38 L10,37 L15,37 L20,32 L25,30 L30,35 L35,35 L40,36 L45,35 L50,30 L55,28 L60,32 L65,30 L70,25 L75,22 L80,24 L85,15 L90,18 L95,12 L100,10 V40 H0 Z" 
-                                    fill="url(#redGradient)" 
-                                />
-                             </svg>
+                <div className="text-3xl font-bold text-white font-display mb-6">$110.91</div>
+                
+                <div className="h-24 w-full mb-4 relative flex items-end">
+                     <svg viewBox="0 0 100 40" className="w-full h-full overflow-visible">
+                        <path d="M0,38 L5,38 L10,37 L15,37 L20,32 L25,30 L30,35 L35,35 L40,36 L45,35 L50,30 L55,28 L60,32 L65,30 L70,25 L75,22 L80,24 L85,15 L90,18 L95,12 L100,10" 
+                            fill="none" 
+                            stroke="#F87171" 
+                            strokeWidth="2" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                        />
+                        <defs>
+                            <linearGradient id="redGradient" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stopColor="#F87171" stopOpacity="0.2"/>
+                                <stop offset="100%" stopColor="#F87171" stopOpacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,38 L5,38 L10,37 L15,37 L20,32 L25,30 L30,35 L35,35 L40,36 L45,35 L50,30 L55,28 L60,32 L65,30 L70,25 L75,22 L80,24 L85,15 L90,18 L95,12 L100,10 V40 H0 Z" 
+                            fill="url(#redGradient)" 
+                        />
+                     </svg>
                              {/* Timeframe Selector Overlay */}
                              <div className="absolute right-0 top-0 bottom-0 w-8 flex flex-col justify-between text-[8px] text-gray-500 font-bold text-right">
                                  <span className="text-red-400 bg-red-400/10 px-1 rounded">All</span>

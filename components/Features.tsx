@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { RefreshCw, Wallet, Cloud, Crosshair, Box, Globe, BarChart3 } from 'lucide-react';
 import { Feature } from '../types';
+import { Link } from 'react-router-dom';
 
 const features: Feature[] = [
   {
@@ -59,12 +60,16 @@ export const Features: React.FC = () => {
         
         {/* Bottom CTA */}
         <div className="mt-16 text-center">
-            <div className="inline-block p-[1px] rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent">
-                <button className="px-8 py-3 rounded-full bg-[#161B24] text-white font-bold hover:bg-[#1C222E] transition-colors border border-white/5 hover:border-steam-accent/50 flex items-center gap-2 mx-auto">
-                    View Full Feature List <span className="text-steam-accent">&rarr;</span>
-                </button>
-            </div>
+        <div className="inline-block p-[1px] rounded-full bg-gradient-to-r from-transparent via-white/10 to-transparent">
+          {/* Zamiana button na Link */}
+          <Link 
+            to="/features" 
+            className="px-8 py-3 rounded-full bg-[#161B24] text-white font-bold hover:bg-[#1C222E] transition-colors border border-white/5 hover:border-steam-accent/50 flex items-center gap-2 mx-auto"
+          >
+            View Full Feature List <span className="text-steam-accent">&rarr;</span>
+          </Link>
         </div>
+      </div>
       </div>
     </section>
   );
