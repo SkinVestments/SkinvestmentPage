@@ -9,7 +9,7 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { PricingPage } from './pages/PricingPage';
 import { FAQPage } from './pages/FAQPage';
 import { RoadmapPage } from './pages/RoadmapPage';
-
+import { ContactPage } from './pages/ContactPage';
 function App() {
   return (
 <HashRouter>
@@ -25,6 +25,7 @@ function App() {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/roadmap" element={<RoadmapPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Routes>
         </main>
 

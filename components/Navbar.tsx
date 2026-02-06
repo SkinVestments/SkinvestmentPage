@@ -62,12 +62,12 @@ export const Navbar: React.FC = () => {
           >
             Privacy
           </Link>
-          <a 
-            href="mailto:kjlabs.studio@gmail.com"
-            className="text-sm font-semibold uppercase tracking-wider text-gray-400 hover:text-white transition-colors"
+          <Link
+            to="/contact"
+            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/contact' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
           >
             Contact
-          </a>
+          </Link>
           <button className="px-5 py-2 rounded bg-[#212c3d] hover:bg-[#2a384d] text-white text-sm font-bold uppercase tracking-wide transition-colors border border-white/5 hover:border-steam-accent/50 shadow-md">
             Get App
           </button>

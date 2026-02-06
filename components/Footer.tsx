@@ -44,8 +44,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-3 text-sm">
               <li><Link to="/faq" className="text-gray-500 hover:text-steam-accent transition-colors">FAQ</Link></li>
               <li><Link to="/privacy" className="text-gray-500 hover:text-steam-accent transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/privacy" className="text-gray-500 hover:text-steam-accent transition-colors">Terms of Service</Link></li>
-              <li><a href="mailto:kjlabs.studio@gmail.com" className="text-gray-500 hover:text-steam-accent transition-colors">Contact Support</a></li>
+              <li><Link to="/contact" className="text-gray-500 hover:text-steam-accent transition-colors">Contact Us</Link></li>
             </ul>
           </div>
         </div>
