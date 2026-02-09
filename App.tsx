@@ -19,10 +19,11 @@ import { PricingPage } from './pages/PricingPage';
 import { FAQPage } from './pages/FAQPage';
 import { RoadmapPage } from './pages/RoadmapPage';
 import { ContactPage } from './pages/ContactPage';
-import Login from './pages/Login';
+import Login from './pages/auth/Login';
+import History from './pages/dashboard/History';
 
 // Strony Prywatne (Panel)
-import Panel from './pages/Panel';
+import Panel from './pages/dashboard/Panel';
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
             {/* Tutaj w przyszłości dodasz: */}
             {/* <Route path="/inventory" element={<Inventory />} /> */}
             {/* <Route path="/settings" element={<Settings />} /> */}
+            <Route path="/history" element={<History />} />
           </Route>
 
         </Routes>

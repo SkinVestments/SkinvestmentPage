@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../utils/supabaseClient';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../utils/supabaseClient';
 import { 
   ChevronLeft, ChevronRight, ArrowUpDown, Loader2, 
   TrendingUp, Package, Plus, CheckCircle, Wallet 
