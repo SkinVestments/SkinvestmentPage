@@ -244,30 +244,39 @@ const Panel = () => {
         {/* KOLUMNA 3: DROPY I KOLEKCJE */}
         <div className="space-y-6">
           
-          {/* WEEKLY DROP */}
-          <div className="bg-[#1e232b] rounded-2xl p-1 border border-gray-800 shadow-lg">
-            <div className="bg-gradient-to-br from-[#181b21] to-[#232830] rounded-xl p-6 relative overflow-hidden">
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 text-steam-accent mb-2">
-                  <Package className="w-5 h-5" />
-                  <span className="font-bold text-sm uppercase tracking-wider">Weekly Drop</span>
+          {/* WEEKLY DROP - Wersja Estetyczna */}
+          <div className="bg-[#1e232b] rounded-2xl border border-white/5 shadow-xl relative overflow-hidden group">
+            
+            {/* Subtelna poświata w tle */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-transparent opacity-50"></div>
+
+            <div className="relative z-10 p-6 md:p-8">
+              <div className="flex items-center gap-2 text-steam-accent mb-3">
+                <div className="p-1.5 bg-blue-500/20 rounded-lg">
+                  <Package className="w-4 h-4" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-1">Resets in 1 day</h3>
-                <p className="text-gray-500 text-xs mb-6">Make sure to claim your XP rewards.</p>
-                
-                <button className="bg-[#2d3542] hover:bg-steam-accent hover:text-white text-gray-300 w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 border border-white/5 group">
-                  <CheckCircle className="w-4 h-4 group-hover:scale-110 transition-transform" /> 
-                  Log Drop
-                </button>
+                <span className="font-bold text-xs uppercase tracking-widest">Weekly Drop</span>
               </div>
               
-              {/* Obrazek skrzynki */}
-              <img 
-                src="https://community.cloudflare.steamstatic.com/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxDZ7I56KU0Zwwo4NUX4oFJZEHLbXU5A1PIYQNqhpOSV-fRPasw8rsUFJ5KBFZv668FFQwnfCcJm0Z7dizq4bbw6WnZb6AxGkH6pNy3rmTpo700AG1qBA-N2r1IdeWclU9ZVmC-lG5xO_vg5C4uMzMzid9-n4/360fx360f" 
-                className="absolute -right-10 -bottom-6 w-48 opacity-90 rotate-12 drop-shadow-2xl"
-                alt="Case" 
-              />
+              <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Resets in 1 day</h3>
+              <p className="text-gray-400 text-sm mb-8 max-w-[60%] leading-relaxed">
+                Make sure to earn enough XP to claim your weekly rewards pool.
+              </p>
+              
+              {/* Przycisk - teraz niebieski i bardziej wyrazisty */}
+              <button className="bg-steam-accent hover:bg-blue-500 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 border border-blue-400/20">
+                <CheckCircle className="w-5 h-5" /> 
+                <span>Log Drop Information</span>
+              </button>
             </div>
+            
+            {/* Prawdziwy obrazek skrzynki z folderu public */}
+            {/* Upewnij się, że plik case.png jest w folderze public! */}
+            <img 
+              src="images\case.webp" 
+              className="absolute -right-12 -bottom-8 w-64 md:w-72 opacity-90 rotate-[3deg] drop-shadow-[0_20px_35px_rgba(0,0,0,0.5)] transition-all duration-500 group-hover:scale-105 group-hover:rotate-[0deg] group-hover:-translate-y-2"              
+              alt="CS2 Case Reward" 
+            />
           </div>
 
           {/* KOLEKCJE */}
