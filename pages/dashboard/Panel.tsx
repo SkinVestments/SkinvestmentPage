@@ -6,6 +6,8 @@ import {
   TrendingUp, Package, Plus, CheckCircle, Wallet 
 } from 'lucide-react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
+import {useWeeklyReset} from '@/utils/utils';
+import { LogDropModal } from '../../components/dashboard/LogDropModal';
 
 // --- TYPY DANYCH ---
 interface CS2Item {
@@ -62,12 +64,14 @@ const Panel = () => {
   const [loading, setLoading] = useState(true);
   const [totalValue, setTotalValue] = useState(0);
   const [investmentsValue, setInvestmentsValue] = useState(0);
-  
+  const [isDropModalOpen, setIsDropModalOpen] = useState(false);
   // Paginacja i sortowanie tabeli
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [sortBy, setSortBy] = useState<string>('acquired_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+
+  const resetTime = useWeeklyReset();
 
   // Funkcja pobierająca dane
   const fetchPortfolio = async () => {
@@ -125,6 +129,10 @@ const Panel = () => {
     fetchPortfolio();
   }, [user, page, sortBy, sortOrder]);
 
+    const handleDropSuccess = () => {
+    fetchPortfolio(); // Ponownie pobierz dane do wykresu i tabeli
+    // Tutaj możesz dodać np. toast.success("Drop logged successfully!");
+  };
   const handleSort = (column: string) => {
     if (sortBy === column) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -258,13 +266,14 @@ const Panel = () => {
                 <span className="font-bold text-xs uppercase tracking-widest">Weekly Drop</span>
               </div>
               
-              <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Resets in 1 day</h3>
+              <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">Resets in {resetTime}</h3>
               <p className="text-gray-400 text-sm mb-8 max-w-[60%] leading-relaxed">
                 Make sure to earn enough XP to claim your weekly rewards pool.
               </p>
               
               {/* Przycisk - teraz niebieski i bardziej wyrazisty */}
-              <button className="bg-steam-accent hover:bg-blue-500 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 border border-blue-400/20">
+              <button className="bg-steam-accent hover:bg-blue-500 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/25 group-hover:shadow-blue-500/40 border border-blue-400/20" 
+              onClick={() => setIsDropModalOpen(true)}>
                 <CheckCircle className="w-5 h-5" /> 
                 <span>Log Drop Information</span>
               </button>
@@ -415,7 +424,11 @@ const Panel = () => {
            </button>
         </div>
       </div>
-
+        <LogDropModal 
+   isOpen={isDropModalOpen}
+   onClose={() => setIsDropModalOpen(false)}
+   onSuccess={handleDropSuccess}
+/>
     </div>
   );
 };
