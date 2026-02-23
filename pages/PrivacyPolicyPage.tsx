@@ -22,39 +22,49 @@ export default function PrivacyPolicyPage() {
               <h2 className="text-2xl font-bold text-white mb-4">1. Introduction</h2>
               <p>
                 Welcome to Skinvestments. We respect your privacy and are committed to protecting your personal data. 
-                This privacy policy will inform you as to how we look after your personal data when you visit our application.
+                This privacy policy explains how we collect, use, and safeguard your information when you use our application.
               </p>
             </section>
 
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">2. Data We Collect</h2>
               <p className="mb-4">
-                We collect minimal data necessary to provide our services. This includes:
+                We collect the minimal amount of data necessary to provide and secure our services:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-400">
-                <li><strong className="text-white">Account Information:</strong> We store your email address and authentication credentials securely via Supabase Auth.</li>
-                <li><strong className="text-white">Inventory Data:</strong> We access your public Steam inventory data to generate valuations.</li>
-                <li><strong className="text-white">Pricing Data:</strong> We do not store personal pricing data but aggregate public market data from providers like Steam, Skinport, and Buff.</li>
+                <li><strong className="text-white">Account Information:</strong> If you sign up via email, we store your email address and an encrypted password.</li>
+                <li><strong className="text-white">Social Login Data:</strong> If you log in via Google or Steam, we receive basic public profile information (such as your display name, avatar, and Steam ID) provided by those platforms.</li>
+                <li><strong className="text-white">Steam Inventory Data:</strong> When you import your inventory, we access and store your public Steam inventory items to generate valuations and track your portfolio.</li>
+                <li><strong className="text-white">Technical & Usage Data:</strong> Our backend provider (Supabase) automatically logs standard connection data for security and performance. This includes your IP address, browser type (User Agent), location (inferred from IP), and login timestamps.</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">3. Third-Party Services & Data</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">3. Third-Party Services</h2>
               <p>
-                Our application aggregates data from multiple sources to provide accurate valuations. By using our service, you acknowledge that we fetch non-personal market data from:
+                Our application relies on third-party services to function. By using Skinvestments, you acknowledge that data is processed by or fetched from:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-400 mt-2">
-                <li><strong className="text-white">Steam Community Market</strong></li>
-                <li><strong className="text-white">Skinport API</strong></li>
-                <li><strong className="text-white">Buff163 (Aggregated)</strong></li>
-                <li><strong className="text-white">Supabase</strong> (for user authentication and sync)</li>
+                <li><strong className="text-white">Supabase:</strong> Provides our database and authentication infrastructure. They securely store your account credentials and technical logs.</li>
+                <li><strong className="text-white">Steam (Valve Corp):</strong> Used for Steam OpenID authentication and fetching inventory data.</li>
+                <li><strong className="text-white">Google:</strong> Used for OAuth authentication if you choose to sign in with Google.</li>
+                <li><strong className="text-white">Market Data Providers:</strong> We aggregate non-personal, public pricing data from Steam Community Market, Skinport, and Buff163 to evaluate your portfolio.</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-white mb-4">4. Contact Us</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">4. Your Data Rights</h2>
+              <p className="mb-4">You have full control over your personal data within our application:</p>
+              <ul className="list-disc pl-6 space-y-2 text-gray-400">
+                <li><strong className="text-white">Right to Erasure:</strong> You can permanently delete your account and all associated portfolio data at any time from your account settings.</li>
+                <li><strong className="text-white">Right to Data Portability:</strong> You can export your portfolio and transaction history data in standard formats (e.g., CSV) via the dashboard.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-white mb-4">5. Contact Us</h2>
               <p>
-                If you have any questions about this privacy policy or our privacy practices, please contact us at: 
+                If you have any questions about this privacy policy or wish to exercise your data rights, please contact us at: 
                 <a href="mailto:privacy@skinvestment.app" className="text-steam-accent hover:underline ml-1">privacy@skinvestment.app</a>
               </p>
             </section>
