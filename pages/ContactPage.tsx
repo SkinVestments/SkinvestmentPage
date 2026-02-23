@@ -62,7 +62,7 @@ export const ContactPage: React.FC = () => {
             <ContactCard 
               icon={<Mail />} 
               label="Email Support" 
-              value="support@steamvestments.com" 
+              value="kjlabs.studio@gmail.com" 
               sub="Response time: < 2h"
             />
             <ContactCard 

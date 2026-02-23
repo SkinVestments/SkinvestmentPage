@@ -70,7 +70,7 @@ export default function TermsAndConditionsPage() {
               <h2 className="text-2xl font-bold text-white mb-4">7. Contact</h2>
               <p>
                 For any questions regarding these Terms, please contact us at: 
-                <a href="mailto:support@skinvestment.app" className="text-steam-accent hover:underline ml-1">support@skinvestment.app</a>
+                <a href="mailto:kjlabs.studio@gmail.com" className="text-steam-accent hover:underline ml-1">kjlabs.studio@gmail.com</a>
               </p>
             </section>
           </div>

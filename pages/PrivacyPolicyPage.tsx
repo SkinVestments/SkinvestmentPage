@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
               <h2 className="text-2xl font-bold text-white mb-4">5. Contact Us</h2>
               <p>
                 If you have any questions about this privacy policy or wish to exercise your data rights, please contact us at: 
-                <a href="mailto:privacy@skinvestment.app" className="text-steam-accent hover:underline ml-1">privacy@skinvestment.app</a>
+                <a href="mailto:kjlabs.studio@gmail.com" className="text-steam-accent hover:underline ml-1">kjlabs.studio@gmail.com</a>
               </p>
             </section>
           </div>
