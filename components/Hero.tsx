@@ -127,7 +127,7 @@ export const Hero: React.FC = () => {
                 <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
                     <BarChart2 size={16} />
                 </div>
-                <span className="font-bold text-white text-lg">Hello, kdfjgh</span>
+                <span className="font-bold text-white text-lg">Hello, my friend</span>
             </div>
             <Bell size={20} className="text-gray-400" />
         </div>
