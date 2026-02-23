@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { HashRouter, Routes, Route, Outlet ,BrowserRouter} from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
 // Komponenty globalne
@@ -28,7 +28,7 @@ import Panel from './pages/dashboard/Panel';
 function App() {
   return (
     <AuthProvider>
-      <HashRouter>
+      <BrowserRouter>
         <ScrollToTop /> {/* Przewija na górę przy zmianie strony */}
         
         <Routes>
@@ -68,7 +68,7 @@ function App() {
           </Route>
 
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </AuthProvider>
   );
 }
