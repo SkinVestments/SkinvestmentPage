@@ -39,13 +39,41 @@ export const Hero: React.FC = () => {
             Stop guessing, start profiting.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-            <Button icon={<Apple size={20} />}>
-              App Store
-            </Button>
-            <Button variant="outline" icon={<Play size={20} />}>
-              Google Play
-            </Button>
+        <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+            
+            {/* App Store */}
+            <div className="relative group cursor-not-allowed">
+              {/* Zmniejszamy widoczność i blokujemy kliknięcie, bo jeszcze nie działa */}
+              <div className="pointer-events-none opacity-60">
+                <Button icon={<Apple size={20} />}>
+                  App Store
+                </Button>
+              </div>
+              
+              {/* Tooltip "Coming Soon" */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-steam-accent text-white text-xs font-bold px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none whitespace-nowrap shadow-lg shadow-blue-500/20 z-10 uppercase tracking-wide">
+                Coming Soon
+                {/* Mały trójkąt pod dymkiem */}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-steam-accent rotate-45 rounded-sm"></div>
+              </div>
+            </div>
+
+            {/* Google Play */}
+            <div className="relative group cursor-not-allowed">
+              <div className="pointer-events-none opacity-60">
+                <Button variant="outline" icon={<Play size={20} />}>
+                  Google Play
+                </Button>
+              </div>
+              
+              {/* Tooltip "Coming Soon" */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-steam-accent text-white text-xs font-bold px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none whitespace-nowrap shadow-lg shadow-blue-500/20 z-10 uppercase tracking-wide">
+                Coming Soon
+                {/* Mały trójkąt pod dymkiem */}
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-steam-accent rotate-45 rounded-sm"></div>
+              </div>
+            </div>
+
           </div>
 
           <div className="pt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-8 gap-y-4 text-steam-secondary text-sm font-medium">
