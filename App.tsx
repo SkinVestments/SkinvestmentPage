@@ -19,6 +19,8 @@ import { PricingPage } from './pages/PricingPage';
 import { FAQPage } from './pages/FAQPage';
 import { RoadmapPage } from './pages/RoadmapPage';
 import { ContactPage } from './pages/ContactPage';
+import NotFound from './pages/NotFound';
+
 import Login from './pages/auth/Login';
 import History from './pages/dashboard/History';
 
@@ -52,6 +54,8 @@ function App() {
             <Route path="/roadmap" element={<RoadmapPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/login" element={<Login />} />
+            
+            <Route path="*" element={<NotFound />} />
           </Route>
 
           {/* === UKŁAD 2: APLIKACJA / PANEL (Sidebar, brak Navbara/Footera) === */}
