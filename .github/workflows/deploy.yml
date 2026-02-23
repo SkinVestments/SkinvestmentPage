@@ -24,7 +24,11 @@ jobs:
           npm install
           npm run build
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Deploy to VPS 🚀
+        uses: appleboy/scp-action@v0.1.7
         with:
-          folder: dist
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "dist/"
+          target: "/home/ubuntu/serwer/strona/" # Ścieżka do folderu na VPS
