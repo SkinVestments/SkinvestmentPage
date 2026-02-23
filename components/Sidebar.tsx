@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Package, History, Settings, LogOut, Home } from 'lucide-react';
+import { LayoutDashboard, Package, History, Settings, LogOut, Home, BarChart2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export const Sidebar = () => {
@@ -9,6 +9,7 @@ export const Sidebar = () => {
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/panel' },
     { icon: Package, label: 'Inventory', path: '/inventory' }, // (Jeszcze nie masz tej strony, ale się przyda)
+    { icon: BarChart2, label: 'Analytics', path: '/analytics' },
     { icon: History, label: 'History', path: '/history' },
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];

@@ -24,6 +24,8 @@ import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
 
 import Login from './pages/auth/Login';
 import History from './pages/dashboard/History';
+import Inventory from './pages/dashboard/Inventory';
+import Analytics from './pages/dashboard/Analytics';
 
 // Strony Prywatne (Panel)
 import Panel from './pages/dashboard/Panel';
@@ -70,6 +72,8 @@ function App() {
             {/* <Route path="/inventory" element={<Inventory />} /> */}
             {/* <Route path="/settings" element={<Settings />} /> */}
             <Route path="/history" element={<History />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/analytics" element={<Analytics />} />
           </Route>
 
         </Routes>
