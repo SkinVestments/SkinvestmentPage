@@ -26,6 +26,7 @@ import Login from './pages/auth/Login';
 import History from './pages/dashboard/History';
 import Inventory from './pages/dashboard/Inventory';
 import Analytics from './pages/dashboard/Analytics';
+import CollectionDetails from './pages/dashboard/CollectionDetails';
 
 // Strony Prywatne (Panel)
 import Panel from './pages/dashboard/Panel';
@@ -74,6 +75,7 @@ function App() {
             <Route path="/history" element={<History />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/analytics" element={<Analytics />} />
+            <Route path="/collection/:id" element={<CollectionDetails />} />
           </Route>
 
         </Routes>

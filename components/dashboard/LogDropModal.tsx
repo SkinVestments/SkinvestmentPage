@@ -322,7 +322,6 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                       onChange={(e) => setSelectedCollectionId(e.target.value)}
                       className="bg-[#1e232b] border border-gray-700 hover:border-gray-500 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 transition-colors cursor-pointer"
                    >
-                      <option value="">Unassigned</option>
                       {collections.map(col => (
                         <option key={col.id} value={col.id}>{col.name}</option>
                       ))}
