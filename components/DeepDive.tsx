@@ -1,7 +1,7 @@
 import React from 'react';
 import { Package, Lock, BarChart2, ArrowRight, ShieldCheck, XCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from './Button';
-
+import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 export const DeepDive: React.FC = () => {
   return (
     <section className="py-32 bg-[#0B0D12] relative">
@@ -115,39 +115,55 @@ export const DeepDive: React.FC = () => {
 
                  {/* TradingView Style Mockup */}
                  <div className="flex-1 w-full">
-                     <div className="bg-[#0B0D12] rounded-xl border border-white/10 p-6 shadow-2xl">
-                         <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
-                             <div className="flex items-center gap-3">
-                                 <div className="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600"></div>
-                                 <div>
-                                     <div className="text-sm font-bold text-white">AWP | Dragon Lore</div>
-                                     <div className="text-xs text-gray-500">Factory New • 0.014 Float</div>
-                                 </div>
-                             </div>
-                             <div className="text-right">
-                                 <div className="text-lg font-bold text-white">$14,250.00</div>
-                                 <div className="text-xs text-steam-profit">+24.5% Past Year</div>
-                             </div>
-                         </div>
-                         
-                         {/* Candlestick visualization (Abstract) */}
-                         <div className="flex items-end h-48 gap-2 opacity-80">
-                             {[40, 35, 45, 50, 48, 60, 55, 65, 70, 68, 80, 75, 85, 90, 88, 100].map((h, i) => (
-                                 <div key={i} className="flex-1 flex flex-col justify-end group cursor-pointer">
-                                     <div 
-                                        style={{ height: `${h}%` }} 
-                                        className={`w-full rounded-sm transition-all duration-300 ${i % 3 === 0 ? 'bg-steam-loss/80' : 'bg-steam-profit/80'} group-hover:brightness-125`}
-                                     ></div>
-                                 </div>
-                             ))}
-                         </div>
-                         
-                         {/* Axis */}
-                         <div className="flex justify-between mt-4 text-[10px] text-gray-600 font-mono">
-                             <span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
-                         </div>
-                     </div>
-                 </div>
+    <div className="bg-[#0B0D12] rounded-xl border border-white/10 p-6 shadow-2xl">
+        {/* Header Karty */}
+        <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+            <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded bg-gradient-to-br from-indigo-500 to-purple-600"></div>
+                <div>
+                    <div className="text-sm font-bold text-white">AWP | Dragon Lore</div>
+                    <div className="text-xs text-gray-500">Factory New • 0.014 Float</div>
+                </div>
+            </div>
+            <div className="text-right">
+                <div className="text-lg font-bold text-white">$14,250.00</div>
+                <div className="text-xs text-green-400 font-medium">+24.5% Past Year</div>
+            </div>
+        </div>
+        
+        {/* PRAWDZIWY WYKRES RECHARTS (Zamiast divów) */}
+        <div className="h-48 w-full -ml-2 pointer-events-none">
+            <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={[
+                    { val: 10000 }, { val: 10200 }, { val: 10500 }, { val: 10100 }, 
+                    { val: 10800 }, { val: 11500 }, { val: 11200 }, { val: 12000 }, 
+                    { val: 12500 }, { val: 12100 }, { val: 13000 }, { val: 13800 }, 
+                    { val: 13500 }, { val: 14250 }
+                ]}>
+                    <defs>
+                        <linearGradient id="colorLore" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                        </linearGradient>
+                    </defs>
+                    <Area 
+                        type="monotone" 
+                        dataKey="val" 
+                        stroke="#10b981" 
+                        strokeWidth={3} 
+                        fill="url(#colorLore)" 
+                        animationDuration={1500}
+                    />
+                </AreaChart>
+            </ResponsiveContainer>
+        </div>
+        
+        {/* Oś X (Ręczna, dla efektu wizualnego) */}
+        <div className="flex justify-between mt-2 px-2 text-[10px] text-gray-600 font-mono tracking-widest uppercase">
+            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+        </div>
+    </div>
+</div>
              </div>
         </div>
 
