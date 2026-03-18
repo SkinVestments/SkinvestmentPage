@@ -25,11 +25,11 @@ export const ContactPage: React.FC = () => {
       {/* Background: Abstract "3D" Cyber Map */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] opacity-10"
-             style={{
-               backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)',
-               backgroundSize: '40px 40px',
-               transform: 'perspective(1000px) rotateX(20deg)'
-             }}
+              style={{
+                backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 1px)',
+                backgroundSize: '40px 40px',
+                transform: 'perspective(1000px) rotateX(20deg)'
+              }}
         />
         {/* Glowing Nodes */}
         <div className="absolute top-[30%] left-[20%] w-2 h-2 bg-blue-500 rounded-full animate-ping" />
@@ -71,6 +71,7 @@ export const ContactPage: React.FC = () => {
               value="Join 15,000+ Traders" 
               sub="Instant community help"
               action="Join Server"
+              comingSoon={true} // <-- Dodana flaga Coming Soon!
             />
           </div>
 
@@ -91,7 +92,7 @@ export const ContactPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: The BIG Form - OBNIŻONY (lg:mt-20) */}
+        {/* Right Column: The BIG Form */}
         <div className="relative group perspective-1000 lg:mt-20">
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
           
@@ -162,18 +163,40 @@ export const ContactPage: React.FC = () => {
 
 // --- Subcomponents ---
 
-const ContactCard: React.FC<{ icon: React.ReactNode, label: string, value: string, sub: string, action?: string }> = ({ icon, label, value, sub, action }) => (
-  <div className="bg-[#161B24]/50 p-5 rounded-xl border border-white/5 hover:border-white/10 transition-colors group">
-    <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-steam-accent mb-4 group-hover:scale-110 transition-transform">
-      {icon}
+// Rozszerzenie propsów o comingSoon
+const ContactCard: React.FC<{ icon: React.ReactNode, label: string, value: string, sub: string, action?: string, comingSoon?: boolean }> = ({ icon, label, value, sub, action, comingSoon }) => (
+  <div className="bg-[#161B24]/50 p-5 rounded-xl border border-white/5 hover:border-white/10 transition-colors group flex flex-col">
+    <div className="flex justify-between items-start mb-4">
+      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-steam-accent group-hover:scale-110 transition-transform">
+        {icon}
+      </div>
+      
+      {/* Znaczek Coming Soon */}
+      {comingSoon && (
+        <div className="px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-blue-400">
+            Coming Soon
+          </span>
+        </div>
+      )}
     </div>
+    
     <div className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">{label}</div>
     <div className="text-lg font-bold text-white mb-1">{value}</div>
     <div className="text-sm text-gray-500">{sub}</div>
+    
     {action && (
-        <div className="mt-4 pt-4 border-t border-white/5">
-            <button className="text-sm font-bold text-white flex items-center gap-2 hover:gap-3 transition-all">
-                {action} <span className="text-steam-accent">&rarr;</span>
+        <div className="mt-auto pt-4 border-t border-white/5">
+            {/* Przycisk dostosowuje się w zależności od tego, czy funkcja jest dostępna, czy "wkrótce" */}
+            <button 
+              disabled={comingSoon}
+              className={`text-sm font-bold flex items-center gap-2 transition-all ${
+                comingSoon 
+                  ? 'text-gray-600 cursor-not-allowed' 
+                  : 'text-white hover:gap-3'
+              }`}
+            >
+                {action} {!comingSoon && <span className="text-steam-accent">&rarr;</span>}
             </button>
         </div>
     )}
