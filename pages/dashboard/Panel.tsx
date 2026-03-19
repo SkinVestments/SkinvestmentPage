@@ -30,6 +30,17 @@ interface PortfolioItem {
   cs2_items: CS2Item;
 }
 
+// Typ dopasowany do odpowiedzi z get_portfolio_current_values
+interface PortfolioCurrentValues {
+  deposited: number;
+  withdrawn: number;
+  inventory_value: number;
+  investments_value: number;
+  period_gain_value: number;
+  period_roi_percentage: number;
+  total_portfolio_value: number;
+}
+
 const ITEMS_PER_PAGE = 5;
 
 // Funkcja stylizująca kolory Rarity
@@ -53,13 +64,16 @@ const Panel = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Stan danych ogólnych
+  // --- STANY TABELI PORTFOLIO ---
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [totalValue, setTotalValue] = useState(0);
-  const [investmentsValue, setInvestmentsValue] = useState(0);
+  
+  // --- STANY WARTOŚCI GŁÓWNYCH (Nowe, z endpointu get_portfolio_current_values) ---
+  const [portfolioStats, setPortfolioStats] = useState<PortfolioCurrentValues | null>(null);
+
   const [isDropModalOpen, setIsDropModalOpen] = useState(false);
   const [isQuickAddModalOpen, setIsQuickAddModalOpen] = useState(false);
+  
   // --- STANY DLA KOLEKCJI ---
   const [collections, setCollections] = useState<any[]>([]);
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
@@ -72,9 +86,9 @@ const Panel = () => {
 
   // --- STANY DLA WYKRESU ---
   const [chartData, setChartData] = useState<any[]>([]);
+  const [availablePeriods, setAvailablePeriods] = useState<string[]>(['7D', '1M', 'ALL']); 
   const [chartLoading, setChartLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<string>('1M'); 
-  const [periodGainPercent, setPeriodGainPercent] = useState<number>(0);
 
   const resetTime = useWeeklyReset();
 
@@ -96,30 +110,23 @@ const Panel = () => {
     if (!user) return;
     try {
       setChartLoading(true);
-      const { data, error } = await supabase.rpc('get_portfolio_value_chart', {
-        p_period: timeRange
+      const { data: response, error } = await supabase.rpc('get_user_performance_chart', {
+        target_user_id: user.id,   
+        period_text: timeRange     
       });
 
       if (error) throw error;
 
-      if (data && data.length > 0) {
-        setChartData(data);
+      if (response && response.data && response.data.length > 0) {
+        const chartPoints = response.data;
+        setChartData(chartPoints);
         
-        const firstValue = Number(data[0].total_value) || 0;
-        const lastValue = Number(data[data.length - 1].total_value) || 0;
-        const lastInvestedValue = Number(data[data.length - 1].invested_value) || 0;
-        
-        setInvestmentsValue(lastInvestedValue);
-        
-        if (firstValue > 0) {
-          setPeriodGainPercent(((lastValue - firstValue) / firstValue) * 100);
-        } else {
-          setPeriodGainPercent(lastValue > 0 ? 100 : 0);
+        if (response.available_periods) {
+          setAvailablePeriods(response.available_periods);
         }
+        
       } else {
         setChartData([]);
-        setPeriodGainPercent(0);
-        setInvestmentsValue(0);
       }
     } catch (error) {
       console.error('Error fetching chart data:', error);
@@ -128,22 +135,28 @@ const Panel = () => {
     }
   };
 
+  // --- NOWA FUNKCJA: Pobieranie aktualnych wartości portfolio ---
+  const fetchPortfolioStats = async () => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase.rpc('get_portfolio_current_values', {
+        p_user_id: user.id,        
+        p_time_range: timeRange
+      });
+      
+      if (error) throw error;
+      if (data) {
+          setPortfolioStats(data);
+      }
+    } catch (error) {
+      console.error('Error fetching portfolio stats:', error);
+    }
+  }
+
   const fetchPortfolio = async () => {
     try {
       setLoading(true);
       if (!user) return;
-
-      const { data: allItems } = await supabase
-        .from('portfolio_items')
-        .select('quantity, cs2_items(price)')
-        .eq('user_id', user.id);
-
-      if (allItems) {
-        const total = allItems.reduce((acc, item: any) => {
-          return acc + (item.quantity * (item.cs2_items?.price || 0));
-        }, 0);
-        setTotalValue(total);
-      }
 
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
@@ -183,11 +196,13 @@ const Panel = () => {
   useEffect(() => {
     fetchChartData();
     fetchCollections();
+    fetchPortfolioStats(); 
   }, [user, timeRange]);
 
   const handleDropSuccess = () => {
     fetchPortfolio(); 
     fetchChartData();
+    fetchPortfolioStats();
   };
 
   const handleSort = (column: string) => {
@@ -204,7 +219,15 @@ const Panel = () => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
   };
 
-  const isPositive = periodGainPercent >= 0;
+  // Używamy danych z portfolioStats (z fallbackami na wypadek, gdy dane jeszcze nie nadeszły)
+  const isPositive = (portfolioStats?.period_roi_percentage || 0) >= 0;
+  const currentTotalValue = portfolioStats?.total_portfolio_value || 0;
+  const currentGainPercent = portfolioStats?.period_roi_percentage || 0;
+  const currentGainValue = portfolioStats?.period_gain_value || 0;
+  const currentInvestmentsValue = portfolioStats?.investments_value || 0;
+  const currentInventoryValue = portfolioStats?.inventory_value || 0;
+  const currentDeposited = portfolioStats?.deposited || 0;
+  const currentWithdrawn = portfolioStats?.withdrawn || 0;
 
   return (
     <div className="text-white animate-fade-in pb-10">
@@ -219,7 +242,7 @@ const Panel = () => {
         </div>
         
         <button 
-          onClick={() => setIsQuickAddModalOpen(true)} // <-- DODANO ONCLICK
+          onClick={() => setIsQuickAddModalOpen(true)}
           className="bg-steam-accent hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2"
         >
           <Plus className="w-5 h-5" /> Quick Add
@@ -241,19 +264,22 @@ const Panel = () => {
               <div>
                 <h2 className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Total Portfolio Value</h2>
                 <div className="flex items-baseline gap-3">
-                  <span className="text-5xl font-bold text-white tracking-tight">{formatCurrency(totalValue)}</span>
+                  <span className="text-5xl font-bold text-white tracking-tight">{formatCurrency(currentTotalValue)}</span>
                   
-                  <span className={`px-2 py-1 rounded-md text-sm font-bold border flex items-center gap-1 ${
+                  <span className={`px-2 py-1 rounded-md text-sm font-bold border flex items-center gap-1.5 ${
                     isPositive ? 'text-green-400 bg-green-500/10 border-green-500/20' : 'text-red-400 bg-red-500/10 border-red-500/20'
                   }`}>
                     {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {Math.abs(periodGainPercent).toFixed(2)}%
+                    <span>{Math.abs(currentGainPercent).toFixed(2)}%</span>
+                    <span className="opacity-70 font-medium">
+                      ({isPositive ? '+' : '-'}{formatCurrency(Math.abs(currentGainValue))})
+                    </span>
                   </span>
                 </div>
               </div>
               
               <div className="flex bg-[#14171D] rounded-lg p-1 border border-white/5 relative z-20">
-                {['1W', '1M', '6M', '1Y', 'ALL'].map((t) => (
+                {availablePeriods.map((t) => (
                   <button 
                     key={t} 
                     onClick={() => setTimeRange(t)}
@@ -296,7 +322,7 @@ const Panel = () => {
                   
                   <Tooltip 
                     formatter={(value: number, name: string) => {
-                      if (name === 'total_value') return [formatCurrency(value), 'Portfolio Value'];
+                      if (name === 'portfolio_value') return [formatCurrency(value), 'Portfolio Value'];
                       if (name === 'invested_value') return [formatCurrency(value), 'Invested Capital'];
                       return [formatCurrency(value), name];
                     }}
@@ -307,7 +333,7 @@ const Panel = () => {
                   />
                   
                   <Area type="monotone" dataKey="invested_value" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="4 4" fillOpacity={1} fill="url(#colorInvested)" />
-                  <Area type="monotone" dataKey="total_value" stroke={isPositive ? "#10b981" : "#ef4444"} strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+                  <Area type="monotone" dataKey="portfolio_value" stroke={isPositive ? "#10b981" : "#ef4444"} strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -317,34 +343,48 @@ const Panel = () => {
         {/* KOLUMNA 2 (Wąska): STATYSTYKI I DROPY */}
         <div className="space-y-6">
           
-          {/* SIATKA MAŁYCH STATYSTYK (w jednym rzędzie na małym ekranie, w kolumnie na dużym) */}
-          <div className="grid grid-cols-2 xl:grid-cols-1 gap-6">
-            <div className="bg-[#1e232b] rounded-2xl p-6 border border-gray-800 flex items-center gap-5 hover:border-steam-accent/30 transition-colors">
-              <div className="p-4 bg-blue-500/10 rounded-xl text-blue-400 border border-blue-500/20">
-                <TrendingUp className="w-8 h-8" />
-              </div>
-              <div>
-                <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Investments</p>
-                <p className="text-2xl font-bold text-white">{formatCurrency(investmentsValue)}</p>
-              </div>
+          {/* SIATKA MAŁYCH STATYSTYK (2x2) */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Investments */}
+            <div className="bg-[#1e232b] rounded-2xl p-5 border border-gray-800 hover:border-steam-accent/30 transition-colors">
+              <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Investments</p>
+              <p className="text-xl font-bold text-white">{formatCurrency(currentInvestmentsValue)}</p>
             </div>
             
-            <div className="bg-[#1e232b] rounded-2xl p-6 border border-gray-800 flex items-center gap-5 hover:border-steam-accent/30 transition-colors">
-              <div className="p-4 bg-gray-700/30 rounded-xl text-gray-400 border border-white/5">
-                <Package className="w-8 h-8" />
-              </div>
-              <div>
-                <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Inventory</p>
-                <p className="text-2xl font-bold text-white">$0.00</p>
-              </div>
+            {/* Inventory */}
+            <div className="bg-[#1e232b] rounded-2xl p-5 border border-gray-800 hover:border-steam-accent/30 transition-colors">
+              <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Inventory</p>
+              <p className="text-xl font-bold text-white">{formatCurrency(currentInventoryValue)}</p>
+            </div>
+
+            {/* Deposited */}
+            <div className="bg-[#1e232b] rounded-2xl p-5 border border-gray-800 hover:border-steam-accent/30 transition-colors">
+              <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Deposited</p>
+              <p className="text-xl font-bold text-white">{formatCurrency(currentDeposited)}</p>
+            </div>
+
+            {/* Withdrawn */}
+            <div className="bg-[#1e232b] rounded-2xl p-5 border border-gray-800 hover:border-steam-accent/30 transition-colors">
+              <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-1">Withdrawn</p>
+              <p className="text-xl font-bold text-white">{formatCurrency(currentWithdrawn)}</p>
             </div>
           </div>
 
-          {/* WEEKLY DROP (Teraz ma sensowne proporcje po prawej stronie) */}
-          <div className="bg-[#1e232b] rounded-2xl border border-white/5 shadow-xl relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-transparent opacity-50"></div>
-            <div className="relative z-10 p-6">
-              <div className="flex items-center gap-2 text-steam-accent mb-3">
+          {/* WEEKLY DROP */}
+          <div className="bg-[#1e232b] rounded-2xl border border-white/5 shadow-xl relative overflow-hidden group p-6 flex flex-col justify-between min-h-[220px]">
+            {/* Delikatny gradient w tle */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-transparent opacity-50 z-0"></div>
+            
+            {/* Skrzynka w tle (przesunięta do góry i w prawo) */}
+            <img 
+              src="/images/case.webp" 
+              className="absolute -right-2 top-3 w-40 sm:w-44 opacity-90 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105 z-0"               
+              alt="Case Reward" 
+            />
+
+            {/* Górna część: Teksty */}
+            <div className="relative z-10 flex-1">
+              <div className="flex items-center gap-2 text-steam-accent mb-4">
                 <div className="p-1.5 bg-blue-500/20 rounded-lg">
                   <Package className="w-4 h-4" />
                 </div>
@@ -352,22 +392,21 @@ const Panel = () => {
               </div>
               
               <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Resets in {resetTime}</h3>
-              <p className="text-gray-400 text-xs mb-6 leading-relaxed max-w-[70%]">
+              <p className="text-gray-400 text-xs leading-relaxed max-w-[65%]">
                 Earn enough XP to claim your weekly rewards.
               </p>
-              
-              <button className="w-full bg-steam-accent hover:bg-blue-500 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 border border-blue-400/20" 
-              onClick={() => setIsDropModalOpen(true)}>
+            </div>
+            
+            {/* Dolna część: Przycisk (zawsze na wierzchu) */}
+            <div className="relative z-10 mt-6">
+              <button 
+                className="w-full bg-[#3b82f6] hover:bg-blue-500 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25" 
+                onClick={() => setIsDropModalOpen(true)}
+              >
                 <CheckCircle className="w-4 h-4" /> 
                 <span>Log Drop</span>
               </button>
             </div>
-            
-            <img 
-              src="/images/case.webp" 
-              className="absolute -right-8 -bottom-6 w-40 opacity-90 rotate-[5deg] drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-all duration-500 group-hover:scale-110 group-hover:rotate-[0deg]"              
-              alt="Case Reward" 
-            />
           </div>
         </div>
       </div>
@@ -549,6 +588,7 @@ const Panel = () => {
           fetchPortfolio();
           fetchChartData();
           fetchCollections();
+          fetchPortfolioStats();
         }}
       />
     </div>
