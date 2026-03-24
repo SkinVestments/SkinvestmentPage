@@ -110,8 +110,7 @@ const Panel = () => {
     if (!user) return;
     try {
       setChartLoading(true);
-      const { data: response, error } = await supabase.rpc('get_user_performance_chart', {
-        target_user_id: user.id,   
+      const { data: response, error } = await supabase.rpc('get_user_performance_chart', { 
         period_text: timeRange     
       });
 
@@ -139,9 +138,8 @@ const Panel = () => {
   const fetchPortfolioStats = async () => {
     if (!user) return;
     try {
-      const { data, error } = await supabase.rpc('get_portfolio_current_values', {
-        p_user_id: user.id,        
-        p_time_range: timeRange
+      const { data, error } = await supabase.rpc('get_portfolio_current_values', {      
+        period_text: timeRange
       });
       
       if (error) throw error;
