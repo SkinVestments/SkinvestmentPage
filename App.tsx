@@ -27,6 +27,7 @@ import History from './pages/dashboard/History';
 import Inventory from './pages/dashboard/Inventory';
 import Analytics from './pages/dashboard/Analytics';
 import CollectionDetails from './pages/dashboard/CollectionDetails';
+import Settings from './pages/dashboard/Settings';
 
 // Strony Prywatne (Panel)
 import Panel from './pages/dashboard/Panel';
@@ -69,13 +70,11 @@ function App() {
             </ProtectedRoute>
           }>
             <Route path="/panel" element={<Panel />} />
-            {/* Tutaj w przyszłości dodasz: */}
-            {/* <Route path="/inventory" element={<Inventory />} /> */}
-            {/* <Route path="/settings" element={<Settings />} /> */}
             <Route path="/history" element={<History />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/collection/:id" element={<CollectionDetails />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
 
         </Routes>
