@@ -42,20 +42,19 @@ export const Hero: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
             
-            {/* App Store */}
-            <div className="relative group cursor-not-allowed">
-              <div className="pointer-events-none opacity-60">
-                <Button icon={<Apple size={20} />}>
-                  App Store
-                </Button>
-              </div>
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-steam-accent text-white text-xs font-bold px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none whitespace-nowrap shadow-lg shadow-blue-500/20 z-10 uppercase tracking-wide">
-                Coming Soon
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-steam-accent rotate-45 rounded-sm"></div>
-              </div>
-            </div>
+            {/* App Store - Aktywny link */}
+            <a 
+              href="https://apps.apple.com/us/app/skinvestments/id6757268598" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Button icon={<Apple size={20} />}>
+                App Store
+              </Button>
+            </a>
 
-            {/* Google Play */}
+            {/* Google Play - Coming Soon */}
             <div className="relative group cursor-not-allowed">
               <div className="pointer-events-none opacity-60">
                 <Button variant="outline" icon={<Play size={20} />}>
@@ -82,7 +81,7 @@ export const Hero: React.FC = () => {
           </div>
         </div>
 
-{/* Right Column: 3D Composition */}
+        {/* Right Column: 3D Composition */}
         <div className="relative flex justify-center lg:justify-end mt-12 lg:mt-0 perspective-1000 group">
           
           {/* Floating Market Card - Pływający Weekly Drop (lekko wysunięty) */}
@@ -100,8 +99,7 @@ export const Hero: React.FC = () => {
               </div>
           </div>
 
-          {/* The Phone - TERAZ RESPONSYWNY */}
-          {/* ZMIANA: Mniejsze wymiary na mobilce (w-280px, h-600px), standardowe na większych ekranach (sm:w-340px) */}
+          {/* The Phone */}
           <div className="relative w-[280px] h-[600px] sm:w-[340px] sm:h-[740px] bg-[#0B0D12] rounded-[2.5rem] sm:rounded-[3.5rem] border-[6px] sm:border-[8px] border-[#1F2937] shadow-[0_0_50px_rgba(59,130,246,0.15)] z-20 ring-1 ring-white/10 transform transition-transform duration-500 rotate-y-12 group-hover:rotate-y-0 group-hover:scale-[1.02]">
               
               {/* Glossy Reflection */}
@@ -118,7 +116,6 @@ export const Hero: React.FC = () => {
 
           </div>
         </div>
-
 
       </div>
     </section>
