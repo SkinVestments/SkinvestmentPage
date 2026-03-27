@@ -51,7 +51,7 @@ export const FullFeaturesPage: React.FC = () => {
       </div>
       <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/10">
         <div className="text-red-400 font-bold flex items-center gap-1"><TrendingUp size={14} className="rotate-180"/> Top Loser</div>
-        <div className="text-sm">Paris 2023 Case</div>
+        <div className="text-sm">Paris 2023 Capsule</div>
         <div className="text-xs text-red-400/70">-2.4%</div>
       </div>
     </div>
