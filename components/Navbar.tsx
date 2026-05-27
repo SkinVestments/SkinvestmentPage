@@ -107,25 +107,8 @@ export const Navbar: React.FC = () => {
           >
             Contact
           </Link>
-
-          {/* --- ZMIANA: LOGIKA DLA ZALOGOWANEGO UŻYTKOWNIKA (DESKTOP) --- */}
-          {user ? (
-            <Link
-              to="/panel"
-              className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/panel' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
-            >
-              <LayoutDashboard className="w-4 h-4" />
-              Panel
-            </Link>
-          ) : (
-            <Link
-              to="/login"
-              className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/login' ? 'text-white' : 'text-gray-400 hover:text-white'}`}
-            >
-              <User className="w-4 h-4" />
-              Log In
-            </Link>
-          )}
+          
+          
 
           <button className="px-5 py-2 rounded bg-[#212c3d] hover:bg-[#2a384d] text-white text-sm font-bold uppercase tracking-wide transition-colors border border-white/5 hover:border-steam-accent/50 shadow-md">
             Get App
