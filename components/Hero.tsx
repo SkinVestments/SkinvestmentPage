@@ -67,8 +67,9 @@ export const Hero: React.FC = () => {
                 <Button variant="outline" icon={<Play size={20} />}>
                   Google Play
                 </Button>
+                </a>
               </div>
-              </a>
+              
               <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-steam-accent text-white text-xs font-bold px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 pointer-events-none whitespace-nowrap shadow-lg shadow-blue-500/20 z-10 uppercase tracking-wide">
                 Coming Soon
                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-steam-accent rotate-45 rounded-sm"></div>
