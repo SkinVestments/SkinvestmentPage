@@ -95,7 +95,7 @@ export const DeepDive: React.FC = () => {
         </div>
 
         {/* Feature Spotlight: The Chart */}
-        <div className="mt-16 sm:mt-24 md:mt-32 p-6 sm:p-8 md:p-12 bg-gradient-to-b from-[#12161E] to-[#0B0D12] rounded-2xl sm:rounded-3xl border border-steam-border/50 relative overflow-hidden">
+        <div className="mt-16 sm:mt-24 md:mt-32 p-6 sm:p-8 md:p-12 bg-gradient-to-b from-steam-elevated to-steam-bg rounded-2xl sm:rounded-3xl border border-steam-border/50 relative overflow-hidden">
              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
              
              <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 relative z-10 min-w-0">
@@ -142,14 +142,14 @@ export const DeepDive: React.FC = () => {
                 ]}>
                     <defs>
                         <linearGradient id="colorLore" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                            <stop offset="5%" stopColor="var(--color-profit)" stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor="var(--color-profit)" stopOpacity={0}/>
                         </linearGradient>
                     </defs>
                     <Area 
                         type="monotone" 
                         dataKey="val" 
-                        stroke="#10b981" 
+                        stroke="var(--color-profit)" 
                         strokeWidth={3} 
                         fill="url(#colorLore)" 
                         animationDuration={1500}

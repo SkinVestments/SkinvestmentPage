@@ -2,7 +2,8 @@ import React from 'react';
 import { Apple, ShieldCheck, Globe, Package } from 'lucide-react';
 import { Button } from './Button';
 import { GooglePlayIcon } from './icons/GooglePlayIcon';
-import { useWeeklyReset } from '../utils/utils'; // Upewnij się, że ścieżka jest poprawna
+import { APP_STORE_URL, GOOGLE_PLAY_URL } from '@/constants/appLinks';
+import { useWeeklyReset } from '../utils/utils';
 
 
 export const Hero: React.FC = () => {
@@ -24,7 +25,7 @@ export const Hero: React.FC = () => {
         
         {/* Left Column: Copy */}
         <div className="space-y-6 sm:space-y-8 text-center lg:text-left min-w-0">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-white/5 border border-steam-border backdrop-blur-sm max-w-full">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full theme-subtle border border-steam-border backdrop-blur-sm max-w-full">
             <span className="w-2 h-2 shrink-0 rounded-full bg-steam-profit animate-pulse" />
             <span className="text-[10px] sm:text-xs font-bold text-steam-secondary uppercase tracking-wide sm:tracking-widest font-display">Multi-Market Aggregation</span>
           </div>
@@ -44,7 +45,7 @@ export const Hero: React.FC = () => {
           
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-4 w-full max-w-sm sm:max-w-none mx-auto lg:mx-0">
             <a
-              href="https://apps.apple.com/us/app/skinvestments/id6757268598"
+              href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full sm:w-auto"
@@ -55,7 +56,7 @@ export const Hero: React.FC = () => {
             </a>
 
             <a
-              href="https://play.google.com/store/apps/details?id=com.steamvestments"
+              href={GOOGLE_PLAY_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full sm:w-auto"

@@ -209,7 +209,7 @@ export const QualityStructureChart = () => {
                   onMouseLeave={() => setHovered(null)}
                 >
                   <div
-                    className="flex flex-col items-center justify-center rounded-lg px-2 py-1.5 font-bold text-white shadow-lg transition-all duration-200"
+                    className="flex flex-col items-center justify-center rounded-lg px-2 py-1.5 font-bold text-on-accent shadow-lg transition-all duration-200"
                     style={{
                       width: `${widthPct}%`,
                       minWidth: narrow ? 64 : 72,

@@ -87,7 +87,7 @@ export const RoadmapPage: React.FC = () => {
                 <div className="absolute left-[20px] md:left-1/2 w-10 h-10 -translate-x-1/2 flex items-center justify-center z-10">
                   <div className={`w-4 h-4 rounded-full border-4 transition-all duration-500 ${
                     item.status === 'completed' ? 'bg-steam-accent border-steam-bg shadow-[0_0_15px_#3b82f6]' :
-                    item.status === 'active' ? 'bg-white border-steam-accent scale-125 shadow-[0_0_20px_white]' :
+                    item.status === 'active' ? 'bg-steam-card border-steam-accent scale-125 shadow-[0_0_20px_color-mix(in_srgb,var(--color-accent)_40%,transparent)]' :
                     'bg-steam-bg border-steam-border'
                   }`}></div>
                 </div>

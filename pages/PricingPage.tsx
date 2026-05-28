@@ -102,7 +102,7 @@ export const PricingPage: React.FC = () => {
             
             {/* Sliding Background */}
             <div 
-              className={`absolute top-1.5 bottom-1.5 rounded-lg bg-white/10 border border-steam-border/50 transition-all duration-300 ease-in-out w-[calc(33.33%-4px)]`}
+              className={`absolute top-1.5 bottom-1.5 rounded-lg theme-subtle-strong border border-steam-border/50 transition-all duration-300 ease-in-out w-[calc(33.33%-4px)]`}
               style={{
                 left: billingCycle === 'monthly' ? '4px' : billingCycle === 'yearly' ? 'calc(33.33% + 2px)' : 'calc(66.66% + 0px)'
               }}
@@ -122,13 +122,13 @@ export const PricingPage: React.FC = () => {
               }`}
             >
               {plan.highlight && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-steam-accent text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg flex items-center gap-2">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-steam-accent to-steam-accent-dark text-on-accent text-xs font-bold uppercase tracking-widest rounded-full shadow-lg flex items-center gap-2">
                   <Sparkles size={12} /> Most Popular
                 </div>
               )}
               
               <div className="mb-8">
-                <div className={`w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 ${plan.color}`}>
+                <div className={`w-12 h-12 rounded-xl theme-subtle flex items-center justify-center mb-4 ${plan.color}`}>
                   <plan.icon size={24} />
                 </div>
                 <h3 className="text-xl font-bold text-steam-text">{plan.name}</h3>
@@ -168,7 +168,7 @@ export const PricingPage: React.FC = () => {
                 ))}
                 {plan.notIncluded.map((feat, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm text-steam-tertiary">
-                    <div className="p-1 rounded-full bg-white/5 shrink-0"><X size={10} /></div>
+                    <div className="p-1 rounded-full theme-subtle shrink-0"><X size={10} /></div>
                     {feat}
                   </div>
                 ))}
@@ -178,8 +178,8 @@ export const PricingPage: React.FC = () => {
               <div className="mt-auto">
                 <button className={`w-full py-4 rounded-xl font-bold transition-all text-sm uppercase tracking-wider ${
                   plan.highlight 
-                    ? 'bg-steam-accent hover:opacity-90 text-white shadow-lg shadow-blue-500/25' 
-                    : 'bg-white/5 hover:bg-steam-hover text-steam-text border border-steam-border/50'
+                    ? 'bg-steam-accent hover:opacity-90 text-white shadow-lg theme-shadow-accent' 
+                    : 'theme-subtle hover:bg-steam-hover text-steam-text border border-steam-border/50'
                 }`}>
                   {plan.cta}
                 </button>

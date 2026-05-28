@@ -99,7 +99,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                 </button>
               ))}
               <div
-                className="absolute top-1.5 bottom-1.5 rounded-lg bg-white/10 border border-steam-border/50 transition-all duration-300 w-[calc(33.33%-4px)]"
+                className="absolute top-1.5 bottom-1.5 rounded-lg theme-subtle-strong border border-steam-border/50 transition-all duration-300 w-[calc(33.33%-4px)]"
                 style={{
                   left:
                     billingCycle === 'monthly'
@@ -141,7 +141,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                     </span>
                   )}
 
-                  <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-3 ${plan.color}`}>
+                  <div className={`w-10 h-10 rounded-xl theme-subtle flex items-center justify-center mb-3 ${plan.color}`}>
                     <Icon size={20} />
                   </div>
                   <h4 className="font-bold text-steam-text text-lg">{plan.name}</h4>

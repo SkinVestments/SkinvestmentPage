@@ -71,15 +71,15 @@ export const FAQPage: React.FC = () => {
 
         {/* Trust Badges */}
         <div className="mt-16 pt-10 border-t border-steam-border/50 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-             <div className="p-4 rounded-xl bg-white/5">
+             <div className="p-4 rounded-xl theme-subtle">
                 <Lock className="w-8 h-8 text-steam-accent mx-auto mb-3" />
                 <div className="font-bold text-steam-text">Read-Only Access</div>
              </div>
-             <div className="p-4 rounded-xl bg-white/5">
+             <div className="p-4 rounded-xl theme-subtle">
                 <ShieldCheck className="w-8 h-8 text-green-500 mx-auto mb-3" />
                 <div className="font-bold text-steam-text">No Passwords</div>
              </div>
-             <div className="p-4 rounded-xl bg-white/5">
+             <div className="p-4 rounded-xl theme-subtle">
                 <HelpCircle className="w-8 h-8 text-purple-500 mx-auto mb-3" />
                 <div className="font-bold text-steam-text">24/7 Support</div>
              </div>

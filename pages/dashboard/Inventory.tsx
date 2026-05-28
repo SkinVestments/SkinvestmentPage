@@ -133,7 +133,7 @@ const Inventory = () => {
               <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total Value</p>
               <p className="text-xl font-bold text-green-400">{formatCurrency(totalValue)}</p>
            </div>
-           <button className="bg-steam-accent hover:opacity-90 text-white p-3 rounded-lg shadow-lg shadow-blue-500/20 transition-all ml-2">
+           <button className="bg-steam-accent hover:opacity-90 text-white p-3 rounded-lg shadow-lg theme-shadow-accent transition-all ml-2">
               <Plus className="w-5 h-5" />
            </button>
         </div>

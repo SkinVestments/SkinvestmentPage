@@ -344,7 +344,7 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                    </div>
                    
                    <div className={`w-12 h-6 rounded-full relative transition-colors duration-300 ${addToInvestments ? 'bg-steam-accent' : 'bg-steam-elevated'}`}>
-                      <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-md transition-all duration-300 ${addToInvestments ? 'left-7' : 'left-1'}`} />
+                      <div className={`absolute top-1 w-4 h-4 rounded-full bg-steam-card border border-steam-border shadow-md transition-all duration-300 ${addToInvestments ? 'left-7' : 'left-1'}`} />
                    </div>
                 </div>
               </div>
@@ -364,7 +364,7 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
            <button 
              disabled={!selectedItemId || submitting}
              onClick={handleSubmit}
-             className="w-full bg-steam-accent hover:opacity-90 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none text-white font-bold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 text-sm uppercase tracking-wide"
+             className="w-full bg-steam-accent hover:opacity-90 hover:theme-shadow-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none text-white font-bold py-3.5 rounded-xl transition-all flex justify-center items-center gap-2 text-sm uppercase tracking-wide"
            >
              {submitting ? <Loader2 className="animate-spin w-5 h-5"/> : <CheckCircle className="w-5 h-5" />}
              Confirm Drop

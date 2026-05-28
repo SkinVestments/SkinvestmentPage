@@ -6,8 +6,8 @@ export interface RarityStyle {
 }
 
 const DEFAULT_RARITY: RarityStyle = {
-  border: 'border-gray-600',
-  text: 'text-gray-400',
+  border: 'border-steam-border',
+  text: 'text-steam-secondary',
   shadow: '',
   hex: '#9ca3af',
 };
@@ -36,7 +36,7 @@ export const getRarityStyle = (rarity: string | null | undefined): RarityStyle =
     return { border: 'border-sky-400', text: 'text-sky-400', shadow: 'shadow-sky-400/20', hex: '#38bdf8' };
   }
   if (r.includes('consumer')) {
-    return { border: 'border-gray-400', text: 'text-gray-400', shadow: 'shadow-gray-400/20', hex: '#9ca3af' };
+    return { border: 'border-steam-border', text: 'text-steam-secondary', shadow: 'shadow-steam-border/20', hex: '#9ca3af' };
   }
 
   return DEFAULT_RARITY;

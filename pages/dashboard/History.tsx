@@ -161,7 +161,7 @@ const History = () => {
                         <div className="flex items-center gap-4">
                            {/* Ikona */}
                           <div className={`
-                             w-16 h-12 bg-gradient-to-b from-[#1a1d24] to-[#141619] rounded flex items-center justify-center p-1 border-b-2
+                             w-16 h-12 bg-gradient-to-b from-steam-elevated to-steam-bg rounded flex items-center justify-center p-1 border-b-2
                              ${rarityStyle.border} ${rarityStyle.shadow}
                           `}>
                             <img 

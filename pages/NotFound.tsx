@@ -24,7 +24,7 @@ const NotFound = () => {
       
       <Link 
         to="/" 
-        className="bg-steam-accent hover:opacity-90 text-white px-8 py-3.5 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 uppercase tracking-wide"
+        className="bg-steam-accent hover:opacity-90 text-white px-8 py-3.5 rounded-xl font-bold transition-all flex items-center gap-2 shadow-lg theme-shadow-accent hover:theme-shadow-accent uppercase tracking-wide"
       >
         <Home className="w-5 h-5" />
         Return to Home

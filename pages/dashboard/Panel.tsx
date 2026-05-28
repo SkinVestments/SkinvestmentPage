@@ -222,7 +222,7 @@ const Panel = () => {
         
         <button 
           onClick={() => setIsQuickAddModalOpen(true)}
-          className="bg-steam-accent hover:opacity-90 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition-all flex items-center gap-2"
+          className="bg-steam-accent hover:opacity-90 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg theme-shadow-accent transition-all flex items-center gap-2"
         >
           <Plus className="w-5 h-5" /> Quick Add
         </button>
@@ -287,8 +287,8 @@ const Panel = () => {
                 <AreaChart data={chartData} className={chartLoading ? 'opacity-30' : ''}>
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={isPositive ? "#10b981" : "#ef4444"} stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor={isPositive ? "#10b981" : "#ef4444"} stopOpacity={0}/>
+                      <stop offset="5%" stopColor={isPositive ? 'var(--color-profit)' : 'var(--color-loss)'} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={isPositive ? 'var(--color-profit)' : 'var(--color-loss)'} stopOpacity={0}/>
                     </linearGradient>
                     <linearGradient id="colorInvested" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.2}/>
@@ -308,11 +308,11 @@ const Panel = () => {
                     labelFormatter={(label) => `Date: ${label}`}
                     contentStyle={chartTooltipStyle}
                     itemStyle={chartTooltipItemStyle}
-                    cursor={{ stroke: '#374151', strokeWidth: 1 }}
+                    cursor={{ stroke: 'var(--color-card-border)', strokeWidth: 1 }}
                   />
                   
                   <Area type="monotone" dataKey="invested_value" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="4 4" fillOpacity={1} fill="url(#colorInvested)" />
-                  <Area type="monotone" dataKey="portfolio_value" stroke={isPositive ? "#10b981" : "#ef4444"} strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+                  <Area type="monotone" dataKey="portfolio_value" stroke={isPositive ? 'var(--color-profit)' : 'var(--color-loss)'} strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -352,7 +352,7 @@ const Panel = () => {
           {/* WEEKLY DROP */}
           <div className="bg-steam-card rounded-2xl border border-steam-border/50 shadow-xl relative overflow-hidden group p-6 flex flex-col justify-between min-h-[220px]">
             {/* Delikatny gradient w tle */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-transparent to-transparent opacity-50 z-0"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-steam-accent/10 via-transparent to-transparent opacity-50 z-0"></div>
             
             {/* Skrzynka w tle (przesunięta do góry i w prawo) */}
             <img 
@@ -379,7 +379,7 @@ const Panel = () => {
             {/* Dolna część: Przycisk (zawsze na wierzchu) */}
             <div className="relative z-10 mt-6">
               <button 
-                className="w-full bg-steam-accent hover:opacity-90 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25" 
+                className="w-full bg-steam-accent hover:opacity-90 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg theme-shadow-accent" 
                 onClick={() => setIsDropModalOpen(true)}
               >
                 <CheckCircle className="w-4 h-4" /> 
@@ -424,7 +424,7 @@ const Panel = () => {
                   </div>
                   
                   <div>
-                    <h4 className="font-bold text-lg text-white group-hover:text-steam-accent transition-colors truncate pr-8">
+                    <h4 className="font-bold text-lg text-steam-text group-hover:text-steam-accent transition-colors truncate pr-8">
                       {col.name}
                     </h4>
                     <div className="flex items-center gap-2 mt-1 text-steam-tertiary text-[10px] font-bold uppercase tracking-wider">
@@ -493,7 +493,7 @@ const Panel = () => {
                       <td className="p-4 pl-6">
                         <div className="flex items-center gap-4">
                           <div className={`
-                            relative w-16 h-12 bg-gradient-to-b from-[#1a1d24] to-[#141619] 
+                            relative w-16 h-12 bg-gradient-to-b from-steam-elevated to-steam-bg 
                             rounded-md flex items-center justify-center p-1 
                             border-b-[3px] ${rarityStyle.border} ${rarityStyle.shadow}
                             transition-all duration-300 group-hover:scale-105

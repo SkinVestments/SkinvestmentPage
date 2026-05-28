@@ -121,3 +121,46 @@ select option {
   background-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
   color: var(--color-text-primary);
 }
+
+/* Subtle fills (replaces bg-white/5, bg-black/20) */
+.theme-subtle {
+  background-color: color-mix(in srgb, var(--color-text-primary) 5%, var(--color-surface));
+}
+
+.theme-subtle-strong {
+  background-color: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-surface-elevated));
+}
+
+.theme-scrim {
+  background-color: color-mix(in srgb, var(--color-background) 55%, transparent);
+}
+
+.theme-overlay {
+  background-color: color-mix(in srgb, var(--color-background) 70%, var(--color-surface));
+}
+
+.theme-progress-track {
+  background-color: color-mix(in srgb, var(--color-text-primary) 10%, var(--color-surface-elevated));
+}
+
+.theme-item-preview {
+  background: linear-gradient(to bottom, var(--color-surface-elevated), var(--color-background));
+}
+
+.theme-border-faint {
+  border-color: color-mix(in srgb, var(--color-text-primary) 12%, var(--color-card-border));
+}
+
+.theme-shadow-accent {
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent) 22%, transparent);
+}
+
+.text-on-accent {
+  color: #ffffff;
+}
+
+/* Toggle switch knob (peer markup unchanged) */
+.theme-switch-knob::after {
+  background-color: var(--color-surface-overlay) !important;
+  border-color: var(--color-card-border) !important;
+}

@@ -3,7 +3,7 @@ import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Loader2, Lock, TrendingUp } from 'lucide-react';
-import { chartTooltipStyle } from '@/utils/chartTheme';
+import { chartProfitStroke, chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
 
 interface DropsChartProps {
   hasPremiumAccess: boolean;
@@ -68,18 +68,18 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorPortfolio" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="var(--color-profit)" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="var(--color-profit)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="chart_date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip 
                   contentStyle={chartTooltipStyle}
-                  itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
-                  labelStyle={{ color: '#9ca3af', marginBottom: '4px' }}
+                  itemStyle={chartTooltipItemStyle}
+                  labelStyle={{ color: 'var(--color-text-secondary)', marginBottom: '4px' }}
                 />
-                <Area type="monotone" dataKey="portfolio_value" name="Value" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorPortfolio)" />
+                <Area type="monotone" dataKey="portfolio_value" name="Value" stroke={chartProfitStroke} strokeWidth={3} fillOpacity={1} fill="url(#colorPortfolio)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

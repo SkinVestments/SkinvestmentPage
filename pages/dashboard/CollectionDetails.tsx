@@ -193,7 +193,7 @@ const CollectionDetails = () => {
                         <td className="p-4 pl-6">
                             <div className="flex items-center gap-4">
                             <div className={`
-                                relative w-14 h-10 bg-gradient-to-b from-[#1a1d24] to-[#141619] 
+                                relative w-14 h-10 bg-gradient-to-b from-steam-elevated to-steam-bg 
                                 rounded-md flex items-center justify-center p-1 
                                 border-b-[2px] ${rarityStyle.border} ${rarityStyle.shadow}
                             `}>

@@ -22,7 +22,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     price: { monthly: '€0', yearly: '€0', lifetime: '€0' },
     desc: 'Perfect for casual players tracking drops.',
     icon: Shield,
-    color: 'text-gray-400',
+    color: 'text-steam-secondary',
     features: [
       'Steam Inventory Tracking',
       'Weekly Drop Timer',

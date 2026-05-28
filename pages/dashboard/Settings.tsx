@@ -7,6 +7,7 @@ import {
   Camera, CreditCard, Link as LinkIcon, Bell, ShoppingCart
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
 import { BillingCycle, PlanId, getPlanById } from '@/constants/subscriptionPlans';
 
@@ -27,7 +28,7 @@ const loadSubscription = (): { planId: PlanId; billingCycle: BillingCycle } => {
 
 const Settings = () => {
   const { user, signOut } = useAuth();
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'account' | 'app' | 'privacy'>('account');
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
@@ -124,7 +125,7 @@ const Settings = () => {
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-4xl shadow-inner border-[4px] border-steam-bg">
                     {nickname.charAt(0).toUpperCase()}
                   </div>
-                  <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                  <div className="absolute inset-0 theme-scrim rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
                     <Camera className="w-8 h-8 text-steam-text" />
                   </div>
                 </div>
@@ -140,7 +141,7 @@ const Settings = () => {
                         onChange={(e) => setNickname(e.target.value)}
                         className="flex-1 bg-steam-bg border border-steam-border text-steam-text font-bold rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors"
                       />
-                      <button className="px-6 py-3 bg-steam-accent hover:opacity-90 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all">
+                      <button className="px-6 py-3 bg-steam-accent hover:opacity-90 text-white font-bold rounded-xl shadow-lg theme-shadow-accent transition-all">
                         Save
                       </button>
                     </div>
@@ -241,7 +242,7 @@ const Settings = () => {
                       checked={notifications} 
                       onChange={() => setNotifications(!notifications)} 
                     />
-                    <div className="w-12 h-6 bg-steam-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-steam-accent shadow-inner"></div>
+                    <div className="w-12 h-6 bg-steam-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-steam-card after:border-steam-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-steam-accent shadow-inner"></div>
                   </label>
                 </div>
 
@@ -297,30 +298,7 @@ const Settings = () => {
                     </div>
                     <span className="font-bold text-steam-text text-base">Appearance</span>
                   </div>
-                  <div className="flex bg-steam-elevated rounded-lg p-1 border border-steam-border">
-                    <button
-                      type="button"
-                      onClick={() => setTheme('light')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-md transition-colors ${
-                        theme === 'light'
-                          ? 'bg-steam-card text-steam-text shadow-md border border-steam-border'
-                          : 'bg-transparent text-steam-tertiary hover:text-steam-text'
-                      }`}
-                    >
-                      Light
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setTheme('dark')}
-                      className={`px-4 py-1.5 text-xs font-bold rounded-md transition-colors ${
-                        theme === 'dark'
-                          ? 'bg-steam-card text-steam-text shadow-md border border-steam-border'
-                          : 'bg-transparent text-steam-tertiary hover:text-steam-text'
-                      }`}
-                    >
-                      Dark
-                    </button>
-                  </div>
+                  <ThemeToggle variant="segmented" />
                 </div>
 
               </div>
@@ -358,14 +336,14 @@ const Settings = () => {
                         checked={analyticsEnabled} 
                         onChange={() => setAnalyticsEnabled(!analyticsEnabled)} 
                       />
-                      <div className="w-14 h-7 bg-steam-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-steam-accent shadow-inner"></div>
+                      <div className="w-14 h-7 bg-steam-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-steam-card after:border-steam-border after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-steam-accent shadow-inner"></div>
                     </label>
                   </div>
                   
                   <div className="mt-8 pt-6 border-t border-steam-border/50">
                     <button 
                       onClick={() => navigate('/privacy')} 
-                      className="inline-flex items-center gap-2 text-sm text-steam-accent hover:text-blue-400 font-bold transition-all group"
+                      className="inline-flex items-center gap-2 text-sm text-steam-accent hover:text-steam-accent font-bold transition-all group"
                     >
                       Read our full Privacy Policy <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>

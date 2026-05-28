@@ -18,7 +18,7 @@ export const Sidebar = () => {
     <aside className="w-64 bg-steam-surface border-r border-steam-border flex flex-col h-screen fixed left-0 top-0 z-40 hidden md:flex">
       {/* Logo Area */}
       <div className="p-6 flex items-center gap-3 border-b border-steam-border/50 h-20">
-        <div className="w-8 h-8 rounded bg-white from-steam-accent to-blue-600 flex items-center justify-center shadow-lg">
+        <div className="w-8 h-8 rounded bg-steam-card border border-steam-border flex items-center justify-center shadow-lg">
           <svg width="1039" height="1039" viewBox="0 0 1039 1039" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_709_11)">
           <path d="M811.719 0H227.281C101.757 0 0 101.757 0 227.281V811.719C0 937.243 101.757 1039 227.281 1039H811.719C937.243 1039 1039 937.243 1039 811.719V227.281C1039 101.757 937.243 0 811.719 0Z" fill="url(#paint0_radial_709_11)"/>

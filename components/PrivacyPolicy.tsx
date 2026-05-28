@@ -78,7 +78,7 @@ export const PrivacyPolicy: React.FC = () => {
               <h2 className="text-2xl font-bold text-steam-text mb-4">5. Contact Us</h2>
               <p>
                 If you have any questions about this privacy policy, GDPR compliance, or your data, please contact us at: 
-                <a href="mailto:kjlabs.studio@gmail.com" className="text-steam-accent hover:text-blue-400 transition-colors font-bold ml-2">
+                <a href="mailto:kjlabs.studio@gmail.com" className="text-steam-accent hover:text-steam-accent transition-colors font-bold ml-2">
                   kjlabs.studio@gmail.com
                 </a>
               </p>

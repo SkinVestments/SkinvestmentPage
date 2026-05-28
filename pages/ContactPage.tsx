@@ -35,7 +35,7 @@ export const ContactPage: React.FC = () => {
         <div className="absolute top-[30%] left-[20%] w-2 h-2 bg-blue-500 rounded-full animate-ping" />
         <div className="absolute top-[45%] right-[25%] w-2 h-2 bg-purple-500 rounded-full animate-ping delay-700" />
         <div className="absolute bottom-[20%] left-[40%] w-2 h-2 bg-steam-profit rounded-full animate-ping delay-1000" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D12] via-transparent to-[#0B0D12]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-steam-bg via-transparent to-steam-bg" />
       </div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 relative z-10 items-start">
@@ -94,7 +94,7 @@ export const ContactPage: React.FC = () => {
 
         {/* Right Column: The BIG Form */}
         <div className="relative group perspective-1000 lg:mt-20">
-          <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+          <div className="absolute -inset-1 bg-gradient-to-r from-steam-accent/40 to-purple-600/40 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
           
           <div className="relative bg-steam-card/95 backdrop-blur-xl border border-steam-border rounded-3xl p-8 md:p-12 shadow-2xl">
             {isSent ? (
@@ -106,7 +106,7 @@ export const ContactPage: React.FC = () => {
                 <p className="text-steam-secondary mb-8 text-lg max-w-sm mx-auto">We've received your inquiry and will get back to you shortly.</p>
                 <button 
                   onClick={() => setIsSent(false)}
-                  className="px-8 py-3 rounded-xl bg-white/5 hover:bg-steam-hover text-steam-text font-bold transition-all"
+                  className="px-8 py-3 rounded-xl theme-subtle hover:bg-steam-hover text-steam-text font-bold transition-all"
                 >
                   Send another message
                 </button>
@@ -148,7 +148,7 @@ export const ContactPage: React.FC = () => {
                 <button 
                   type="submit" 
                   disabled={isSubmitting}
-                  className="w-full bg-steam-accent hover:opacity-90 text-white font-bold py-5 rounded-xl shadow-lg shadow-blue-500/20 transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed text-lg mt-4"
+                  className="w-full bg-steam-accent hover:opacity-90 text-white font-bold py-5 rounded-xl shadow-lg theme-shadow-accent transition-all flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed text-lg mt-4"
                 >
                   {isSubmitting ? <Loader2 className="animate-spin w-6 h-6" /> : <>Send Message <Send size={20} /></>}
                 </button>
@@ -167,7 +167,7 @@ export const ContactPage: React.FC = () => {
 const ContactCard: React.FC<{ icon: React.ReactNode, label: string, value: string, sub: string, action?: string, comingSoon?: boolean }> = ({ icon, label, value, sub, action, comingSoon }) => (
   <div className="bg-steam-card/50 p-5 rounded-xl border border-steam-border/50 hover:border-steam-border transition-colors group flex flex-col">
     <div className="flex justify-between items-start mb-4">
-      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-steam-accent group-hover:scale-110 transition-transform">
+      <div className="w-10 h-10 rounded-lg theme-subtle flex items-center justify-center text-steam-accent group-hover:scale-110 transition-transform">
         {icon}
       </div>
       

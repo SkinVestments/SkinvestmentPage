@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
                 <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:bg-[#5865F2] transition-all">
                     <MessageSquare size={16} /> {/* Discord proxy */}
                 </a>
-                <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:bg-white/20 transition-all">
+                <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:theme-subtle-strong transition-all">
                     <Github size={16} />
                 </a>
             </div>

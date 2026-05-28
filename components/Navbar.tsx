@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, User, LayoutDashboard } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ThemeToggle } from './ThemeToggle';
+import { GetAppButton } from './GetAppButton';
 
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -36,7 +38,7 @@ export const Navbar: React.FC = () => {
           className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0 shrink"
         >
           {/* Tutaj jest przywrócony pełny kod SVG */}
-          <div className="w-10 h-10 rounded bg-white flex items-center justify-center shadow-lg group-hover:shadow-steam-accent/20 transition-all">
+          <div className="w-10 h-10 rounded bg-steam-card border border-steam-border flex items-center justify-center shadow-lg group-hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-accent)_25%,transparent)] transition-all">
           <svg width="1039" height="1039" viewBox="0 0 1039 1039" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_709_11)">
           <path d="M811.719 0H227.281C101.757 0 0 101.757 0 227.281V811.719C0 937.243 101.757 1039 227.281 1039H811.719C937.243 1039 1039 937.243 1039 811.719V227.281C1039 101.757 937.243 0 811.719 0Z" fill="url(#paint0_radial_709_11)"/>
@@ -132,18 +134,23 @@ export const Navbar: React.FC = () => {
             </Link>
           )}
 
-          <button className="px-5 py-2 rounded bg-steam-surface hover:bg-steam-hover text-steam-text text-sm font-bold uppercase tracking-wide transition-colors border border-steam-border hover:border-steam-accent/50 shadow-md">
-            Get App
-          </button>
+          <ThemeToggle />
+
+          <GetAppButton />
         </div>
 
-        {/* Mobile Toggle */}
-        <button 
-          className="md:hidden text-steam-text hover:text-steam-accent transition-colors"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X /> : <Menu />}
-        </button>
+        {/* Mobile: theme + menu */}
+        <div className="flex items-center gap-2 md:hidden shrink-0">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="text-steam-text hover:text-steam-accent transition-colors p-1"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {isMobileMenuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -191,9 +198,12 @@ export const Navbar: React.FC = () => {
             </Link>
           )}
 
-          <button className="w-full py-3 mt-2 rounded bg-steam-accent text-white font-bold uppercase tracking-wider">
-            Download Now
-          </button>
+          <div className="pt-2 border-t border-steam-border">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-steam-tertiary mb-2">Appearance</p>
+            <ThemeToggle variant="segmented" className="w-full" />
+          </div>
+
+          <GetAppButton variant="mobile" onNavigate={closeMobileMenu} />
         </div>
       )}
     </nav>
