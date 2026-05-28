@@ -1,0 +1,123 @@
+/* Theme tokens are applied via ThemeContext on :root */
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-overlay);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+.glass-panel {
+  background: color-mix(in srgb, var(--color-surface-overlay) 85%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--color-card-border) 60%, transparent);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-variant) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme='light'] body::before {
+  opacity: 0.02;
+}
+
+/* === Semantic theme utilities === */
+.theme-page {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.theme-card {
+  background-color: var(--color-surface-overlay);
+  border: 1px solid var(--color-card-border);
+  color: var(--color-text-primary);
+}
+
+.theme-surface {
+  background-color: var(--color-surface);
+  border-color: var(--color-card-border);
+}
+
+.theme-input {
+  background-color: var(--color-surface-elevated);
+  border: 1px solid var(--color-card-border);
+  color: var(--color-text-primary);
+}
+
+.theme-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.theme-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.theme-row-hover:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.theme-muted {
+  color: var(--color-text-secondary);
+}
+
+.theme-label {
+  color: var(--color-text-tertiary);
+}
+
+.theme-divider {
+  border-color: var(--color-divider);
+}
+
+/* Recharts / chart tooltips */
+.recharts-default-tooltip {
+  background-color: var(--color-surface) !important;
+  border-color: var(--color-card-border) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.recharts-tooltip-label {
+  color: var(--color-text-secondary) !important;
+}
+
+select,
+textarea,
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='search'] {
+  color-scheme: light dark;
+}
+
+select option {
+  background-color: var(--color-surface-overlay);
+  color: var(--color-text-primary);
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  color: var(--color-text-primary);
+}

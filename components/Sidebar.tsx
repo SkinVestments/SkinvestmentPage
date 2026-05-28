@@ -15,9 +15,9 @@ export const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-[#171a21] border-r border-white/5 flex flex-col h-screen fixed left-0 top-0 z-40 hidden md:flex">
+    <aside className="w-64 bg-steam-surface border-r border-steam-border flex flex-col h-screen fixed left-0 top-0 z-40 hidden md:flex">
       {/* Logo Area */}
-      <div className="p-6 flex items-center gap-3 border-b border-white/5 h-20">
+      <div className="p-6 flex items-center gap-3 border-b border-steam-border/50 h-20">
         <div className="w-8 h-8 rounded bg-white from-steam-accent to-blue-600 flex items-center justify-center shadow-lg">
           <svg width="1039" height="1039" viewBox="0 0 1039 1039" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_709_11)">
@@ -64,7 +64,7 @@ export const Sidebar = () => {
           </defs>
           </svg>
         </div>
-        <span className="text-xl font-bold text-white tracking-tight uppercase">
+        <span className="text-xl font-bold text-steam-text tracking-tight uppercase">
           Skin<span className="text-steam-accent">vestments</span>
         </span>
       </div>
@@ -79,7 +79,7 @@ export const Sidebar = () => {
               flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group
               ${isActive 
                 ? 'bg-steam-accent/10 text-steam-accent font-bold shadow-[0_0_15px_rgba(59,130,246,0.15)]' 
-                : 'text-gray-400 hover:bg-white/5 hover:text-white font-medium'}
+                : 'text-steam-secondary hover:bg-steam-hover hover:text-steam-text font-medium'}
             `}
           >
             <item.icon className="w-5 h-5" />
@@ -89,10 +89,10 @@ export const Sidebar = () => {
       </nav>
 
       {/* Footer / Logout */}
-      <div className="p-4 border-t border-white/5 bg-[#14161b]">
+      <div className="p-4 border-t border-steam-border/50 bg-steam-elevated">
         
         {/* Link powrotu na stronę główną */}
-        <NavLink to="/" className="flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-white transition-colors text-sm font-medium mb-1">
+        <NavLink to="/" className="flex items-center gap-3 px-4 py-3 text-steam-tertiary hover:text-steam-text transition-colors text-sm font-medium mb-1">
             <Home className="w-4 h-4" /> Back to Home
         </NavLink>
 

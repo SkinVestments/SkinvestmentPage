@@ -1,85 +1,20 @@
 import React from 'react';
-import { HashRouter, Routes, Route, Outlet ,BrowserRouter} from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-
-// Komponenty globalne
-import { Navbar } from './components/Navbar';
-import { Footer } from './components/Footer';
-import { ScrollToTop } from './components/ScrollToTop';
-import { ProtectedRoute } from './components/ProtectedRoute';
-
-// Layouty
-import { DashboardLayout } from './layouts/DashboardLayout'; // <--- Upewnij się, że ten plik istnieje (z poprzedniego kroku)
-
-// Strony Publiczne
-import Home from './pages/Home';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import { FullFeaturesPage } from './pages/FullFeatures';
-import { PricingPage } from './pages/PricingPage';
-import { FAQPage } from './pages/FAQPage';
-import { RoadmapPage } from './pages/RoadmapPage';
-import { ContactPage } from './pages/ContactPage';
-import NotFound from './pages/NotFound';
-import TermsAndConditionsPage from './pages/TermsAndConditionsPage';
-
-import Login from './pages/auth/Login';
-import History from './pages/dashboard/History';
-import Inventory from './pages/dashboard/Inventory';
-import Analytics from './pages/dashboard/Analytics';
-import CollectionDetails from './pages/dashboard/CollectionDetails';
-import Settings from './pages/dashboard/Settings';
-
-// Strony Prywatne (Panel)
-import Panel from './pages/dashboard/Panel';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { ScrollToTop } from '@/components/ScrollToTop';
+import { AppRoutes } from '@/routes/AppRoutes';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <ScrollToTop /> {/* Przewija na górę przy zmianie strony */}
-        
-        <Routes>
-          
-          {/* === UKŁAD 1: STRONY PUBLICZNE (Navbar + Footer) === */}
-          {/* Używamy elementu <div...>, żeby owinąć te strony w Navbar i Footer */}
-          <Route element={
-            <div className="min-h-screen bg-[#14171D] text-white selection:bg-steam-accent selection:text-white font-sans flex flex-col">
-              <Navbar />
-              <main className="flex-grow">
-                <Outlet /> {/* W tym miejscu renderują się poniższe Route'y */}
-              </main>
-              <Footer />
-            </div>
-          }>
-            <Route path="/" element={<Home />} />
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
-            <Route path="/features" element={<FullFeaturesPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/faq" element={<FAQPage />} />
-            <Route path="/roadmap" element={<RoadmapPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/terms" element={<TermsAndConditionsPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-
-          {/* === UKŁAD 2: APLIKACJA / PANEL (Sidebar, brak Navbara/Footera) === */}
-          <Route element={
-            <ProtectedRoute>
-              <DashboardLayout /> {/* To zawiera Sidebar i miejsce na treść */}
-            </ProtectedRoute>
-          }>
-            <Route path="/panel" element={<Panel />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/collection/:id" element={<CollectionDetails />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

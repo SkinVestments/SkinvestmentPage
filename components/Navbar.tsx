@@ -26,14 +26,14 @@ export const Navbar: React.FC = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
-      isScrolled ? 'bg-[#171a21]/95 backdrop-blur-md border-white/5 py-3 shadow-lg' : 'bg-transparent border-transparent py-5'
+      isScrolled ? 'bg-steam-surface/95 backdrop-blur-md border-steam-border py-3 shadow-lg' : 'bg-transparent border-transparent py-5'
     }`}>
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center gap-3 min-w-0">
         {/* Logo */}
         <Link
           to="/"
           onClick={closeMobileMenu}
-          className="flex items-center gap-3 cursor-pointer group"
+          className="flex items-center gap-2 sm:gap-3 cursor-pointer group min-w-0 shrink"
         >
           {/* Tutaj jest przywrócony pełny kod SVG */}
           <div className="w-10 h-10 rounded bg-white flex items-center justify-center shadow-lg group-hover:shadow-steam-accent/20 transition-all">
@@ -82,7 +82,7 @@ export const Navbar: React.FC = () => {
           </defs>
           </svg>
           </div>
-          <span className="text-2xl font-bold tracking-tight text-white uppercase">
+          <span className="text-lg sm:text-2xl font-bold tracking-tight text-steam-text uppercase truncate">
             Skin<span className="text-steam-accent">vestments</span>
           </span>
         </Link>
@@ -91,32 +91,55 @@ export const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center gap-8">
           <Link
             to="/"
-            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
+            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/' ? 'text-steam-accent' : 'text-steam-secondary hover:text-steam-text'}`}
           >
             Home
           </Link>
           <Link
             to="/privacy"
-            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/privacy' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
+            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/privacy' ? 'text-steam-accent' : 'text-steam-secondary hover:text-steam-text'}`}
           >
             Privacy
           </Link>
           <Link
             to="/contact"
-            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/contact' ? 'text-steam-accent' : 'text-gray-400 hover:text-white'}`}
+            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/contact' ? 'text-steam-accent' : 'text-steam-secondary hover:text-steam-text'}`}
           >
             Contact
           </Link>
-          
 
-          <button className="px-5 py-2 rounded bg-[#212c3d] hover:bg-[#2a384d] text-white text-sm font-bold uppercase tracking-wide transition-colors border border-white/5 hover:border-steam-accent/50 shadow-md">
+          {user ? (
+            <Link
+              to="/panel"
+              className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wider transition-colors ${
+                location.pathname.startsWith('/panel') || location.pathname.startsWith('/history') || location.pathname.startsWith('/inventory') || location.pathname.startsWith('/analytics') || location.pathname.startsWith('/settings') || location.pathname.startsWith('/collection')
+                  ? 'text-steam-accent'
+                  : 'text-steam-secondary hover:text-steam-text'
+              }`}
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Panel
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className={`flex items-center gap-2 text-sm font-semibold uppercase tracking-wider transition-colors ${
+                location.pathname === '/login' ? 'text-steam-accent' : 'text-steam-secondary hover:text-steam-text'
+              }`}
+            >
+              <User className="w-4 h-4" />
+              Log In
+            </Link>
+          )}
+
+          <button className="px-5 py-2 rounded bg-steam-surface hover:bg-steam-hover text-steam-text text-sm font-bold uppercase tracking-wide transition-colors border border-steam-border hover:border-steam-accent/50 shadow-md">
             Get App
           </button>
         </div>
 
         {/* Mobile Toggle */}
         <button 
-          className="md:hidden text-white hover:text-steam-accent transition-colors"
+          className="md:hidden text-steam-text hover:text-steam-accent transition-colors"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? <X /> : <Menu />}
@@ -125,28 +148,34 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-[#171a21] border-b border-white/10 p-6 flex flex-col gap-4 md:hidden animate-fade-in shadow-2xl">
+        <div className="absolute top-full left-0 right-0 bg-steam-surface border-b border-steam-border p-6 flex flex-col gap-4 md:hidden animate-fade-in shadow-2xl">
           <Link 
             to="/" 
             onClick={closeMobileMenu}
-            className="text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent"
+            className="text-left text-lg font-bold uppercase text-steam-secondary hover:text-steam-accent"
           >
             Home
           </Link>
           <Link 
             to="/privacy" 
             onClick={closeMobileMenu}
-            className="text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent"
+            className="text-left text-lg font-bold uppercase text-steam-secondary hover:text-steam-accent"
           >
             Privacy Policy
           </Link>
+          <Link 
+            to="/contact" 
+            onClick={closeMobileMenu}
+            className="text-left text-lg font-bold uppercase text-steam-secondary hover:text-steam-accent"
+          >
+            Contact
+          </Link>
 
-          {/* --- ZMIANA: LOGIKA DLA ZALOGOWANEGO UŻYTKOWNIKA (MOBILE) --- */}
           {user ? (
              <Link 
               to="/panel" 
               onClick={closeMobileMenu}
-              className="flex items-center gap-2 text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent"
+              className="flex items-center gap-2 text-left text-lg font-bold uppercase text-steam-secondary hover:text-steam-accent"
             >
               <LayoutDashboard className="w-5 h-5" />
               Panel
@@ -155,7 +184,7 @@ export const Navbar: React.FC = () => {
             <Link 
               to="/login" 
               onClick={closeMobileMenu}
-              className="flex items-center gap-2 text-left text-lg font-bold uppercase text-gray-300 hover:text-steam-accent"
+              className="flex items-center gap-2 text-left text-lg font-bold uppercase text-steam-secondary hover:text-steam-accent"
             >
               <User className="w-5 h-5" />
               Log In

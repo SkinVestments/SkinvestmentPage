@@ -25,13 +25,13 @@ export const FAQPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B0D12] pt-32 pb-20 px-6">
+    <div className="min-h-screen bg-steam-bg pt-24 sm:pt-32 pb-20 px-4 sm:px-6 overflow-x-hidden">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold uppercase tracking-widest mb-4">
             <ShieldCheck size={14} /> Security First
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold font-display text-white mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold font-display text-steam-text mb-6">
             Trust & <span className="text-steam-accent">Security</span>
           </h1>
           <p className="text-steam-secondary text-lg">
@@ -46,20 +46,20 @@ export const FAQPage: React.FC = () => {
               onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
               className={`group rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden ${
                 openIndex === idx 
-                  ? 'bg-[#161B24] border-steam-accent/50 shadow-[0_0_20px_rgba(59,130,246,0.1)]' 
-                  : 'bg-[#12161E]/50 border-white/5 hover:border-white/10'
+                  ? 'bg-steam-card border-steam-accent/50 shadow-[0_0_20px_rgba(59,130,246,0.1)]' 
+                  : 'bg-steam-elevated/50 border-steam-border/50 hover:border-steam-border'
               }`}
             >
               <div className="p-6 flex justify-between items-center">
-                <h3 className={`font-bold text-lg ${openIndex === idx ? 'text-white' : 'text-gray-300'}`}>
+                <h3 className={`font-bold text-lg ${openIndex === idx ? 'text-steam-text' : 'text-steam-secondary'}`}>
                   {faq.question}
                 </h3>
                 <ChevronDown 
-                  className={`transition-transform duration-300 ${openIndex === idx ? 'rotate-180 text-steam-accent' : 'text-gray-500'}`} 
+                  className={`transition-transform duration-300 ${openIndex === idx ? 'rotate-180 text-steam-accent' : 'text-steam-tertiary'}`} 
                 />
               </div>
               <div 
-                className={`px-6 text-gray-400 leading-relaxed overflow-hidden transition-all duration-300 ${
+                className={`px-6 text-steam-secondary leading-relaxed overflow-hidden transition-all duration-300 ${
                   openIndex === idx ? 'max-h-40 pb-6 opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
@@ -70,18 +70,18 @@ export const FAQPage: React.FC = () => {
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-16 pt-10 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+        <div className="mt-16 pt-10 border-t border-steam-border/50 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
              <div className="p-4 rounded-xl bg-white/5">
                 <Lock className="w-8 h-8 text-steam-accent mx-auto mb-3" />
-                <div className="font-bold text-white">Read-Only Access</div>
+                <div className="font-bold text-steam-text">Read-Only Access</div>
              </div>
              <div className="p-4 rounded-xl bg-white/5">
                 <ShieldCheck className="w-8 h-8 text-green-500 mx-auto mb-3" />
-                <div className="font-bold text-white">No Passwords</div>
+                <div className="font-bold text-steam-text">No Passwords</div>
              </div>
              <div className="p-4 rounded-xl bg-white/5">
                 <HelpCircle className="w-8 h-8 text-purple-500 mx-auto mb-3" />
-                <div className="font-bold text-white">24/7 Support</div>
+                <div className="font-bold text-steam-text">24/7 Support</div>
              </div>
         </div>
       </div>

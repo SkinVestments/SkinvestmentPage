@@ -3,6 +3,7 @@ import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { Loader2, Lock, TrendingUp } from 'lucide-react';
+import { chartTooltipStyle } from '@/utils/chartTheme';
 
 interface DropsChartProps {
   hasPremiumAccess: boolean;
@@ -37,18 +38,18 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
   }, [user, timeRange]);
 
   return (
-    <div className="bg-[#1e232b] p-6 rounded-2xl border border-gray-800 shadow-lg h-full relative overflow-hidden flex flex-col">
+    <div className="bg-steam-card p-6 rounded-2xl border border-steam-border shadow-lg h-full relative overflow-hidden flex flex-col">
       <div className="flex justify-between items-center mb-6 relative z-10">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-gray-400" />
-          <h3 className="font-bold text-white">Drops Performance</h3>
+          <TrendingUp className="w-5 h-5 text-steam-secondary" />
+          <h3 className="font-bold text-steam-text">Drops Performance</h3>
         </div>
         
         <select 
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value)}
           disabled={!hasPremiumAccess}
-          className="bg-[#14171D] border border-gray-700 text-xs text-white rounded-lg px-2 py-1 focus:outline-none"
+          className="bg-steam-bg border border-steam-border text-xs text-steam-text rounded-lg px-2 py-1 focus:outline-none"
         >
           <option value="1M">1 Month</option>
           <option value="3M">3 Months</option>
@@ -60,7 +61,7 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
 
       <div className="flex-1 min-h-[300px] w-full relative">
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="animate-spin text-gray-500" /></div>
+          <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="animate-spin text-steam-tertiary" /></div>
         ) : (
           <div className={`w-full h-full transition-all duration-500 ${!hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''}`}>
             <ResponsiveContainer width="100%" height="100%">
@@ -74,7 +75,7 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
                 <XAxis dataKey="chart_date" hide />
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#171a21', borderColor: '#374151', borderRadius: '8px', color: '#fff' }}
+                  contentStyle={chartTooltipStyle}
                   itemStyle={{ color: '#10b981', fontWeight: 'bold' }}
                   labelStyle={{ color: '#9ca3af', marginBottom: '4px' }}
                 />
@@ -86,14 +87,14 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
 
         {/* PAYWALL OVERLAY */}
         {!hasPremiumAccess && !loading && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#1e232b]/50 rounded-xl">
-            <div className="bg-[#14171D] p-6 rounded-2xl border border-gray-700 shadow-2xl text-center max-w-sm w-full mx-4">
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-steam-card/50 rounded-xl">
+            <div className="bg-steam-bg p-6 rounded-2xl border border-steam-border shadow-2xl text-center max-w-sm w-full mx-4">
                <div className="w-12 h-12 bg-steam-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Lock className="w-6 h-6 text-steam-accent" />
                </div>
-               <h4 className="text-white font-bold text-lg mb-2">Pro Analytics Required</h4>
-               <p className="text-sm text-gray-400 mb-6">Unlock deep insights into your drop history and advanced portfolio charting.</p>
-               <button className="w-full bg-steam-accent hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-colors">
+               <h4 className="text-steam-text font-bold text-lg mb-2">Pro Analytics Required</h4>
+               <p className="text-sm text-steam-secondary mb-6">Unlock deep insights into your drop history and advanced portfolio charting.</p>
+               <button className="w-full bg-steam-accent hover:opacity-90 text-white font-bold py-3 rounded-xl transition-colors">
                  Upgrade to PRO
                </button>
             </div>

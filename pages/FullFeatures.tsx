@@ -12,12 +12,12 @@ export const FullFeaturesPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0B0D12] text-white pt-32 pb-20">
-      <div className="max-w-7xl mx-auto px-6">
+    <div className="min-h-screen bg-steam-bg text-steam-text pt-24 sm:pt-32 pb-20 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Header */}
         <div className="mb-20">
-          <h1 className="text-5xl md:text-7xl font-bold font-display mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold font-display mb-6">
             Everything you need to <br />
             <span className="text-gradient-accent text-steam-accent">Trade Like a Pro.</span>
           </h1>
@@ -58,12 +58,12 @@ export const FullFeaturesPage: React.FC = () => {
   </div>
   
   {/* Visual: Pro Chart Widget */}
-  <div className="order-1 lg:order-2 bg-[#12161E] border border-white/5 p-8 rounded-3xl relative overflow-hidden group font-mono">
+  <div className="order-1 lg:order-2 bg-steam-elevated border border-steam-border/50 p-8 rounded-3xl relative overflow-hidden group font-mono">
       <div className="border border-white/20 p-6 rounded-lg bg-black/40 shadow-2xl relative z-10">
           
           {/* Header */}
-          <div className="flex justify-between mb-4 border-b border-white/5 pb-2">
-              <span className="text-[10px] opacity-50 uppercase tracking-wider font-bold text-gray-400">SteamVestments Pulse</span>
+          <div className="flex justify-between mb-4 border-b border-steam-border/50 pb-2">
+              <span className="text-[10px] opacity-50 uppercase tracking-wider font-bold text-steam-secondary">SteamVestments Pulse</span>
               <span className="text-[10px] text-blue-400 font-bold flex items-center gap-1.5">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
@@ -74,7 +74,7 @@ export const FullFeaturesPage: React.FC = () => {
           </div>
 
           {/* Main Values */}
-          <div className="text-4xl font-bold mb-1 text-white tracking-tight">$14,759.06</div>
+          <div className="text-4xl font-bold mb-1 text-steam-text tracking-tight">$14,759.06</div>
           <div className="text-green-400 text-sm mb-6 font-bold flex items-center gap-1">
             ▲ +$234.50 (24h)
           </div>
@@ -117,7 +117,7 @@ export const FullFeaturesPage: React.FC = () => {
           </div>
           
           {/* Footer */}
-          <div className="mt-4 flex justify-between items-end text-[10px] text-gray-500 font-medium">
+          <div className="mt-4 flex justify-between items-end text-[10px] text-steam-tertiary font-medium">
              <span>24H VOLATILITY</span>
              <span className="opacity-50">UPDATED: 10:45:02</span>
           </div>
@@ -128,7 +128,7 @@ export const FullFeaturesPage: React.FC = () => {
           {/* Section 2: Visual Analytics (Rarity Pyramid) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Visual: Pyramid Chart */}
-            <div className="bg-[#12161E] border border-white/5 p-8 rounded-3xl relative overflow-hidden group order-2 lg:order-1">
+            <div className="bg-steam-elevated border border-steam-border/50 p-8 rounded-3xl relative overflow-hidden group order-2 lg:order-1">
               <div className="absolute inset-0 bg-steam-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl" />
               <div className="relative z-10 space-y-4">
                 <div className="flex justify-center flex-col items-center gap-2">
@@ -140,15 +140,15 @@ export const FullFeaturesPage: React.FC = () => {
                     { label: 'BLUE', color: 'bg-blue-500', w: 'w-80', val: '54%' },
                   ].map((row, i) => (
                     <div key={i} className="flex items-center gap-4">
-                      <div className={`${row.w} h-10 ${row.color} rounded-lg flex items-center justify-center font-bold text-[10px] shadow-lg shadow-black/20 text-white`}>
+                      <div className={`${row.w} h-10 ${row.color} rounded-lg flex items-center justify-center font-bold text-[10px] shadow-lg shadow-black/20 text-steam-text`}>
                         {row.label}
                       </div>
-                      <span className="text-xs font-bold text-gray-500">{row.val}</span>
+                      <span className="text-xs font-bold text-steam-tertiary">{row.val}</span>
                     </div>
                   ))}
                 </div>
                 <div className="text-center pt-6">
-                  <div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Quality Score</div>
+                  <div className="text-[10px] text-steam-tertiary font-bold uppercase tracking-widest mb-1">Quality Score</div>
                   <div className="text-2xl font-bold text-steam-accent">HIGH TIER 💎</div>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export const FullFeaturesPage: React.FC = () => {
                   'Bulk valuation by quality tier', 
                   'Global market saturation benchmarks'
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm font-medium text-gray-300">
+                  <li key={i} className="flex items-center gap-3 text-sm font-medium text-steam-secondary">
                     <ShieldCheck size={18} className="text-steam-profit" /> {item}
                   </li>
                 ))}
@@ -188,7 +188,7 @@ export const FullFeaturesPage: React.FC = () => {
                 Most investors lose money through **stagnation**. Our detector identifies items that haven't moved in 180+ days, 
                 calculating the "Cost of Opportunity" to help you rotate funds into growth assets.
               </p>
-              <h3 className="text-2xl font-bold pt-4 text-white flex items-center gap-2">
+              <h3 className="text-2xl font-bold pt-4 text-steam-text flex items-center gap-2">
                 <Target className="text-steam-accent" /> Focus on your "Grails"
               </h3>
               <p className="text-steam-secondary">
@@ -197,10 +197,10 @@ export const FullFeaturesPage: React.FC = () => {
               </p>
             </div>
             
-            <div className="bg-[#12161E] border border-white/5 p-8 rounded-3xl relative group font-mono">
+            <div className="bg-steam-elevated border border-steam-border/50 p-8 rounded-3xl relative group font-mono">
                 <div className="space-y-6 relative z-10">
                     {/* Grail Watcher Mockup */}
-                    <div className="border border-white/10 p-5 rounded-xl bg-black/20">
+                    <div className="border border-steam-border p-5 rounded-xl bg-black/20">
                         <div className="flex items-center gap-2 mb-4 text-steam-accent text-sm font-bold uppercase tracking-tighter">
                             <Target size={16}/> Top Asset Watcher
                         </div>
@@ -209,7 +209,7 @@ export const FullFeaturesPage: React.FC = () => {
                             <span className="opacity-50">Qty: 1,500</span>
                         </div>
                         <div className="text-2xl font-bold">$0.45 <span className="text-xs text-green-400 font-normal">(+125%)</span></div>
-                        <div className="w-full h-2 bg-white/10 rounded-full mt-4 overflow-hidden border border-white/5">
+                        <div className="w-full h-2 bg-white/10 rounded-full mt-4 overflow-hidden border border-steam-border/50">
                             <div className="w-[45%] h-full bg-steam-accent shadow-[0_0_15px_rgba(59,130,246,0.5)]"></div>
                         </div>
                         <div className="flex justify-between text-[10px] mt-2 opacity-50 font-bold uppercase">
@@ -242,10 +242,10 @@ export const FullFeaturesPage: React.FC = () => {
           {/* Section 4: Holding Time Analysis */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
              {/* Visual: Holding Time Stats */}
-             <div className="bg-[#12161E] border border-white/5 p-8 rounded-3xl relative group order-2 lg:order-1">
+             <div className="bg-steam-elevated border border-steam-border/50 p-8 rounded-3xl relative group order-2 lg:order-1">
               <div className="space-y-6">
                 <div className="flex justify-between items-center mb-8">
-                  <span className="text-sm font-bold text-gray-400 flex items-center gap-2 italic">
+                  <span className="text-sm font-bold text-steam-secondary flex items-center gap-2 italic">
                     <Clock size={16} /> Holding Time Analysis
                   </span>
                   <div className="px-2 py-1 rounded bg-steam-profit/10 text-steam-profit text-[10px] font-bold">PRO FEATURE</div>
@@ -256,7 +256,7 @@ export const FullFeaturesPage: React.FC = () => {
                   { label: 'Hold 1-6 Months', roi: '+12%', color: 'text-yellow-500', bg: 'bg-yellow-500/20' },
                   { label: 'Hold > 1 Year', roi: '+85%', color: 'text-green-500', bg: 'bg-green-500/20' },
                 ].map((row, i) => (
-                  <div key={i} className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
+                  <div key={i} className="flex justify-between items-center p-4 rounded-xl bg-white/5 border border-steam-border/50 hover:border-steam-border transition-colors">
                     <span className="text-sm font-medium">{row.label}</span>
                     <div className="flex items-center gap-4">
                       <span className={`font-bold ${row.color}`}>Avg ROI {row.roi}</span>
@@ -266,7 +266,7 @@ export const FullFeaturesPage: React.FC = () => {
                 ))}
 
                 <div className="mt-8 p-4 rounded-xl bg-steam-accent/5 border border-steam-accent/10">
-                  <p className="text-[10px] text-gray-400 mb-1 font-bold uppercase tracking-tighter">Strategic Advice:</p>
+                  <p className="text-[10px] text-steam-secondary mb-1 font-bold uppercase tracking-tighter">Strategic Advice:</p>
                   <p className="text-sm text-white">History shows you earn more when you wait. Your current style: <span className="text-steam-accent font-bold uppercase">Impatient Trader 🐰</span></p>
                 </div>
               </div>
@@ -282,20 +282,20 @@ export const FullFeaturesPage: React.FC = () => {
                 Discover if your "quick flip" strategy is actually outperforming long-term asset appreciation.
               </p>
               <div className="grid grid-cols-2 gap-4 pt-6">
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                  <div className="text-2xl font-bold text-white">14 Days</div>
-                  <div className="text-xs text-gray-500 uppercase font-bold tracking-tighter">Avg. Hold Time</div>
+                <div className="p-4 rounded-2xl bg-white/5 border border-steam-border/50">
+                  <div className="text-2xl font-bold text-steam-text">14 Days</div>
+                  <div className="text-xs text-steam-tertiary uppercase font-bold tracking-tighter">Avg. Hold Time</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                <div className="p-4 rounded-2xl bg-white/5 border border-steam-border/50">
                   <div className="text-2xl font-bold text-steam-profit">+77.5%</div>
-                  <div className="text-xs text-gray-500 uppercase font-bold tracking-tighter">Market Benchmark</div>
+                  <div className="text-xs text-steam-tertiary uppercase font-bold tracking-tighter">Market Benchmark</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Section 5: Small features grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-20 border-t border-white/5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-20 border-t border-steam-border/50">
             <FeatureSmall 
               icon={<Zap className="text-yellow-500" />} 
               title="Instant Market Sync" 

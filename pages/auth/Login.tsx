@@ -78,12 +78,12 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center min-h-[80vh] px-4">
-      <div className="bg-[#1e232b] p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-800 animate-fade-in relative overflow-hidden">
+      <div className="bg-steam-card p-8 rounded-2xl shadow-2xl w-full max-w-md border border-steam-border animate-fade-in relative overflow-hidden">
         
-        <h2 className="text-2xl font-bold mb-2 text-white text-center">
+        <h2 className="text-2xl font-bold mb-2 text-steam-text text-center">
           {isSignUp ? 'Create Account' : 'Sign In'}
         </h2>
-        <p className="text-gray-400 text-center mb-6 text-sm">
+        <p className="text-steam-secondary text-center mb-6 text-sm">
           {isSignUp ? 'Join Skinvestments' : 'Welcome back!'}
         </p>
         
@@ -120,7 +120,7 @@ const Login = () => {
           <button 
             onClick={() => handleOAuthLogin('apple')}
             type="button"
-            className="w-full flex items-center justify-center gap-3 bg-black hover:bg-gray-900 border border-gray-700 text-white py-3 px-4 rounded-xl font-bold transition-colors shadow-sm"
+            className="w-full flex items-center justify-center gap-3 bg-black hover:bg-gray-900 border border-steam-border text-steam-text py-3 px-4 rounded-xl font-bold transition-colors shadow-sm"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 384 512">
               <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
@@ -130,18 +130,18 @@ const Login = () => {
         </div>
 
         <div className="flex items-center gap-4 mb-6">
-          <div className="flex-1 h-px bg-gray-800"></div>
-          <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">or email</span>
-          <div className="flex-1 h-px bg-gray-800"></div>
+          <div className="flex-1 h-px bg-steam-border"></div>
+          <span className="text-xs font-bold text-steam-tertiary uppercase tracking-widest">or email</span>
+          <div className="flex-1 h-px bg-steam-border"></div>
         </div>
 
         {/* --- FORMULARZ EMAIL --- */}
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
-            <label className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-1.5">Email</label>
+            <label className="block text-steam-secondary text-xs font-bold uppercase tracking-wider mb-1.5">Email</label>
             <input
               type="email"
-              className="w-full bg-[#14171D] border border-gray-700 rounded-xl p-3 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
+              className="theme-input w-full rounded-xl p-3 transition-colors"
               placeholder="name@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -150,11 +150,11 @@ const Login = () => {
           </div>
           
           <div>
-            <label className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-1.5">Password</label>
+            <label className="block text-steam-secondary text-xs font-bold uppercase tracking-wider mb-1.5">Password</label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className="w-full bg-[#14171D] border border-gray-700 rounded-xl p-3 pr-10 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
+                className="theme-input w-full rounded-xl p-3 pr-10 transition-colors"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -164,7 +164,7 @@ const Login = () => {
               <button 
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 focus:outline-none transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-steam-tertiary hover:text-steam-secondary focus:outline-none transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -175,11 +175,11 @@ const Login = () => {
           {/* POLE POTWIERDZENIA HASŁA */}
           {isSignUp && (
             <div className="animate-fade-in-up">
-              <label className="block text-gray-400 text-xs font-bold uppercase tracking-wider mb-1.5">Confirm Password</label>
+              <label className="block text-steam-secondary text-xs font-bold uppercase tracking-wider mb-1.5">Confirm Password</label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
-                  className="w-full bg-[#14171D] border border-gray-700 rounded-xl p-3 pr-10 text-white focus:outline-none focus:border-blue-500 transition-colors placeholder-gray-600"
+                  className="theme-input w-full rounded-xl p-3 pr-10 transition-colors"
                   placeholder="••••••••"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -189,7 +189,7 @@ const Login = () => {
                 <button 
                   type="button" 
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 focus:outline-none transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-steam-tertiary hover:text-steam-secondary focus:outline-none transition-colors"
                   tabIndex={-1}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -201,13 +201,13 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg shadow-blue-500/20"
+            className="w-full bg-steam-accent hover:opacity-90 text-white font-bold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg"
           >
             {loading ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Sign In')}
           </button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-gray-400">
+        <div className="mt-8 text-center text-sm text-steam-secondary">
           <p>
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}
             <button 

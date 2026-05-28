@@ -133,17 +133,17 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#0B0D12]/90 backdrop-blur-sm" onClick={onClose}></div>
+      <div className="absolute inset-0 bg-steam-bg/90 backdrop-blur-sm" onClick={onClose}></div>
 
-      <div className="relative z-10 bg-[#161B24] rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[800px] animate-fade-in-up border border-gray-800">
+      <div className="relative z-10 bg-steam-card rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[800px] animate-fade-in-up border border-steam-border">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-800/50">
-          <button onClick={onClose} className="p-2 -ml-2 text-gray-400 hover:text-white transition-colors">
+        <div className="flex items-center justify-between p-5 border-b border-steam-border/50">
+          <button onClick={onClose} className="p-2 -ml-2 text-steam-secondary hover:text-steam-text transition-colors">
             <X className="w-6 h-6" />
           </button>
-          <h2 className="text-lg font-bold text-white">New Transaction</h2>
-          <button onClick={handleReset} className="text-sm font-bold text-gray-500 hover:text-gray-300 transition-colors">
+          <h2 className="text-lg font-bold text-steam-text">New Transaction</h2>
+          <button onClick={handleReset} className="text-sm font-bold text-steam-tertiary hover:text-steam-secondary transition-colors">
             Reset
           </button>
         </div>
@@ -151,16 +151,16 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
         <div className="flex-1 overflow-y-auto p-5 scrollbar-thin">
           
           {/* Typ transakcji (Pills) */}
-          <div className="flex bg-[#0B0D12] p-1 rounded-xl mb-6 border border-gray-800">
+          <div className="flex bg-steam-bg p-1 rounded-xl mb-6 border border-steam-border">
             <button 
               onClick={() => setType('BUY')}
-              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${isBuy ? 'bg-green-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${isBuy ? 'bg-green-500 text-white shadow-lg' : 'text-steam-tertiary hover:text-steam-secondary'}`}
             >
               BUY
             </button>
             <button 
               onClick={() => setType('SELL')}
-              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${!isBuy ? 'bg-red-500 text-white shadow-lg' : 'text-gray-500 hover:text-gray-300'}`}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${!isBuy ? 'bg-red-500 text-white shadow-lg' : 'text-steam-tertiary hover:text-steam-secondary'}`}
             >
               SELL
             </button>
@@ -168,21 +168,21 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
           {/* Wybór przedmiotu */}
           <div className="mb-6 relative">
-            <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Item</label>
+            <label className="block text-[10px] font-bold text-steam-tertiary uppercase tracking-widest mb-2">Item</label>
             {!selectedItem ? (
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-steam-tertiary" />
                 <input 
                   type="text" 
                   placeholder="e.g. AK-47 | Redline"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#1E232B] border border-gray-800 text-white rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-steam-accent transition-colors text-sm"
+                  className="w-full bg-steam-card border border-steam-border text-steam-text rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-steam-accent transition-colors text-sm"
                 />
                 
                 {/* Wyniki wyszukiwania */}
                 {searchQuery.length >= 3 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-[#1E232B] border border-gray-800 rounded-xl shadow-2xl overflow-hidden z-20 max-h-60 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-steam-card border border-steam-border rounded-xl shadow-2xl overflow-hidden z-20 max-h-60 overflow-y-auto">
                     {isSearching ? (
                       <div className="p-4 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-steam-accent" /></div>
                     ) : searchResults.length > 0 ? (
@@ -190,30 +190,30 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                         <div 
                           key={item.id} 
                           onClick={() => { setSelectedItem(item); setPrice(item.price?.toString() || ''); setSearchQuery(''); }}
-                          className="p-3 flex items-center gap-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800/50 last:border-0"
+                          className="p-3 flex items-center gap-3 hover:bg-steam-hover cursor-pointer border-b border-steam-border/50 last:border-0"
                         >
                           <img src={item.icon_url} alt="" className="w-10 h-10 object-contain" />
                           <div>
-                            <p className="text-sm font-bold text-white truncate">{item.market_hash_name}</p>
-                            <p className="text-xs text-gray-500">${item.price}</p>
+                            <p className="text-sm font-bold text-steam-text truncate">{item.market_hash_name}</p>
+                            <p className="text-xs text-steam-tertiary">${item.price}</p>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="p-4 text-center text-sm text-gray-500">No items found</div>
+                      <div className="p-4 text-center text-sm text-steam-tertiary">No items found</div>
                     )}
                   </div>
                 )}
               </div>
             ) : (
-              <div className="bg-[#1E232B] border border-gray-800 rounded-xl p-3 flex items-center justify-between">
+              <div className="bg-steam-card border border-steam-border rounded-xl p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img src={selectedItem.icon_url} alt="" className="w-10 h-10 object-contain" />
                   <div>
-                    <p className="text-sm font-bold text-white truncate max-w-[200px]">{selectedItem.market_hash_name}</p>
+                    <p className="text-sm font-bold text-steam-text truncate max-w-[200px]">{selectedItem.market_hash_name}</p>
                   </div>
                 </div>
-                <button onClick={() => setSelectedItem(null)} className="text-gray-500 hover:text-white p-2">
+                <button onClick={() => setSelectedItem(null)} className="text-steam-tertiary hover:text-steam-text p-2">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -221,26 +221,26 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
           </div>
 
           {/* Szczegóły: Ilość i Cena */}
-          <label className="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Details</label>
+          <label className="block text-[10px] font-bold text-steam-tertiary uppercase tracking-widest mb-2">Details</label>
           <div className="flex gap-3 mb-4">
-            <div className="flex-1 bg-[#1E232B] border border-gray-800 rounded-xl flex items-center justify-between p-1">
+            <div className="flex-1 bg-steam-card border border-steam-border rounded-xl flex items-center justify-between p-1">
               <button 
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="p-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-3 text-steam-secondary hover:text-steam-text hover:bg-steam-hover rounded-lg transition-colors"
               >
                 <Minus className="w-4 h-4" />
               </button>
-              <span className="font-bold text-white text-lg font-mono">{quantity}</span>
+              <span className="font-bold text-steam-text text-lg font-mono">{quantity}</span>
               <button 
                 onClick={() => setQuantity(quantity + 1)}
-                className="p-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-3 text-steam-secondary hover:text-steam-text hover:bg-steam-hover rounded-lg transition-colors"
               >
                 <Plus className="w-4 h-4" />
               </button>
             </div>
             
             <div className="flex-[1.5] relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-steam-tertiary font-bold">$</span>
               <input 
                 type="number" 
                 min="0"
@@ -248,17 +248,17 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="0.00"
-                className="w-full bg-[#1E232B] border border-gray-800 text-white rounded-xl py-3.5 pl-8 pr-4 focus:outline-none focus:border-steam-accent transition-colors font-mono text-lg font-bold text-right"
+                className="w-full bg-steam-card border border-steam-border text-steam-text rounded-xl py-3.5 pl-8 pr-4 focus:outline-none focus:border-steam-accent transition-colors font-mono text-lg font-bold text-right"
               />
             </div>
           </div>
 
           {/* Opcje dodatkowe */}
-          <div className="space-y-3 bg-[#1E232B] border border-gray-800 rounded-xl p-2">
+          <div className="space-y-3 bg-steam-card border border-steam-border rounded-xl p-2">
             
             {/* Data */}
-            <div className="flex items-center justify-between p-3 border-b border-gray-800">
-              <div className="flex items-center gap-3 text-gray-400">
+            <div className="flex items-center justify-between p-3 border-b border-steam-border">
+              <div className="flex items-center gap-3 text-steam-secondary">
                 <Calendar className="w-4 h-4" />
                 <span className="text-sm font-medium">Date</span>
               </div>
@@ -266,24 +266,24 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 type="date" 
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="bg-transparent text-white text-sm font-bold focus:outline-none cursor-pointer"
+                className="bg-transparent text-steam-text text-sm font-bold focus:outline-none cursor-pointer"
               />
             </div>
 
             {/* Kolekcja */}
-            <div className="flex items-center justify-between p-3 border-b border-gray-800">
-              <div className="flex items-center gap-3 text-gray-400">
+            <div className="flex items-center justify-between p-3 border-b border-steam-border">
+              <div className="flex items-center gap-3 text-steam-secondary">
                 <Folder className="w-4 h-4" />
                 <span className="text-sm font-medium">Add to collection:</span>
               </div>
               <select 
                 value={collectionId}
                 onChange={(e) => setCollectionId(e.target.value)}
-                className="bg-transparent text-white text-sm font-bold focus:outline-none cursor-pointer max-w-[120px] truncate text-right outline-none"
+                className="bg-transparent text-steam-text text-sm font-bold focus:outline-none cursor-pointer max-w-[120px] truncate text-right outline-none"
               >
                 {/* DODANO KLASY DO OPTION */}
                 {collections.map(c => (
-                  <option key={c.id} value={c.id} className="bg-[#1E232B] text-white">
+                  <option key={c.id} value={c.id} className="bg-steam-card text-steam-text">
                     {c.name}
                   </option>
                 ))}
@@ -294,24 +294,24 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             <div className="flex items-center justify-between p-3">
               {isBuy ? (
                 <>
-                  <div className="flex items-center gap-3 text-gray-400">
+                  <div className="flex items-center gap-3 text-steam-secondary">
                     <TrendingUp className="w-4 h-4" />
                     <span className="text-sm font-medium">Add to Investments</span>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" className="sr-only peer" checked={isInvestment} onChange={() => setIsInvestment(!isInvestment)} />
-                    <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-steam-accent"></div>
+                    <div className="w-11 h-6 bg-steam-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-steam-accent"></div>
                   </label>
                 </>
               ) : (
                 <>
-                  <div className="flex items-center gap-3 text-gray-400">
+                  <div className="flex items-center gap-3 text-steam-secondary">
                     <Percent className="w-4 h-4" />
                     <span className="text-sm font-medium">Steam Fee (13%)</span>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" className="sr-only peer" checked={applySteamFee} onChange={() => setApplySteamFee(!applySteamFee)} />
-                    <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                    <div className="w-11 h-6 bg-steam-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
                   </label>
                 </>
               )}
@@ -322,18 +322,18 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
         </div>
 
         {/* Footer */}
-        <div className="p-5 border-t border-gray-800/50 bg-[#161B24]">
+        <div className="p-5 border-t border-steam-border/50 bg-steam-card">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-gray-500 font-bold">Total</span>
-            <span className="text-2xl font-bold text-white font-mono">
+            <span className="text-sm text-steam-tertiary font-bold">Total</span>
+            <span className="text-2xl font-bold text-steam-text font-mono">
               ${totalValue.toFixed(2)}
             </span>
           </div>
           <button 
             onClick={handleSubmit}
             disabled={!selectedItem || isSubmitting}
-            className={`w-full py-4 rounded-xl font-bold text-white transition-colors flex items-center justify-center gap-2
-              ${isSubmitting || !selectedItem ? 'opacity-50 cursor-not-allowed bg-gray-800' : isBuy ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}
+            className={`w-full py-4 rounded-xl font-bold text-steam-text transition-colors flex items-center justify-center gap-2
+              ${isSubmitting || !selectedItem ? 'opacity-50 cursor-not-allowed bg-steam-elevated' : isBuy ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}
             `}
           >
             {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : isBuy ? 'Confirm Purchase' : 'Confirm Sale'}

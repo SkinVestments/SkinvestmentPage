@@ -5,6 +5,7 @@ import {
   Search, Filter, LayoutGrid, List as ListIcon, 
   Plus, Package, Loader2 
 } from 'lucide-react';
+import { formatCurrency, getRarityStyle } from '@/utils/display';
 
 // --- TYPY ---
 interface InventoryItem {
@@ -19,20 +20,6 @@ interface InventoryItem {
     type: string | null;
   };
 }
-
-// Funkcja stylizująca rzadkość
-const getRarityStyle = (rarity: string | null | undefined) => {
-  if (!rarity) return { border: 'border-gray-600', text: 'text-gray-400', hex: '#9ca3af' };
-  const r = rarity.toLowerCase();
-  if (r.includes('contraband')) return { border: 'border-yellow-500', text: 'text-yellow-500', hex: '#eab308' };
-  if (r.includes('covert')) return { border: 'border-red-500', text: 'text-red-500', hex: '#ef4444' };
-  if (r.includes('classified')) return { border: 'border-pink-500', text: 'text-pink-500', hex: '#ec4899' };
-  if (r.includes('restricted')) return { border: 'border-purple-500', text: 'text-purple-500', hex: '#a855f7' };
-  if (r.includes('mil-spec')) return { border: 'border-blue-600', text: 'text-blue-500', hex: '#3b82f6' };
-  if (r.includes('industrial')) return { border: 'border-sky-400', text: 'text-sky-400', hex: '#38bdf8' };
-  if (r.includes('consumer')) return { border: 'border-gray-400', text: 'text-gray-400', hex: '#9ca3af' };
-  return { border: 'border-gray-600', text: 'text-gray-400', hex: '#9ca3af' };
-};
 
 // --- HELPER: PROFESJONALNY GENERATOR WYKRESU (SMOOTH SPARKLINE) ---
 const generateSparklinePath = (seedId: string) => {
@@ -126,28 +113,27 @@ const Inventory = () => {
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
   const totalValue = items.reduce((acc, item) => acc + ((item.cs2_items?.price || 0) * item.quantity), 0);
-  const formatCurrency = (val: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
 
   return (
-    <div className="text-white animate-fade-in pb-10">
+    <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
       
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-white mb-1">Inventory</h1>
-          <p className="text-gray-400">Manage and browse your CS2 collection.</p>
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1">Inventory</h1>
+          <p className="text-steam-secondary">Manage and browse your CS2 collection.</p>
         </div>
         
-        <div className="flex items-center gap-4 bg-[#1e232b] p-3 rounded-xl border border-gray-800 shadow-lg">
-           <div className="px-4 border-r border-gray-700">
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Total Items</p>
-              <p className="text-xl font-bold text-white">{totalItems}</p>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 bg-steam-card p-3 rounded-xl border border-steam-border shadow-lg w-full sm:w-auto">
+           <div className="px-3 sm:px-4 border-r border-steam-border min-w-0">
+              <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total Items</p>
+              <p className="text-xl font-bold text-steam-text">{totalItems}</p>
            </div>
            <div className="px-4">
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Total Value</p>
+              <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total Value</p>
               <p className="text-xl font-bold text-green-400">{formatCurrency(totalValue)}</p>
            </div>
-           <button className="bg-steam-accent hover:bg-blue-600 text-white p-3 rounded-lg shadow-lg shadow-blue-500/20 transition-all ml-2">
+           <button className="bg-steam-accent hover:opacity-90 text-white p-3 rounded-lg shadow-lg shadow-blue-500/20 transition-all ml-2">
               <Plus className="w-5 h-5" />
            </button>
         </div>
@@ -156,21 +142,21 @@ const Inventory = () => {
       {/* TOOLBAR */}
       <div className="flex flex-col lg:flex-row justify-between gap-4 mb-6">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-steam-tertiary" />
           <input 
             type="text" 
             placeholder="Search your inventory..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#1e232b] border border-gray-800 rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-steam-accent transition-colors"
+            className="w-full bg-steam-card border border-steam-border rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-steam-accent transition-colors"
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
           <select 
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-[#1e232b] border border-gray-800 text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-steam-accent cursor-pointer"
+            className="flex-1 min-w-[140px] sm:flex-none bg-steam-card border border-steam-border text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-steam-accent cursor-pointer"
           >
             <option value="value_desc">Highest Value</option>
             <option value="value_asc">Lowest Value</option>
@@ -178,20 +164,20 @@ const Inventory = () => {
             <option value="recent">Recently Added</option>
           </select>
 
-          <button className="bg-[#1e232b] border border-gray-800 p-2.5 rounded-xl text-gray-400 hover:text-white transition-colors">
+          <button className="bg-steam-card border border-steam-border p-2.5 rounded-xl text-steam-secondary hover:text-steam-text transition-colors">
             <Filter className="w-4 h-4" />
           </button>
 
-          <div className="flex bg-[#1e232b] p-1 rounded-xl border border-gray-800">
+          <div className="flex bg-steam-card p-1 rounded-xl border border-steam-border">
             <button 
               onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-white'}`}
+              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-steam-elevated text-steam-text' : 'text-steam-tertiary hover:text-steam-text'}`}
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-gray-700 text-white' : 'text-gray-500 hover:text-white'}`}
+              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-steam-elevated text-steam-text' : 'text-steam-tertiary hover:text-steam-text'}`}
             >
               <ListIcon className="w-4 h-4" />
             </button>
@@ -203,10 +189,10 @@ const Inventory = () => {
       {loading ? (
         <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-steam-accent" /></div>
       ) : filteredAndSortedItems.length === 0 ? (
-        <div className="bg-[#1e232b] rounded-2xl border border-gray-800 p-20 text-center">
-            <Package className="w-16 h-16 mx-auto text-gray-700 mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No items found</h3>
-            <p className="text-gray-500 text-sm">Your inventory is empty or no items match your search.</p>
+        <div className="bg-steam-card rounded-2xl border border-steam-border p-20 text-center">
+            <Package className="w-16 h-16 mx-auto text-steam-tertiary mb-4" />
+            <h3 className="text-xl font-bold text-steam-text mb-2">No items found</h3>
+            <p className="text-steam-tertiary text-sm">Your inventory is empty or no items match your search.</p>
         </div>
       ) : (
         <>
@@ -222,17 +208,17 @@ const Inventory = () => {
                 const { linePath, areaPath } = generateSparklinePath(item.id);
 
                 return (
-                  <div key={item.id} className="bg-[#1e232b] rounded-xl border border-gray-800 hover:border-gray-600 transition-colors group relative overflow-hidden flex flex-col shadow-lg">
+                  <div key={item.id} className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-border transition-colors group relative overflow-hidden flex flex-col shadow-lg">
                     
                     {/* Badge Ilości */}
                     {item.quantity > 1 && (
-                      <div className="absolute top-2 right-2 bg-[#0B0D12]/90 border border-gray-700 text-white text-[10px] font-bold px-2 py-1 rounded-md z-20">
+                      <div className="absolute top-2 right-2 bg-steam-bg/90 border border-steam-border text-steam-text text-[10px] font-bold px-2 py-1 rounded-md z-20">
                         x{item.quantity}
                       </div>
                     )}
 
                     {/* SEKCJA Z OBRAZKIEM I WYKRESEM */}
-                    <div className={`relative h-36 w-full flex items-center justify-center p-4 border-b-[3px] ${rarityStyle.border} bg-[#0B0D12] overflow-hidden`}>
+                    <div className={`relative h-36 w-full flex items-center justify-center p-4 border-b-[3px] ${rarityStyle.border} bg-steam-bg overflow-hidden`}>
                       
                       {/* Profesjonalny Wykres w tle */}
                       <div className="absolute inset-0 z-0 opacity-50 transition-opacity duration-500 group-hover:opacity-100">
@@ -277,18 +263,18 @@ const Inventory = () => {
                     </div>
 
                     {/* Info */}
-                    <div className="p-3 flex flex-col flex-1 bg-[#1e232b] relative z-20">
-                      <p className="text-xs font-bold text-gray-200 line-clamp-2 leading-snug mb-3 flex-1">
+                    <div className="p-3 flex flex-col flex-1 bg-steam-card relative z-20">
+                      <p className="text-xs font-bold text-steam-text line-clamp-2 leading-snug mb-3 flex-1">
                         {item.cs2_items?.market_hash_name}
                       </p>
                       
                       <div className="flex justify-between items-end mt-auto">
                         <div>
-                           <p className="text-[10px] text-gray-500 uppercase tracking-widest mb-0.5">Total Value</p>
-                           <p className="text-sm font-bold text-white font-mono">{formatCurrency(totalVal)}</p>
+                           <p className="text-[10px] text-steam-tertiary uppercase tracking-widest mb-0.5">Total Value</p>
+                           <p className="text-sm font-bold text-steam-text font-mono">{formatCurrency(totalVal)}</p>
                         </div>
                         {item.quantity > 1 && (
-                          <p className="text-[10px] text-gray-400 font-mono">({formatCurrency(itemPrice)} ea)</p>
+                          <p className="text-[10px] text-steam-secondary font-mono">({formatCurrency(itemPrice)} ea)</p>
                         )}
                       </div>
                     </div>
@@ -300,29 +286,29 @@ const Inventory = () => {
 
           {/* WIDOK TABELI (LIST) - BEZ ZMIAN */}
           {viewMode === 'list' && (
-            <div className="bg-[#1e232b] rounded-xl border border-gray-800 overflow-hidden shadow-xl">
+            <div className="bg-steam-card rounded-xl border border-steam-border overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-[#171a21] text-gray-500 text-xs font-bold uppercase tracking-wider border-b border-gray-800">
+                    <tr className="bg-steam-surface text-steam-tertiary text-xs font-bold uppercase tracking-wider border-b border-steam-border">
                       <th className="p-4 pl-6">Item Details</th>
                       <th className="p-4">Quantity</th>
                       <th className="p-4 text-right">Unit Price</th>
                       <th className="p-4 text-right pr-6">Total Value</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-800/50 text-sm">
+                  <tbody className="divide-y divide-steam-border/50 text-sm">
                     {filteredAndSortedItems.map((item) => {
                       const rarityStyle = getRarityStyle(item.cs2_items?.rarity);
                       return (
-                        <tr key={item.id} className="hover:bg-[#252b36] transition-colors group">
+                        <tr key={item.id} className="hover:bg-steam-hover transition-colors group">
                           <td className="p-3 pl-6">
                             <div className="flex items-center gap-4">
-                              <div className={`w-14 h-10 rounded flex items-center justify-center border-b-2 ${rarityStyle.border} bg-[#141619]`}>
+                              <div className={`w-14 h-10 rounded flex items-center justify-center border-b-2 ${rarityStyle.border} bg-steam-elevated`}>
                                 <img src={item.cs2_items?.icon_url || ''} alt="" className="max-w-full max-h-full object-contain" />
                               </div>
                               <div>
-                                <div className="font-bold text-gray-200">{item.cs2_items?.market_hash_name}</div>
+                                <div className="font-bold text-steam-text">{item.cs2_items?.market_hash_name}</div>
                                 <div className={`text-[10px] font-bold uppercase tracking-wider ${rarityStyle.text}`}>
                                   {item.cs2_items?.rarity || 'Common'}
                                 </div>
@@ -330,14 +316,14 @@ const Inventory = () => {
                             </div>
                           </td>
                           <td className="p-4">
-                            <span className="bg-gray-800 px-2 py-1 rounded text-xs font-bold text-gray-300">
+                            <span className="bg-steam-elevated px-2 py-1 rounded text-xs font-bold text-steam-secondary">
                               {item.quantity}
                             </span>
                           </td>
-                          <td className="p-4 text-right text-gray-400 font-mono">
+                          <td className="p-4 text-right text-steam-secondary font-mono">
                             {formatCurrency(item.cs2_items?.price || 0)}
                           </td>
-                          <td className="p-4 text-right pr-6 font-bold text-white font-mono">
+                          <td className="p-4 text-right pr-6 font-bold text-steam-text font-mono">
                             {formatCurrency((item.cs2_items?.price || 0) * item.quantity)}
                           </td>
                         </tr>

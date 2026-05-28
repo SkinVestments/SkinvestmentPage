@@ -14,14 +14,14 @@ const skins = [
 
 export const SkinTicker: React.FC = () => {
     return (
-        <div className="w-full bg-[#0d0f12] border-y border-white/5 overflow-hidden py-3">
+        <div className="w-full bg-steam-bg border-y border-steam-border/50 overflow-hidden py-3">
             <div className="flex animate-scroll whitespace-nowrap gap-12 w-max">
                 {/* Duplicate the list to ensure smooth infinite scroll */}
                 {[...skins, ...skins, ...skins].map((skin, i) => (
                     <div key={i} className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-gray-400 uppercase tracking-wide">{skin.name}</span>
+                        <span className="text-sm font-bold text-steam-secondary uppercase tracking-wide">{skin.name}</span>
                         <div className="flex items-center gap-1">
-                            <span className="text-white font-mono">{skin.price}</span>
+                            <span className="text-steam-text font-mono">{skin.price}</span>
                             <span className={`text-xs flex items-center ${skin.up ? 'text-steam-success' : 'text-steam-loss'}`}>
                                 {skin.up ? <TrendingUp size={12} className="mr-0.5" /> : <TrendingDown size={12} className="mr-0.5" />}
                                 {skin.change}

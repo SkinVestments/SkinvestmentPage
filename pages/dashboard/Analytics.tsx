@@ -9,13 +9,13 @@ const Analytics = () => {
   const userHasPremium = true; 
 
   return (
-    <div className="text-white animate-fade-in pb-10">
+    <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
       
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-white mb-1">Analytics</h1>
-          <p className="text-gray-400">Deep dive into your portfolio performance.</p>
+          <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1">Analytics</h1>
+          <p className="text-steam-secondary">Deep dive into your portfolio performance.</p>
         </div>
         
         {!userHasPremium && (
