@@ -229,7 +229,7 @@ export const SummaryCards = () => {
             </p>
           </div>
           <div className="w-40">
-            <div className="h-2 rounded-full bg-steam-bg border border-steam-border overflow-hidden">
+            <div className="h-2 rounded-full bg-steam-bg overflow-hidden theme-progress-track">
               <div
                 className="h-full bg-cyan-400"
                 style={{ width: `${Math.max(0, Math.min(100, luckScore))}%` }}

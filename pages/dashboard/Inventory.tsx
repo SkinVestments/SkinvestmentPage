@@ -1,24 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  Search, Filter, LayoutGrid, List as ListIcon, 
-  Plus, Package, Loader2 
+import {
+  Search,
+  Filter,
+  LayoutGrid,
+  List as ListIcon,
+  Plus,
+  Package,
+  Loader2,
+  Lock,
 } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { ItemImage } from '@/components/ui/ItemImage';
+import {
+  InventoryFilters,
+  DEFAULT_INVENTORY_FILTERS,
+  type InventoryFilterState,
+} from '@/components/inventory/InventoryFilters';
+import {
+  countActiveFilters,
+  getPnlStatus,
+  isItemTradeLocked,
+  normalizePriceSource,
+  normalizeRarityTier,
+} from '@/utils/inventoryFilters';
 
 // --- TYPY ---
 interface InventoryItem {
   id: string;
   quantity: number;
   acquired_at: string;
+  buy_price: number | null;
+  trade_lock_until?: string | null;
   cs2_items: {
     market_hash_name: string;
     icon_url: string | null;
     price: number;
     rarity: string | null;
     type: string | null;
+    price_source?: string | null;
   };
 }
 
@@ -68,6 +89,8 @@ const Inventory = () => {
   
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'value_desc' | 'value_asc' | 'name' | 'recent'>('value_desc');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filters, setFilters] = useState<InventoryFilterState>(DEFAULT_INVENTORY_FILTERS);
 
   const fetchInventory = async () => {
     try {
@@ -77,13 +100,28 @@ const Inventory = () => {
       const { data, error } = await supabase
         .from('portfolio_items')
         .select(`
-          id, quantity, acquired_at,
-          cs2_items ( market_hash_name, icon_url, price, rarity, type )
+          id, quantity, acquired_at, buy_price, trade_lock_until,
+          cs2_items ( market_hash_name, icon_url, price, rarity, type, price_source )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id', user.id)
+        .gt('quantity', 0);
 
-      if (error) throw error;
-      if (data) setItems(data as any);
+      if (error) {
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('portfolio_items')
+          .select(`
+            id, quantity, acquired_at, buy_price,
+            cs2_items ( market_hash_name, icon_url, price, rarity, type )
+          `)
+          .eq('user_id', user.id)
+          .gt('quantity', 0);
+
+        if (fallbackError) throw fallbackError;
+        if (fallbackData) setItems(fallbackData as InventoryItem[]);
+        return;
+      }
+
+      if (data) setItems(data as InventoryItem[]);
     } catch (error) {
       console.error('Error fetching inventory:', error);
     } finally {
@@ -95,25 +133,61 @@ const Inventory = () => {
     fetchInventory();
   }, [user]);
 
-  const filteredAndSortedItems = items
-    .filter(item => 
-      item.cs2_items?.market_hash_name.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      const valA = (a.cs2_items?.price || 0) * a.quantity;
-      const valB = (b.cs2_items?.price || 0) * b.quantity;
-      
-      switch (sortBy) {
-        case 'value_desc': return valB - valA;
-        case 'value_asc': return valA - valB;
-        case 'name': return (a.cs2_items?.market_hash_name || '').localeCompare(b.cs2_items?.market_hash_name || '');
-        case 'recent': return new Date(b.acquired_at).getTime() - new Date(a.acquired_at).getTime();
-        default: return 0;
-      }
-    });
+  const showPriceSourceFilter = useMemo(
+    () => items.some((item) => item.cs2_items?.price_source),
+    [items],
+  );
+
+  const filteredAndSortedItems = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+
+    return items
+      .filter((item) => {
+        const name = item.cs2_items?.market_hash_name?.toLowerCase() ?? '';
+        if (q && !name.includes(q)) return false;
+
+        const tier = normalizeRarityTier(item.cs2_items?.rarity);
+        if (filters.rarity !== 'all' && tier !== filters.rarity) return false;
+
+        const unitPrice = item.cs2_items?.price ?? 0;
+        const { status: pnlStatus } = getPnlStatus(unitPrice, item.buy_price);
+        if (filters.pnl !== 'all' && pnlStatus !== filters.pnl) return false;
+
+        if (filters.priceSource !== 'all' && showPriceSourceFilter) {
+          const src = normalizePriceSource(item.cs2_items?.price_source);
+          if (src !== filters.priceSource) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        const valA = (a.cs2_items?.price || 0) * a.quantity;
+        const valB = (b.cs2_items?.price || 0) * b.quantity;
+
+        switch (sortBy) {
+          case 'value_desc':
+            return valB - valA;
+          case 'value_asc':
+            return valA - valB;
+          case 'name':
+            return (a.cs2_items?.market_hash_name || '').localeCompare(
+              b.cs2_items?.market_hash_name || '',
+            );
+          case 'recent':
+            return new Date(b.acquired_at).getTime() - new Date(a.acquired_at).getTime();
+          default:
+            return 0;
+        }
+      });
+  }, [items, searchQuery, filters, sortBy, showPriceSourceFilter]);
+
+  const activeFilterCount = countActiveFilters(filters);
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
-  const totalValue = items.reduce((acc, item) => acc + ((item.cs2_items?.price || 0) * item.quantity), 0);
+  const totalValue = items.reduce(
+    (acc, item) => acc + (item.cs2_items?.price || 0) * item.quantity,
+    0,
+  );
 
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
@@ -165,8 +239,23 @@ const Inventory = () => {
             <option value="recent">Recently Added</option>
           </select>
 
-          <button className="bg-steam-card border border-steam-border p-2.5 rounded-xl text-steam-secondary hover:text-steam-text transition-colors">
+          <button
+            type="button"
+            onClick={() => setFiltersOpen((o) => !o)}
+            className={`relative bg-steam-card border p-2.5 rounded-xl transition-colors ${
+              filtersOpen || activeFilterCount > 0
+                ? 'border-steam-accent text-steam-accent'
+                : 'border-steam-border text-steam-secondary hover:text-steam-text'
+            }`}
+            aria-expanded={filtersOpen}
+            aria-label="Toggle filters"
+          >
             <Filter className="w-4 h-4" />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-steam-accent text-white text-[10px] font-bold flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
           </button>
 
           <div className="flex bg-steam-card p-1 rounded-xl border border-steam-border">
@@ -186,6 +275,16 @@ const Inventory = () => {
         </div>
       </div>
 
+      <InventoryFilters
+        open={filtersOpen}
+        filters={filters}
+        onChange={setFilters}
+        onClose={() => setFiltersOpen(false)}
+        showPriceSourceFilter={showPriceSourceFilter}
+        resultCount={filteredAndSortedItems.length}
+        totalCount={items.length}
+      />
+
       {/* KONTENT EKWIPUNKU */}
       {loading ? (
         <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-steam-accent" /></div>
@@ -193,7 +292,9 @@ const Inventory = () => {
         <div className="bg-steam-card rounded-2xl border border-steam-border p-20 text-center">
             <Package className="w-16 h-16 mx-auto text-steam-tertiary mb-4" />
             <h3 className="text-xl font-bold text-steam-text mb-2">No items found</h3>
-            <p className="text-steam-tertiary text-sm">Your inventory is empty or no items match your search.</p>
+            <p className="text-steam-tertiary text-sm">
+              Your inventory is empty or no items match your search and filters.
+            </p>
         </div>
       ) : (
         <>
@@ -204,19 +305,28 @@ const Inventory = () => {
                 const rarityStyle = getRarityStyle(item.cs2_items?.rarity);
                 const itemPrice = item.cs2_items?.price || 0;
                 const totalVal = itemPrice * item.quantity;
-                
+                const locked = isItemTradeLocked(item.acquired_at, item.trade_lock_until);
+                const { status: pnlStatus, gainPct } = getPnlStatus(itemPrice, item.buy_price);
+
                 // Generowanie danych wykresu dla tła
                 const { linePath, areaPath } = generateSparklinePath(item.id);
 
                 return (
                   <div key={item.id} className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-border transition-colors group relative overflow-hidden flex flex-col shadow-lg">
                     
-                    {/* Badge Ilości */}
-                    {item.quantity > 1 && (
-                      <div className="absolute top-2 right-2 bg-steam-bg/90 border border-steam-border text-steam-text text-[10px] font-bold px-2 py-1 rounded-md z-20">
-                        x{item.quantity}
-                      </div>
-                    )}
+                    {/* Badges */}
+                    <div className="absolute top-2 right-2 z-20 flex flex-col items-end gap-1">
+                      {item.quantity > 1 && (
+                        <div className="bg-steam-bg/90 border border-steam-border text-steam-text text-[10px] font-bold px-2 py-1 rounded-md">
+                          x{item.quantity}
+                        </div>
+                      )}
+                      {locked && (
+                        <div className="bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1">
+                          <Lock className="w-3 h-3" /> Locked
+                        </div>
+                      )}
+                    </div>
 
                     {/* SEKCJA Z OBRAZKIEM I WYKRESEM */}
                     <div className={`relative h-36 w-full flex items-center justify-center p-4 border-b-[3px] ${rarityStyle.border} bg-steam-bg overflow-hidden`}>
@@ -270,13 +380,29 @@ const Inventory = () => {
                         {item.cs2_items?.market_hash_name}
                       </p>
                       
-                      <div className="flex justify-between items-end mt-auto">
+                      <div className="flex justify-between items-end mt-auto gap-2">
                         <div>
-                           <p className="text-[10px] text-steam-tertiary uppercase tracking-widest mb-0.5">Total Value</p>
-                           <p className="text-sm font-bold text-steam-text font-mono">{formatCurrency(totalVal)}</p>
+                          <p className="text-[10px] text-steam-tertiary uppercase tracking-widest mb-0.5">
+                            Total Value
+                          </p>
+                          <p className="text-sm font-bold text-steam-text font-mono">
+                            {formatCurrency(totalVal)}
+                          </p>
+                          {pnlStatus === 'profit' && gainPct != null && (
+                            <p className="text-[10px] font-bold text-green-400 mt-0.5">
+                              +{gainPct.toFixed(1)}%
+                            </p>
+                          )}
+                          {pnlStatus === 'loss' && gainPct != null && (
+                            <p className="text-[10px] font-bold text-red-400 mt-0.5">
+                              {gainPct.toFixed(1)}%
+                            </p>
+                          )}
                         </div>
                         {item.quantity > 1 && (
-                          <p className="text-[10px] text-steam-secondary font-mono">({formatCurrency(itemPrice)} ea)</p>
+                          <p className="text-[10px] text-steam-secondary font-mono shrink-0">
+                            ({formatCurrency(itemPrice)} ea)
+                          </p>
                         )}
                       </div>
                     </div>
@@ -302,6 +428,9 @@ const Inventory = () => {
                   <tbody className="divide-y divide-steam-border/50 text-sm">
                     {filteredAndSortedItems.map((item) => {
                       const rarityStyle = getRarityStyle(item.cs2_items?.rarity);
+                      const unitPrice = item.cs2_items?.price || 0;
+                      const locked = isItemTradeLocked(item.acquired_at, item.trade_lock_until);
+                      const { status: pnlStatus, gainPct } = getPnlStatus(unitPrice, item.buy_price);
                       return (
                         <tr key={item.id} className="hover:bg-steam-hover transition-colors group">
                           <td className="p-3 pl-6">
@@ -315,7 +444,14 @@ const Inventory = () => {
                                 />
                               </div>
                               <div>
-                                <div className="font-bold text-steam-text">{item.cs2_items?.market_hash_name}</div>
+                                <div className="font-bold text-steam-text flex items-center gap-2 flex-wrap">
+                                  {item.cs2_items?.market_hash_name}
+                                  {locked && (
+                                    <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 inline-flex items-center gap-0.5">
+                                      <Lock className="w-2.5 h-2.5" /> Lock
+                                    </span>
+                                  )}
+                                </div>
                                 <div className={`text-[10px] font-bold uppercase tracking-wider ${rarityStyle.text}`}>
                                   {item.cs2_items?.rarity || 'Common'}
                                 </div>
@@ -330,8 +466,16 @@ const Inventory = () => {
                           <td className="p-4 text-right text-steam-secondary font-mono">
                             {formatCurrency(item.cs2_items?.price || 0)}
                           </td>
-                          <td className="p-4 text-right pr-6 font-bold text-steam-text font-mono">
-                            {formatCurrency((item.cs2_items?.price || 0) * item.quantity)}
+                          <td className="p-4 text-right pr-6 font-mono">
+                            <div className="font-bold text-steam-text">
+                              {formatCurrency(unitPrice * item.quantity)}
+                            </div>
+                            {pnlStatus === 'profit' && gainPct != null && (
+                              <div className="text-[10px] text-green-400 font-bold">+{gainPct.toFixed(1)}%</div>
+                            )}
+                            {pnlStatus === 'loss' && gainPct != null && (
+                              <div className="text-[10px] text-red-400 font-bold">{gainPct.toFixed(1)}%</div>
+                            )}
                           </td>
                         </tr>
                       );

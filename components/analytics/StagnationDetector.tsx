@@ -112,7 +112,7 @@ export const StagnationDetector = () => {
 
   return (
     <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg flex flex-col min-h-[420px] h-full">
-      <div className="p-4 sm:p-6 border-b border-steam-border shrink-0">
+      <div className="p-4 sm:p-6 border-b border-steam-border/50 shrink-0">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex items-start gap-3 min-w-0">
             <div className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 shrink-0">

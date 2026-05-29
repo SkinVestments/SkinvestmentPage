@@ -125,7 +125,7 @@ const HeatmapGrid = ({ title, labels, cells, metric, columnsClass }: HeatmapGrid
           return (
             <div
               key={`${title}-${label}`}
-              className="rounded-xl border border-steam-border p-2 sm:p-3 min-h-[72px] flex flex-col justify-between transition-colors"
+              className="rounded-xl p-2 sm:p-3 min-h-[72px] flex flex-col justify-between transition-colors"
               style={{ background: cellBackground(value, maxAbs, metric) }}
               title={
                 hasData

@@ -148,7 +148,12 @@ select option {
 }
 
 .theme-border-faint {
-  border-color: color-mix(in srgb, var(--color-text-primary) 12%, var(--color-card-border));
+  border-color: color-mix(in srgb, var(--color-card-border) 65%, transparent);
+}
+
+/* Softer outlines — avoids harsh bright 1px lines on dark cards */
+.border-steam-border {
+  border-color: color-mix(in srgb, var(--color-card-border) 55%, transparent);
 }
 
 .theme-shadow-accent {
