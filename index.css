@@ -159,6 +159,15 @@ select option {
   color: #ffffff;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-surface-hover);
+  border-radius: 4px;
+}
+
 /* Toggle switch knob (peer markup unchanged) */
 .theme-switch-knob::after {
   background-color: var(--color-surface-overlay) !important;

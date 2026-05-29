@@ -6,6 +6,7 @@ import {
   ArrowLeft, Loader2, Wallet, TrendingUp, TrendingDown, Package, ShieldCheck,ChevronRight
 } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
+import { ItemImage } from '@/components/ui/ItemImage';
 
 // --- TYPY DANYCH ---
 interface CollectionItem {
@@ -197,7 +198,12 @@ const CollectionDetails = () => {
                                 rounded-md flex items-center justify-center p-1 
                                 border-b-[2px] ${rarityStyle.border} ${rarityStyle.shadow}
                             `}>
-                                <img src={item.icon_url || ''} alt="" className="w-full h-full object-contain" />
+                                <ItemImage
+                                  src={item.icon_url}
+                                  alt={item.name}
+                                  className="w-full h-full object-contain"
+                                  wrapperClassName="w-full h-full"
+                                />
                             </div>
                             <div className="flex flex-col">
                                 <span className="font-bold text-steam-text group-hover:text-steam-text truncate max-w-[200px]">{item.name}</span>

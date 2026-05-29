@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { X, Search, CheckCircle, Folder, TrendingUp, Loader2, Box, Package } from 'lucide-react';
+import { ItemImage } from '@/components/ui/ItemImage';
 
 // --- TYPY DANYCH ---
 
@@ -235,7 +236,12 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                       `}
                     >
                       <div className="h-20 w-full flex items-center justify-center mb-3">
-                        <img src={item.icon} alt={item.name} className="max-h-full max-w-full drop-shadow-lg object-contain" />
+                        <ItemImage
+                          src={item.icon}
+                          alt={item.name}
+                          className="max-h-full max-w-full drop-shadow-lg object-contain"
+                          wrapperClassName="h-20 w-full"
+                        />
                       </div>
                       <p className="text-xs font-bold text-steam-text line-clamp-2 h-8 leading-tight">{item.name}</p>
                       <p className="text-xs text-green-400 font-mono mt-2 font-bold">${item.price.toFixed(2)}</p>
@@ -282,7 +288,12 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                           onClick={() => handleSelectSearchedItem(item)}
                           className="flex items-center gap-3 p-3 hover:bg-steam-hover cursor-pointer transition-colors border-b border-steam-border last:border-0"
                         >
-                          <img src={item.icon} alt="" className="w-10 h-8 object-contain" />
+                          <ItemImage
+                            src={item.icon}
+                            alt={item.name}
+                            className="w-10 h-8 object-contain"
+                            wrapperClassName="w-10 h-8 shrink-0"
+                          />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-steam-text truncate">{item.name}</p>
                             <p className="text-xs text-green-400 font-mono">${item.price.toFixed(2)}</p>
@@ -295,7 +306,12 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                   {/* Wybrany przedmiot z wyszukiwarki */}
                   {selectedSearchItem && (
                     <div className="mt-3 flex items-center gap-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl animate-fade-in relative">
-                       <img src={selectedSearchItem.icon} alt="" className="w-16 h-12 object-contain drop-shadow-md" />
+                       <ItemImage
+                         src={selectedSearchItem.icon}
+                         alt={selectedSearchItem.name}
+                         className="w-16 h-12 object-contain drop-shadow-md"
+                         wrapperClassName="w-16 h-12 shrink-0"
+                       />
                        <div>
                           <p className="text-sm font-bold text-steam-text">{selectedSearchItem.name}</p>
                           <p className="text-xs text-green-400 font-mono font-bold">${selectedSearchItem.price.toFixed(2)}</p>

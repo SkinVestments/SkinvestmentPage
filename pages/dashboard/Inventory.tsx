@@ -6,6 +6,7 @@ import {
   Plus, Package, Loader2 
 } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
+import { ItemImage } from '@/components/ui/ItemImage';
 
 // --- TYPY ---
 interface InventoryItem {
@@ -255,10 +256,11 @@ const Inventory = () => {
                       </div>
 
                       {/* Obrazek Skina */}
-                      <img 
-                        src={item.cs2_items?.icon_url || ''} 
-                        alt={item.cs2_items?.market_hash_name} 
+                      <ItemImage
+                        src={item.cs2_items?.icon_url}
+                        alt={item.cs2_items?.market_hash_name ?? ''}
                         className="relative z-10 max-h-full max-w-full object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)] group-hover:scale-110 transition-transform duration-500 group-hover:-translate-y-1"
+                        wrapperClassName="relative z-10 w-full h-full min-h-[72px]"
                       />
                     </div>
 
@@ -304,8 +306,13 @@ const Inventory = () => {
                         <tr key={item.id} className="hover:bg-steam-hover transition-colors group">
                           <td className="p-3 pl-6">
                             <div className="flex items-center gap-4">
-                              <div className={`w-14 h-10 rounded flex items-center justify-center border-b-2 ${rarityStyle.border} bg-steam-elevated`}>
-                                <img src={item.cs2_items?.icon_url || ''} alt="" className="max-w-full max-h-full object-contain" />
+                              <div className={`w-14 h-10 rounded overflow-hidden border-b-2 ${rarityStyle.border}`}>
+                                <ItemImage
+                                  src={item.cs2_items?.icon_url}
+                                  alt={item.cs2_items?.market_hash_name ?? ''}
+                                  className="max-w-full max-h-full object-contain"
+                                  wrapperClassName="w-full h-full"
+                                />
                               </div>
                               <div>
                                 <div className="font-bold text-steam-text">{item.cs2_items?.market_hash_name}</div>

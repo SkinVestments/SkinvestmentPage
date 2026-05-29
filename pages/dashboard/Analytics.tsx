@@ -2,7 +2,9 @@ import React from 'react';
 import { SummaryCards } from '../../components/analytics/SummaryCards';
 import { AllocationChart } from '../../components/analytics/AllocationChart';
 import { DropsChart } from '../../components/analytics/DropsChart';
-import { QualityStructureChart } from '../../components/analytics/QualityStructureChart'; // NOWY IMPORT
+import { QualityStructureChart } from '../../components/analytics/QualityStructureChart';
+import { StagnationDetector } from '../../components/analytics/StagnationDetector';
+import { ProfitHeatmap } from '../../components/analytics/ProfitHeatmap';
 import { Sparkles } from 'lucide-react';
 
 const Analytics = () => {
@@ -39,16 +41,19 @@ const Analytics = () => {
       </div>
 
       {/* RZĄD 3: JAKOŚĆ I DODATKI */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Lewa kolumna: Quality Structure */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="lg:col-span-1">
           <QualityStructureChart />
         </div>
-        
-        {/* Prawa kolumna: Zarezerwowana na przyszły wykres (np. najlepsze inwestycje) */}
+
         <div className="lg:col-span-1">
-          {/* Możesz tu wstawić kolejny kafelek z wykresem */}
+          <StagnationDetector />
         </div>
+      </div>
+
+      {/* RZĄD 4: PROFIT HEATMAP */}
+      <div className="grid grid-cols-1 gap-6">
+        <ProfitHeatmap />
       </div>
 
     </div>

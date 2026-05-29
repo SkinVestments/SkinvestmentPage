@@ -11,9 +11,14 @@ import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { LogDropModal } from '../../components/dashboard/LogDropModal';
 import { CreateCollectionModal } from '../../components/dashboard/CreateCollectionModal';
 import { QuickAddModal } from '@/components/dashboard/QuickAddModal';
+import { ItemImage } from '@/components/ui/ItemImage';
 
 import { useNavigate } from 'react-router-dom';
 import { chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
+import {
+  normalizePortfolioCurrentValues,
+  type PortfolioCurrentValues,
+} from '@/utils/portfolioRpc';
 
 // --- TYPY DANYCH ---
 interface CS2Item {
@@ -30,17 +35,6 @@ interface PortfolioItem {
   buy_price: number;
   acquired_at: string;
   cs2_items: CS2Item;
-}
-
-// Typ dopasowany do odpowiedzi z get_portfolio_current_values
-interface PortfolioCurrentValues {
-  deposited: number;
-  withdrawn: number;
-  inventory_value: number;
-  investments_value: number;
-  period_gain_value: number;
-  period_roi_percentage: number;
-  total_portfolio_value: number;
 }
 
 const ITEMS_PER_PAGE = 5;
@@ -128,9 +122,8 @@ const Panel = () => {
       });
       
       if (error) throw error;
-      if (data) {
-          setPortfolioStats(data);
-      }
+      const stats = normalizePortfolioCurrentValues(data);
+      if (stats) setPortfolioStats(stats);
     } catch (error) {
       console.error('Error fetching portfolio stats:', error);
     }
@@ -498,10 +491,11 @@ const Panel = () => {
                             border-b-[3px] ${rarityStyle.border} ${rarityStyle.shadow}
                             transition-all duration-300 group-hover:scale-105
                           `}>
-                            <img 
-                              src={item.cs2_items?.icon_url || ''} 
-                              alt="" 
-                              className="w-full h-full object-contain drop-shadow-md" 
+                            <ItemImage
+                              src={item.cs2_items?.icon_url}
+                              alt={item.cs2_items?.market_hash_name ?? ''}
+                              className="w-full h-full object-contain drop-shadow-md"
+                              wrapperClassName="w-full h-full"
                             />
                           </div>
                           <div className="flex flex-col">

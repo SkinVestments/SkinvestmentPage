@@ -3,6 +3,7 @@ import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { Loader2, ArrowDownUp, Calendar, Package, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
+import { ItemImage } from '@/components/ui/ItemImage';
 
 // --- TYPY ZGODNE Z TWOJĄ BAZĄ ---
 type TransactionType = 'DROP' | 'BUY' | 'SELL';
@@ -164,10 +165,11 @@ const History = () => {
                              w-16 h-12 bg-gradient-to-b from-steam-elevated to-steam-bg rounded flex items-center justify-center p-1 border-b-2
                              ${rarityStyle.border} ${rarityStyle.shadow}
                           `}>
-                            <img 
-                              src={tx.cs2_items?.icon_url || ''} 
-                              alt="" 
-                              className="w-full h-full object-contain drop-shadow-md" 
+                            <ItemImage
+                              src={tx.cs2_items?.icon_url}
+                              alt={tx.cs2_items?.market_hash_name ?? ''}
+                              className="w-full h-full object-contain drop-shadow-md"
+                              wrapperClassName="w-full h-full"
                             />
                           </div>
                           {/* Tekst */}

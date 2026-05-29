@@ -3,7 +3,8 @@ import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Loader2, PieChart as PieIcon } from 'lucide-react';
-import { chartTooltipStyle } from '@/utils/chartTheme';
+import { chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
+import { formatCurrency } from '@/utils/display';
 
 const COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#6b7280'];
 
@@ -16,25 +17,26 @@ export const AllocationChart = () => {
     const fetchAllocation = async () => {
       if (!user) return;
       try {
-        const { data: allocData, error } = await supabase.rpc('get_portfolio_allocation', {
-          p_user_id: user.id
-        });
+        // Funkcja w Supabase używa auth.uid() — bez parametru p_user_id
+        const { data: allocData, error } = await supabase.rpc('get_portfolio_allocation');
 
         if (error) throw error;
 
         if (allocData && allocData.length > 0) {
-          
-          const formattedData = allocData.map((item: any) => {
-            // ZMIANA: Zmieniliśmy item.cat_value na item.total_value zgodnie z bazą!
+          const formattedData = allocData.map((item: {
+            cat_name?: string;
+            category?: string;
+            total_value?: number | string;
+            percentage?: number | string;
+          }) => {
             const rawValue = item.total_value !== undefined ? item.total_value : 0;
-            const stringValue = String(rawValue).replace(/[^0-9.-]+/g, ""); 
-            const parsedValue = parseFloat(stringValue);
+            const parsedValue =
+              typeof rawValue === 'number' ? rawValue : parseFloat(String(rawValue).replace(/[^0-9.-]+/g, ''));
 
             return {
-              // ZMIANA: Zmieniliśmy item.cat_name na item.category zgodnie z bazą!
-              name: item.category || 'Other', 
-              value: isNaN(parsedValue) ? 0 : parsedValue, 
-              percentage: parseFloat(item.percentage) || 0
+              name: item.cat_name || item.category || 'other',
+              value: Number.isFinite(parsedValue) ? parsedValue : 0,
+              percentage: Number(item.percentage) || 0,
             };
           });
 
@@ -95,10 +97,10 @@ export const AllocationChart = () => {
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip 
-              formatter={(value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)}
+            <Tooltip
+              formatter={(value: number) => formatCurrency(value)}
               contentStyle={chartTooltipStyle}
-              itemStyle={{ color: '#e5e7eb', fontWeight: 'bold' }}
+              itemStyle={chartTooltipItemStyle}
             />
           </PieChart>
         </ResponsiveContainer>

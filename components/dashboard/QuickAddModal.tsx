@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { X, Search, Loader2, Minus, Plus, Calendar, Folder, TrendingUp, Percent } from 'lucide-react';
+import { ItemImage } from '@/components/ui/ItemImage';
 
 interface QuickAddModalProps {
   isOpen: boolean;
@@ -192,7 +193,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                           onClick={() => { setSelectedItem(item); setPrice(item.price?.toString() || ''); setSearchQuery(''); }}
                           className="p-3 flex items-center gap-3 hover:bg-steam-hover cursor-pointer border-b border-steam-border/50 last:border-0"
                         >
-                          <img src={item.icon_url} alt="" className="w-10 h-10 object-contain" />
+                          <ItemImage
+                            src={item.icon_url}
+                            alt={item.market_hash_name}
+                            className="w-10 h-10 object-contain"
+                            wrapperClassName="w-10 h-10 shrink-0"
+                          />
                           <div>
                             <p className="text-sm font-bold text-steam-text truncate">{item.market_hash_name}</p>
                             <p className="text-xs text-steam-tertiary">${item.price}</p>
@@ -208,7 +214,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             ) : (
               <div className="bg-steam-card border border-steam-border rounded-xl p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img src={selectedItem.icon_url} alt="" className="w-10 h-10 object-contain" />
+                  <ItemImage
+                    src={selectedItem.icon_url}
+                    alt={selectedItem.market_hash_name}
+                    className="w-10 h-10 object-contain"
+                    wrapperClassName="w-10 h-10 shrink-0"
+                  />
                   <div>
                     <p className="text-sm font-bold text-steam-text truncate max-w-[200px]">{selectedItem.market_hash_name}</p>
                   </div>
