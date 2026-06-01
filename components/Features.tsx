@@ -34,7 +34,6 @@ const features: ExtendedFeature[] = [
     title: "Multiple Accounts",
     description: "Storage units? Alt accounts? Track everything in one unified dashboard view without relogging.",
     icon: Wallet,
-    comingSoon: true // <--- Dodana flaga
   },
   {
     title: "Analytics Dashboard",

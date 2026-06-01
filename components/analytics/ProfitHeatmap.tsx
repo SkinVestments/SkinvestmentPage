@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { formatCurrency } from '@/utils/display';
-import { CalendarDays, Loader2, Grid3X3 } from 'lucide-react';
+import { CalendarDays, Grid3X3 } from 'lucide-react';
+import { HeatmapGridSkeleton } from './AnalyticsSkeletons';
 
 type HeatmapUnit = 'DOW' | 'MONTH';
 type HeatmapMetric = 'profit' | 'revenue' | 'trades';
@@ -50,21 +51,40 @@ const formatMetric = (value: number, metric: HeatmapMetric): string => {
   return formatCurrency(value);
 };
 
-const cellBackground = (value: number, maxAbs: number, metric: HeatmapMetric): string => {
-  if (maxAbs <= 0 || value === 0) return 'var(--color-surface)';
+interface CellVisual {
+  background: string;
+  borderColor: string;
+  intensity: number;
+}
+
+const getCellVisual = (value: number, maxAbs: number, metric: HeatmapMetric): CellVisual => {
+  const neutral: CellVisual = {
+    background: 'var(--color-surface-elevated)',
+    borderColor: 'color-mix(in srgb, var(--color-card-border) 70%, transparent)',
+    intensity: 0,
+  };
+
+  if (maxAbs <= 0 || value === 0) return neutral;
 
   if (metric === 'profit') {
     const t = Math.min(1, Math.abs(value) / maxAbs);
-    const alpha = 0.12 + t * 0.55;
-    return value >= 0
-      ? `color-mix(in srgb, var(--color-profit) ${alpha * 100}%, var(--color-surface))`
-      : `color-mix(in srgb, var(--color-loss) ${alpha * 100}%, var(--color-surface))`;
+    const mix = 0.34 + t * 0.58;
+    const accent = value >= 0 ? 'var(--color-profit)' : 'var(--color-loss)';
+    return {
+      background: `color-mix(in srgb, ${accent} ${mix * 100}%, var(--color-surface-elevated))`,
+      borderColor: `color-mix(in srgb, ${accent} ${48 + t * 42}%, transparent)`,
+      intensity: t,
+    };
   }
 
   const t = Math.min(1, value / maxAbs);
-  const alpha = 0.1 + t * 0.5;
-  const color = metric === 'revenue' ? '#3b82f6' : '#a855f7';
-  return `color-mix(in srgb, ${color} ${alpha * 100}%, var(--color-surface))`;
+  const mix = 0.3 + t * 0.62;
+  const accent = metric === 'revenue' ? '#2563eb' : '#9333ea';
+  return {
+    background: `color-mix(in srgb, ${accent} ${mix * 100}%, var(--color-surface-elevated))`,
+    borderColor: `color-mix(in srgb, ${accent} ${44 + t * 46}%, transparent)`,
+    intensity: t,
+  };
 };
 
 const normalizeRow = (row: Record<string, unknown>): HeatmapRow => ({
@@ -104,6 +124,42 @@ interface HeatmapGridProps {
   columnsClass: string;
 }
 
+/** Readable label + value colors on tinted cells (no background chips). */
+const getHeatmapTextColors = (
+  hasData: boolean,
+  metric: HeatmapMetric,
+  value: number,
+  intensity: number,
+): { label: string; value: string } => {
+  if (!hasData) {
+    return { label: 'text-steam-tertiary', value: 'text-steam-tertiary' };
+  }
+
+  const hot = intensity > 0.15;
+
+  if (metric === 'profit') {
+    if (value > 0) {
+      return hot
+        ? { label: 'text-emerald-950 dark:text-emerald-50', value: 'text-emerald-900 dark:text-emerald-100' }
+        : { label: 'text-steam-text', value: 'text-steam-profit' };
+    }
+    if (value < 0) {
+      return hot
+        ? { label: 'text-red-950 dark:text-red-50', value: 'text-red-900 dark:text-red-100' }
+        : { label: 'text-steam-text', value: 'text-steam-loss' };
+    }
+  }
+
+  if (hot) {
+    if (metric === 'revenue') {
+      return { label: 'text-blue-950 dark:text-blue-50', value: 'text-blue-900 dark:text-blue-100' };
+    }
+    return { label: 'text-purple-950 dark:text-purple-50', value: 'text-purple-900 dark:text-purple-100' };
+  }
+
+  return { label: 'text-steam-text', value: 'text-steam-text' };
+};
+
 const HeatmapGrid = ({ title, labels, cells, metric, columnsClass }: HeatmapGridProps) => {
   const values = labels.map((_, i) => getMetricValue(cells.get(i + 1) ?? emptyCell(), metric));
   const maxAbs =
@@ -113,7 +169,7 @@ const HeatmapGrid = ({ title, labels, cells, metric, columnsClass }: HeatmapGrid
 
   return (
     <div>
-      <h4 className="text-xs font-bold text-steam-tertiary uppercase tracking-wider mb-3">
+      <h4 className="text-xs font-bold text-steam-secondary uppercase tracking-wider mb-3">
         {title}
       </h4>
       <div className={`grid gap-2 ${columnsClass}`}>
@@ -121,28 +177,32 @@ const HeatmapGrid = ({ title, labels, cells, metric, columnsClass }: HeatmapGrid
           const cell = cells.get(index + 1) ?? emptyCell();
           const value = getMetricValue(cell, metric);
           const hasData = cell.trades_count > 0;
+          const visual = getCellVisual(value, maxAbs, metric);
+          const isHot = hasData && visual.intensity > 0.2;
+          const textColors = getHeatmapTextColors(hasData, metric, value, visual.intensity);
 
           return (
             <div
               key={`${title}-${label}`}
-              className="rounded-xl p-2 sm:p-3 min-h-[72px] flex flex-col justify-between transition-colors"
-              style={{ background: cellBackground(value, maxAbs, metric) }}
+              className={`rounded-xl p-2 sm:p-3 min-h-[72px] flex flex-col justify-between transition-colors border ${
+                isHot ? 'shadow-sm' : ''
+              }`}
+              style={{
+                background: visual.background,
+                borderColor: visual.borderColor,
+              }}
               title={
                 hasData
                   ? `${label}: ${formatMetric(value, metric)} · ${cell.trades_count} trade${cell.trades_count === 1 ? '' : 's'}`
                   : `${label}: no sells`
               }
             >
-              <span className="text-[10px] font-bold text-steam-tertiary uppercase">{label}</span>
               <span
-                className={`text-sm font-bold tabular-nums ${
-                  metric === 'profit' && value > 0
-                    ? 'text-green-400'
-                    : metric === 'profit' && value < 0
-                      ? 'text-red-400'
-                      : 'text-steam-text'
-                }`}
+                className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wide ${textColors.label}`}
               >
+                {label}
+              </span>
+              <span className={`text-sm font-bold tabular-nums ${textColors.value}`}>
                 {hasData ? formatMetric(value, metric) : '—'}
               </span>
             </div>
@@ -229,9 +289,7 @@ export const ProfitHeatmap = () => {
       </div>
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center min-h-[200px]">
-          <Loader2 className="animate-spin text-steam-tertiary w-8 h-8" />
-        </div>
+        <HeatmapGridSkeleton />
       ) : errorMessage ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center min-h-[200px] gap-3">
           <p className="text-sm text-red-400 font-medium">{errorMessage}</p>

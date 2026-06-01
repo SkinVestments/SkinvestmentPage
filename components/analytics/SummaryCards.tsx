@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
-import { TrendingUp, DollarSign, Activity, Wallet, Loader2, Flame, Dice5 } from 'lucide-react';
+import { TrendingUp, DollarSign, Activity, Wallet, Flame, Dice5 } from 'lucide-react';
+import { SummaryCardsSkeleton } from './AnalyticsSkeletons';
 import { formatCurrency } from '@/utils/display';
 import {
   normalizePortfolioCurrentValues,
@@ -92,11 +93,7 @@ export const SummaryCards = () => {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center p-10">
-        <Loader2 className="animate-spin text-steam-accent w-8 h-8" />
-      </div>
-    );
+    return <SummaryCardsSkeleton />;
   }
 
   const streakWeeks = dropsAnalytics?.current_streak ?? 0;

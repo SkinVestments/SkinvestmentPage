@@ -173,6 +173,26 @@ select option {
   border-radius: 4px;
 }
 
+@keyframes shimmer-slide {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-text-primary) 4%, var(--color-surface-elevated)) 0%,
+    color-mix(in srgb, var(--color-text-primary) 10%, var(--color-surface-elevated)) 45%,
+    color-mix(in srgb, var(--color-text-primary) 4%, var(--color-surface-elevated)) 90%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-slide 1.6s ease-in-out infinite;
+}
+
 /* Toggle switch knob (peer markup unchanged) */
 .theme-switch-knob::after {
   background-color: var(--color-surface-overlay) !important;
