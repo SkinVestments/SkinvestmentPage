@@ -3,11 +3,18 @@ import { Apple, ShieldCheck, Globe, Package } from 'lucide-react';
 import { Button } from './Button';
 import { GooglePlayIcon } from './icons/GooglePlayIcon';
 import { APP_STORE_URL, GOOGLE_PLAY_URL } from '@/constants/appLinks';
+import { useTheme } from '@/context/ThemeContext';
 import { useWeeklyReset } from '../utils/utils';
 
+const HERO_SCREEN = {
+  dark: '/images/screen-b.png',
+  light: '/images/screen-w.png',
+} as const;
 
 export const Hero: React.FC = () => {
   const resetTimer = useWeeklyReset();
+  const { theme } = useTheme();
+  const screenSrc = theme === 'light' ? HERO_SCREEN.light : HERO_SCREEN.dark;
   
   return (
     <section className="relative min-h-[90vh] sm:min-h-[95vh] flex items-center pt-24 sm:pt-32 pb-16 sm:pb-24 bg-steam-bg">
@@ -105,10 +112,10 @@ export const Hero: React.FC = () => {
 
               {/* Screen Content - Idealne wycentrowanie z dopasowanym zaokrągleniem rogu */}
               <div className="absolute inset-0 z-30 overflow-hidden rounded-[2rem] sm:rounded-[3rem] bg-steam-bg flex items-center justify-center">
-                  <img 
-                      src="/images/screen.png" 
-                      alt="Skinvestments App Interface" 
-                      className="w-full h-full object-cover object-center"
+                  <img
+                    src={screenSrc}
+                    alt="Skinvestments App Interface"
+                    className="w-full h-full object-cover object-center transition-opacity duration-300"
                   />
               </div>
             </div>

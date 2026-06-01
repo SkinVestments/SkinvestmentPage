@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { formatCurrency } from '@/utils/display';
-import { AlertCircle, Clock, Loader2, Moon, TrendingUp } from 'lucide-react';
+import { AlertCircle, Clock, Moon, TrendingUp } from 'lucide-react';
+import { StagnationListSkeleton } from './AnalyticsSkeletons';
 import { ItemImage } from '@/components/ui/ItemImage';
 
 export interface StagnantItem {
@@ -24,6 +25,16 @@ const THRESHOLD_OPTIONS = [
   { label: '180 days', value: 180 },
   { label: '365 days', value: 365 },
 ] as const;
+
+const STEAM_ICON_CDN = 'https://community.cloudflare.steamstatic.com/economy/image/';
+
+const resolveIconUrl = (raw: unknown): string | null => {
+  if (raw == null || raw === '') return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  if (s.startsWith('http://') || s.startsWith('https://')) return s;
+  return `${STEAM_ICON_CDN}${s.replace(/^\//, '')}`;
+};
 
 const formatLastActivity = (iso: string) => {
   try {
@@ -46,7 +57,7 @@ export const StagnationDetector = () => {
   const normalizeRow = (row: Record<string, unknown>): StagnantItem => ({
     skin_id: String(row.skin_id ?? ''),
     market_hash_name: String(row.market_hash_name ?? 'Unknown item'),
-    icon_url: row.icon_url ? String(row.icon_url) : null,
+    icon_url: resolveIconUrl(row.icon_url ?? row.icon),
     folder_id: row.folder_id ? String(row.folder_id) : null,
     quantity: Number(row.quantity ?? 0),
     avg_buy_price: Number(row.avg_buy_price ?? 0),
@@ -171,9 +182,7 @@ export const StagnationDetector = () => {
 
       <div className="flex-1 min-h-0 p-4 sm:p-6 pt-0 sm:pt-0">
         {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <Loader2 className="animate-spin text-steam-tertiary w-8 h-8" />
-          </div>
+          <StagnationListSkeleton />
         ) : errorMessage ? (
           <div className="flex flex-col items-center justify-center text-center h-48 px-4">
             <AlertCircle className="w-10 h-10 text-steam-loss mb-3" />
@@ -215,12 +224,14 @@ export const StagnationDetector = () => {
                         : 'cursor-default'
                     }`}
                   >
-                    <ItemImage
-                      src={item.icon_url}
-                      alt={item.market_hash_name}
-                      className="w-full h-full object-contain"
-                      wrapperClassName="w-12 h-9 shrink-0 rounded overflow-hidden"
-                    />
+                    <div className="relative w-14 h-11 shrink-0 theme-item-preview rounded-md flex items-center justify-center p-1 border border-steam-border/50">
+                      <ItemImage
+                        src={item.icon_url}
+                        alt={item.market_hash_name}
+                        className="max-w-full max-h-full object-contain drop-shadow-sm"
+                        wrapperClassName="w-full h-full"
+                      />
+                    </div>
 
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-steam-text truncate">{item.market_hash_name}</p>

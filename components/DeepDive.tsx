@@ -1,6 +1,5 @@
 import React from 'react';
 import { Package, Lock, BarChart2, ArrowRight, ShieldCheck, XCircle, CheckCircle2 } from 'lucide-react';
-import { Button } from './Button';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 export const DeepDive: React.FC = () => {
   return (
@@ -108,9 +107,8 @@ export const DeepDive: React.FC = () => {
                      </h3>
                      <p className="text-steam-secondary text-lg leading-relaxed">
                          Our proprietary charting engine overlays your transaction history onto global market data. 
-                         Know exactly how much profit you made on that <span className="text-steam-text font-medium">AWP | Gungnir</span> trade.
+                         Know exactly how much profit you made on that <span className="text-steam-text font-medium">AWP | Dragon Lore</span> trade.
                      </p>
-                     <Button>Explore Analytics</Button>
                  </div>
 
                  {/* TradingView Style Mockup */}

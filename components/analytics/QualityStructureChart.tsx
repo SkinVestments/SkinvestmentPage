@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, Diamond } from 'lucide-react';
+import { Diamond } from 'lucide-react';
+import { QualityPyramidSkeleton } from './AnalyticsSkeletons';
 
 const RARITY_COLORS: Record<string, string> = {
   contraband: '#EAB308',
@@ -25,6 +26,17 @@ const PYRAMID_ORDER = [
   'covert',
   'contraband',
 ];
+
+/** Shown as separate pyramid rows; everything else merges into one bottom block */
+const PREMIUM_PYRAMID_KEYS = [
+  'mil-spec',
+  'restricted',
+  'classified',
+  'covert',
+  'contraband',
+] as const;
+
+const BULK_SEGMENT_COLOR = '#4B5563';
 
 const TIER_COUNT = PYRAMID_ORDER.length;
 
@@ -64,6 +76,43 @@ const getRarityInfo = (rarityName: string) => {
 const pyramidSortIndex = (originalName: string) => {
   const idx = PYRAMID_ORDER.findIndex((r) => originalName.includes(r));
   return idx === -1 ? 0 : idx;
+};
+
+const isPremiumPyramidTier = (originalName: string) =>
+  PREMIUM_PYRAMID_KEYS.some((key) => originalName.includes(key));
+
+/** One widest bottom row for base/consumer/industrial/unknown rarities (Exotic, High Grade, etc.) */
+const consolidatePyramidSegments = (
+  segments: ChartSegment[],
+  totalItems: number,
+): ChartSegment[] => {
+  const premium: ChartSegment[] = [];
+  let bulkCount = 0;
+
+  for (const seg of segments) {
+    if (isPremiumPyramidTier(seg.originalName)) {
+      premium.push(seg);
+    } else {
+      bulkCount += seg.count;
+    }
+  }
+
+  premium.sort((a, b) => a.tierIndex - b.tierIndex);
+
+  if (bulkCount <= 0) return premium;
+
+  const bulkPct = totalItems > 0 ? (bulkCount / totalItems) * 100 : 0;
+  const bulkRow: ChartSegment = {
+    originalName: 'common-bulk',
+    name: 'COMMON',
+    count: bulkCount,
+    value: bulkPct,
+    color: BULK_SEGMENT_COLOR,
+    percentageLabel: `${bulkPct.toFixed(0)}%`,
+    tierIndex: 0,
+  };
+
+  return [bulkRow, ...premium];
 };
 
 /** Width % of container — wider at bottom tier, narrower at top */
@@ -131,11 +180,11 @@ export const QualityStructureChart = () => {
             })
             .filter((item) => item.count > 0);
 
-          processedData.sort((a, b) => a.tierIndex - b.tierIndex);
+          const pyramidData = consolidatePyramidSegments(processedData, totalItems);
 
-          setData(processedData);
+          setData(pyramidData);
 
-          const highTierShare = processedData
+          const highTierShare = pyramidData
             .filter((d) => ['PINK', 'RED', 'GOLD'].includes(d.name))
             .reduce((sum, d) => sum + d.value, 0);
 
@@ -158,11 +207,7 @@ export const QualityStructureChart = () => {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg h-[400px] flex items-center justify-center">
-        <Loader2 className="animate-spin text-steam-tertiary w-8 h-8" />
-      </div>
-    );
+    return <QualityPyramidSkeleton />;
   }
 
   if (data.length === 0) {
@@ -203,7 +248,7 @@ export const QualityStructureChart = () => {
 
               return (
                 <div
-                  key={item.name}
+                  key={item.originalName}
                   className="flex w-full justify-center"
                   onMouseEnter={() => setHovered(item.name)}
                   onMouseLeave={() => setHovered(null)}

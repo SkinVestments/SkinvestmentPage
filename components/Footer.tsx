@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Twitter, Mail, MessageSquare } from 'lucide-react';
+import { Github, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
@@ -18,9 +18,6 @@ export const Footer: React.FC = () => {
             <div className="mt-6 flex gap-4">
                 <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:bg-steam-accent transition-all">
                     <Twitter size={16} />
-                </a>
-                <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:bg-[#5865F2] transition-all">
-                    <MessageSquare size={16} /> {/* Discord proxy */}
                 </a>
                 <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:theme-subtle-strong transition-all">
                     <Github size={16} />

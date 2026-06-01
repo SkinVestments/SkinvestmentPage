@@ -5,7 +5,7 @@ import {
   ChevronLeft, ChevronRight, ArrowUpDown, Loader2, 
   TrendingUp, TrendingDown, Package, Plus, CheckCircle, Wallet, ArrowRight 
 } from 'lucide-react';
-import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis, YAxis, Legend } from 'recharts';
 import { useWeeklyReset } from '@/utils/utils';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { LogDropModal } from '../../components/dashboard/LogDropModal';
@@ -14,7 +14,14 @@ import { QuickAddModal } from '@/components/dashboard/QuickAddModal';
 import { ItemImage } from '@/components/ui/ItemImage';
 
 import { useNavigate } from 'react-router-dom';
-import { chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
+import {
+  chartAxisLineStyle,
+  chartAxisTickStyle,
+  chartTooltipItemStyle,
+  chartTooltipStyle,
+  formatChartXAxis,
+  formatChartYAxis,
+} from '@/utils/chartTheme';
 import {
   normalizePortfolioCurrentValues,
   type PortfolioCurrentValues,
@@ -227,7 +234,7 @@ const Panel = () => {
         {/* KOLUMNA 1 (Szeroka): WYKRES */}
         <div className="xl:col-span-2">
           
-          <div className="bg-steam-card rounded-2xl p-6 border border-steam-border shadow-xl relative overflow-hidden group h-full flex flex-col justify-between">
+          <div className="bg-steam-card rounded-2xl p-6 border border-steam-border shadow-xl relative overflow-x-hidden group h-full flex flex-col justify-between">
             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
               <TrendingUp className="w-40 h-40 text-steam-accent" />
             </div>
@@ -265,7 +272,7 @@ const Panel = () => {
               </div>
             </div>
 
-            <div className="h-[260px] mt-6 w-full relative">
+            <div className="h-[320px] mt-6 w-full relative shrink-0">
               {chartLoading ? (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
                   <Loader2 className="w-8 h-8 text-steam-accent animate-spin" />
@@ -277,7 +284,11 @@ const Panel = () => {
               ) : null}
 
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} className={chartLoading ? 'opacity-30' : ''}>
+                <AreaChart
+                  data={chartData}
+                  className={chartLoading ? 'opacity-30' : ''}
+                  margin={{ top: 8, right: 12, left: 8, bottom: 28 }}
+                >
                   <defs>
                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor={isPositive ? 'var(--color-profit)' : 'var(--color-loss)'} stopOpacity={0.3}/>
@@ -288,24 +299,83 @@ const Panel = () => {
                       <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  
-                  <XAxis dataKey="chart_date" hide />
-                  <YAxis hide domain={['auto', 'auto']} />
-                  
-                  <Tooltip 
+
+                  <XAxis
+                    dataKey="chart_date"
+                    tick={chartAxisTickStyle}
+                    axisLine={chartAxisLineStyle}
+                    tickLine={false}
+                    tickFormatter={formatChartXAxis}
+                    minTickGap={28}
+                    height={50}
+                    label={{
+                      value: 'Date',
+                      position: 'bottom',
+                      offset: 0,
+                      fill: 'var(--color-text-tertiary)',
+                      fontSize: 10,
+                    }}
+                  />
+                  <YAxis
+                    tick={chartAxisTickStyle}
+                    axisLine={chartAxisLineStyle}
+                    tickLine={false}
+                    width={52}
+                    tickFormatter={formatChartYAxis}
+                    domain={['auto', 'auto']}
+                    label={{
+                      value: 'Value (USD)',
+                      angle: -90,
+                      position: 'insideLeft',
+                      offset: 8,
+                      fill: 'var(--color-text-tertiary)',
+                      fontSize: 10,
+                    }}
+                  />
+
+                  <Tooltip
                     formatter={(value: number, name: string) => {
-                      if (name === 'portfolio_value') return [formatCurrency(value), 'Portfolio Value'];
-                      if (name === 'invested_value') return [formatCurrency(value), 'Invested Capital'];
+                      if (name === 'Portfolio Value' || name === 'portfolio_value') {
+                        return [formatCurrency(value), 'Portfolio Value'];
+                      }
+                      if (name === 'Invested Capital' || name === 'invested_value') {
+                        return [formatCurrency(value), 'Invested Capital'];
+                      }
                       return [formatCurrency(value), name];
                     }}
-                    labelFormatter={(label) => `Date: ${label}`}
+                    labelFormatter={(label) => `Date: ${formatChartXAxis(String(label))}`}
                     contentStyle={chartTooltipStyle}
                     itemStyle={chartTooltipItemStyle}
                     cursor={{ stroke: 'var(--color-card-border)', strokeWidth: 1 }}
                   />
-                  
-                  <Area type="monotone" dataKey="invested_value" stroke="#8b5cf6" strokeWidth={2} strokeDasharray="4 4" fillOpacity={1} fill="url(#colorInvested)" />
-                  <Area type="monotone" dataKey="portfolio_value" stroke={isPositive ? 'var(--color-profit)' : 'var(--color-loss)'} strokeWidth={3} fillOpacity={1} fill="url(#colorValue)" />
+
+                  <Legend
+                    verticalAlign="top"
+                    align="right"
+                    iconType="plainline"
+                    iconSize={14}
+                    wrapperStyle={{ fontSize: 11, color: 'var(--color-text-secondary)', paddingBottom: 4 }}
+                  />
+
+                  <Area
+                    type="monotone"
+                    name="Invested Capital"
+                    dataKey="invested_value"
+                    stroke="#8b5cf6"
+                    strokeWidth={2}
+                    strokeDasharray="4 4"
+                    fillOpacity={1}
+                    fill="url(#colorInvested)"
+                  />
+                  <Area
+                    type="monotone"
+                    name="Portfolio Value"
+                    dataKey="portfolio_value"
+                    stroke={isPositive ? 'var(--color-profit)' : 'var(--color-loss)'}
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorValue)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -462,7 +532,7 @@ const Panel = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-steam-surface text-steam-tertiary text-xs font-bold uppercase tracking-wider border-b border-steam-border">
-                  <th className="p-5 pl-6">Item</th>
+                  <th className="p-5 pl-6 w-[45%]">Item</th>
                   <th 
                     className="p-5 cursor-pointer hover:text-steam-accent transition-colors"
                     onClick={() => handleSort('quantity')}
@@ -483,10 +553,10 @@ const Panel = () => {
                    const rarityStyle = getRarityStyle(item.cs2_items?.rarity);
                    return (
                     <tr key={item.id} className="hover:bg-steam-hover transition-colors group">
-                      <td className="p-4 pl-6">
-                        <div className="flex items-center gap-4">
+                      <td className="p-4 pl-6 w-[45%] max-w-0">
+                        <div className="flex items-center gap-4 min-w-0">
                           <div className={`
-                            relative w-16 h-12 bg-gradient-to-b from-steam-elevated to-steam-bg 
+                            relative w-16 h-12 shrink-0 bg-gradient-to-b from-steam-elevated to-steam-bg 
                             rounded-md flex items-center justify-center p-1 
                             border-b-[3px] ${rarityStyle.border} ${rarityStyle.shadow}
                             transition-all duration-300 group-hover:scale-105
@@ -498,9 +568,13 @@ const Panel = () => {
                               wrapperClassName="w-full h-full"
                             />
                           </div>
-                          <div className="flex flex-col">
-                             <span className="font-bold text-steam-text group-hover:text-steam-text truncate max-w-[150px]">{item.cs2_items?.market_hash_name}</span>
-                             <span className={`text-[10px] uppercase font-bold tracking-wider ${rarityStyle.text}`}>{item.cs2_items?.rarity || 'Common'}</span>
+                          <div className="flex flex-col min-w-0 flex-1">
+                             <span className="font-bold text-steam-text group-hover:text-steam-text truncate whitespace-nowrap" title={item.cs2_items?.market_hash_name ?? ''}>
+                               {item.cs2_items?.market_hash_name}
+                             </span>
+                             <span className={`text-[10px] uppercase font-bold tracking-wider truncate whitespace-nowrap ${rarityStyle.text}`}>
+                               {item.cs2_items?.rarity || 'Common'}
+                             </span>
                           </div>
                         </div>
                       </td>
