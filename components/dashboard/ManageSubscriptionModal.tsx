@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Check, Infinity, Loader2, Sparkles, X } from 'lucide-react';
+import { Check, Infinity, Lock, Sparkles, X } from 'lucide-react';
 import {
   BillingCycle,
   PlanId,
   SUBSCRIPTION_PLANS,
-  getPeriodLabel,
+  getPlanPriceDisplay,
 } from '@/constants/subscriptionPlans';
 
 interface ManageSubscriptionModalProps {
@@ -24,8 +24,6 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
 }) => {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>(currentBillingCycle);
   const [selectedPlanId, setSelectedPlanId] = useState<PlanId>(currentPlanId);
-  const [isSaving, setIsSaving] = useState(false);
-
   useEffect(() => {
     if (isOpen) {
       setBillingCycle(currentBillingCycle);
@@ -35,11 +33,9 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
 
   if (!isOpen) return null;
 
-  const handleConfirm = async () => {
-    setIsSaving(true);
-    await new Promise((r) => setTimeout(r, 400));
-    onSelectPlan(selectedPlanId, billingCycle);
-    setIsSaving(false);
+  const handleSelectPlan = (planId: PlanId) => {
+    setSelectedPlanId(planId);
+    onSelectPlan(planId, billingCycle);
     onClose();
   };
 
@@ -59,7 +55,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
               Choose your plan
             </h3>
             <p className="text-sm text-steam-secondary mt-1">
-              Pick the subscription that fits your trading style.
+              Same plans as the mobile app — one account, synced across devices.
             </p>
           </div>
           <button
@@ -88,7 +84,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                   {cycle}
                   {cycle === 'yearly' && (
                     <span className="absolute -top-2.5 -right-1 text-[8px] bg-green-500 text-black px-1 py-0.5 rounded-full font-extrabold">
-                      -15%
+                      -20%
                     </span>
                   )}
                   {cycle === 'lifetime' && (
@@ -118,21 +114,27 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
               const isSelected = selectedPlanId === plan.id;
               const isCurrent = currentPlanId === plan.id && currentBillingCycle === billingCycle;
               const Icon = plan.icon;
+              const { price, period, yearlyNote } = getPlanPriceDisplay(plan.id, billingCycle);
 
               return (
                 <button
                   key={plan.id}
                   type="button"
-                  onClick={() => setSelectedPlanId(plan.id)}
+                  onClick={() => handleSelectPlan(plan.id)}
                   className={`relative text-left p-5 rounded-2xl border transition-all flex flex-col ${
                     isSelected
                       ? 'border-steam-accent bg-steam-accent/10 ring-2 ring-steam-accent/40'
                       : 'border-steam-border bg-steam-card hover:border-steam-border'
                   } ${plan.highlight && !isSelected ? 'border-steam-accent/30' : ''}`}
                 >
+                  {plan.elite && (
+                    <span className="absolute -top-2.5 left-4 px-2 py-0.5 bg-yellow-500 text-black text-[9px] font-bold uppercase tracking-wider rounded-full">
+                      Elite
+                    </span>
+                  )}
                   {plan.highlight && (
                     <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-steam-accent text-white text-[9px] font-bold uppercase tracking-wider rounded-full flex items-center gap-1">
-                      <Sparkles size={10} /> Popular
+                      <Sparkles size={10} /> Most popular
                     </span>
                   )}
                   {isCurrent && (
@@ -145,22 +147,48 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                     <Icon size={20} />
                   </div>
                   <h4 className="font-bold text-steam-text text-lg">{plan.name}</h4>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-2xl font-bold text-steam-text">{plan.price[billingCycle]}</span>
-                    {plan.id !== 'basic' && (
-                      <span className="text-steam-tertiary text-xs">{getPeriodLabel(billingCycle)}</span>
+                  <div className="mt-1">
+                    <div className="flex items-baseline gap-1 flex-wrap">
+                      <span className="text-2xl font-bold text-steam-text">{price}</span>
+                      <span className="text-steam-tertiary text-xs">{period}</span>
+                    </div>
+                    {yearlyNote && (
+                      <p className="text-[10px] text-steam-tertiary mt-0.5 capitalize">{yearlyNote}</p>
                     )}
                   </div>
-                  <p className="text-xs text-steam-secondary mt-2 mb-4 leading-relaxed">{plan.desc}</p>
+                  <p className="text-xs text-steam-secondary mt-2 mb-3 leading-relaxed">{plan.desc}</p>
+
+                  {plan.includesLabel && (
+                    <p className="text-[11px] font-semibold text-steam-text mb-2">{plan.includesLabel}</p>
+                  )}
 
                   <ul className="space-y-2 flex-1">
                     {plan.features.map((feat) => (
-                      <li key={feat} className="flex items-start gap-2 text-xs text-steam-secondary">
+                      <li
+                        key={feat.text}
+                        className={`flex items-start gap-2 text-xs ${
+                          feat.soon ? 'text-steam-tertiary' : 'text-steam-secondary'
+                        }`}
+                      >
                         <Check size={12} className="text-green-500 shrink-0 mt-0.5" strokeWidth={3} />
-                        {feat}
+                        <span className={feat.soon ? 'opacity-80' : undefined}>
+                          {feat.text}
+                          {feat.soon && (
+                            <span className="ml-1.5 inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide bg-red-500/15 text-red-400 border border-red-500/25">
+                              Soon
+                            </span>
+                          )}
+                        </span>
                       </li>
                     ))}
                   </ul>
+
+                  {plan.footnote && (
+                    <p className="mt-3 flex items-start gap-1.5 text-[10px] text-steam-tertiary leading-snug">
+                      <Lock size={11} className="shrink-0 mt-0.5 opacity-70" />
+                      {plan.footnote}
+                    </p>
+                  )}
 
                   {isSelected && (
                     <div className="mt-4 pt-3 border-t border-steam-accent/20 text-center">
@@ -173,30 +201,6 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
               );
             })}
           </div>
-        </div>
-
-        <div className="flex flex-col-reverse sm:flex-row gap-3 p-5 sm:p-6 border-t border-steam-border shrink-0 bg-steam-bg/50">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 py-3 rounded-xl font-bold text-steam-secondary hover:text-steam-text hover:bg-steam-hover transition-colors border border-steam-border"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirm}
-            disabled={isSaving}
-            className="flex-1 py-3 rounded-xl font-bold bg-steam-accent hover:opacity-90 text-white transition-colors shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" /> Saving…
-              </>
-            ) : (
-              `Confirm ${SUBSCRIPTION_PLANS.find((p) => p.id === selectedPlanId)?.name ?? 'Plan'}`
-            )}
-          </button>
         </div>
       </div>
     </div>
