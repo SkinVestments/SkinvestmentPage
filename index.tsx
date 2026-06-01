@@ -1,6 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { applyThemeToDocument } from './context/ThemeContext';
+import { THEME_STORAGE_KEY } from './constants/appTheme';
+
+const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+applyThemeToDocument(storedTheme === 'light' ? 'light' : 'dark');
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

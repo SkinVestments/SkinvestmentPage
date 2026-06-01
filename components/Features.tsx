@@ -45,13 +45,13 @@ const features: ExtendedFeature[] = [
 
 export const Features: React.FC = () => {
   return (
-    <section className="py-24 bg-[#0B0D12] relative overflow-hidden">
+    <section className="py-16 sm:py-24 bg-steam-bg relative overflow-hidden">
         {/* Subtle background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-blue-900/5 blur-[100px] rounded-full pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold font-display text-white mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold font-display text-steam-text mb-4">
             Pro Tools for <span className="text-steam-accent">Serious Traders</span>
           </h2>
           <p className="text-steam-secondary max-w-2xl mx-auto text-lg">
@@ -72,7 +72,7 @@ export const Features: React.FC = () => {
             {/* Zamiana button na Link */}
             <Link 
               to="/features" 
-              className="px-8 py-3 rounded-full bg-[#161B24] text-white font-bold hover:bg-[#1C222E] transition-colors border border-white/5 hover:border-steam-accent/50 flex items-center gap-2 mx-auto"
+              className="px-8 py-3 rounded-full bg-steam-card text-steam-text font-bold hover:bg-steam-hover transition-colors border border-steam-border/50 hover:border-steam-accent/50 flex items-center gap-2 mx-auto"
             >
               View Full Feature List <span className="text-steam-accent">&rarr;</span>
             </Link>
@@ -105,7 +105,7 @@ const FeatureCard: React.FC<{ feature: ExtendedFeature }> = ({ feature }) => {
             ref={divRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="relative p-8 rounded-2xl bg-[#12161E] border border-white/5 overflow-hidden group hover:scale-[1.01] transition-transform duration-300 flex flex-col"
+            className="relative p-8 rounded-2xl bg-steam-elevated border border-steam-border/50 overflow-hidden group hover:scale-[1.01] transition-transform duration-300 flex flex-col"
         >
             {/* Spotlight Effect */}
             <div 
@@ -130,7 +130,7 @@ const FeatureCard: React.FC<{ feature: ExtendedFeature }> = ({ feature }) => {
 
             <div className="relative z-10 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 flex items-center justify-center group-hover:border-steam-accent/30 group-hover:bg-steam-accent/10 transition-colors">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-white/5 to-white/0 border border-steam-border flex items-center justify-center group-hover:border-steam-accent/30 group-hover:bg-steam-accent/10 transition-colors">
                         <feature.icon className="w-6 h-6 text-steam-secondary group-hover:text-steam-accent transition-colors" />
                     </div>
                     
@@ -144,7 +144,7 @@ const FeatureCard: React.FC<{ feature: ExtendedFeature }> = ({ feature }) => {
                     )}
                 </div>
                 
-                <h3 className="text-xl font-bold text-white mb-3 font-display">
+                <h3 className="text-xl font-bold text-steam-text mb-3 font-display">
                     {feature.title}
                 </h3>
                 <p className="text-steam-secondary leading-relaxed text-sm">

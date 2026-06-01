@@ -16,10 +16,10 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = "relative px-6 py-3 rounded-md font-semibold transition-all duration-300 flex items-center justify-center gap-2 group overflow-hidden tracking-wide";
   
   const variants = {
-    primary: "bg-gradient-to-r from-steam-accent to-blue-500 text-white shadow-[0_4px_20px_rgba(102,192,244,0.3)] hover:shadow-[0_4px_25px_rgba(102,192,244,0.5)] hover:scale-[1.02] active:scale-[0.98]",
-    secondary: "bg-steam-light text-white hover:bg-white/10 hover:text-steam-accent border border-transparent",
-    outline: "bg-transparent text-steam-secondary border border-steam-secondary/30 hover:border-steam-accent hover:text-steam-accent hover:bg-steam-accent/5",
-    ghost: "bg-transparent text-steam-secondary hover:text-white"
+    primary: "bg-gradient-to-r from-steam-accent to-steam-accent-dark text-white shadow-[0_4px_20px_color-mix(in_srgb,var(--color-accent)_30%,transparent)] hover:shadow-[0_4px_25px_color-mix(in_srgb,var(--color-accent)_50%,transparent)] hover:scale-[1.02] active:scale-[0.98]",
+    secondary: "bg-steam-surface text-steam-text hover:bg-steam-hover hover:text-steam-accent border border-steam-border",
+    outline: "bg-transparent text-steam-secondary border border-steam-border hover:border-steam-accent hover:text-steam-accent hover:bg-steam-accent/10",
+    ghost: "bg-transparent text-steam-secondary hover:text-steam-text"
   };
 
   return (

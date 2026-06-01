@@ -42,18 +42,23 @@
             },
             colors: {
               steam: {
-                bg: '#0B0D12', // Deeper, richer black/blue
-                surface: '#12161E', // Slightly lighter
-                card: '#161B24',
-                light: '#2A475E',
-                accent: '#3B82F6', // More electric blue
-                'accent-dark': '#2563EB',
-                text: '#FFFFFF',
-                secondary: '#94A3B8',
-                tertiary: '#64748B',
-                profit: '#10B981', // Emerald green
-                loss: '#EF4444', // Bright red
-                gold: '#F59E0B',
+                bg: 'var(--color-background)',
+                surface: 'var(--color-surface)',
+                elevated: 'var(--color-surface-elevated)',
+                card: 'var(--color-surface-overlay)',
+                hover: 'var(--color-surface-hover)',
+                border: 'var(--color-card-border)',
+                light: 'var(--color-surface)',
+                accent: 'var(--color-accent)',
+                'accent-dark': 'var(--color-accent-variant)',
+                text: 'var(--color-text-primary)',
+                secondary: 'var(--color-text-secondary)',
+                tertiary: 'var(--color-text-tertiary)',
+                profit: 'var(--color-profit)',
+                loss: 'var(--color-loss)',
+                success: 'var(--color-success)',
+                warning: 'var(--color-warning)',
+                gold: '#FFC107',
               }
             },
             animation: {
@@ -68,8 +73,8 @@
             },
             keyframes: {
               glow: {
-                '0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.2)' },
-                '100%': { boxShadow: '0 0 25px rgba(59, 130, 246, 0.4), 0 0 10px rgba(59, 130, 246, 0.6)' },
+                '0%': { boxShadow: '0 0 5px color-mix(in srgb, var(--color-accent) 20%, transparent)' },
+                '100%': { boxShadow: '0 0 25px color-mix(in srgb, var(--color-accent) 40%, transparent), 0 0 10px color-mix(in srgb, var(--color-accent) 55%, transparent)' },
               },
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
@@ -85,12 +90,15 @@
       }
     </script>
     <style>
+      html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+      }
+
       body {
-        background-color: #0B0D12;
-        color: white;
         position: relative;
       }
-      /* Noise Texture Overlay */
+
       body::before {
         content: "";
         position: fixed;
@@ -103,39 +111,9 @@
         pointer-events: none;
         z-index: 50;
       }
-      
-      /* Modern Scrollbar */
+
       ::-webkit-scrollbar {
         width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0B0D12; 
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #1E293B; 
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #3B82F6; 
-      }
-
-      .glass-panel {
-        background: rgba(18, 22, 30, 0.7);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.03);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-      }
-      
-      .text-gradient {
-        background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-      }
-      
-      .text-gradient-accent {
-        background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
       }
     </style>
   <script type="importmap">
