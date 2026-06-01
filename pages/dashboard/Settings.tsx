@@ -46,9 +46,9 @@ const Settings = () => {
   const currentPlan = getPlanById(currentPlanId);
   const subscriptionLabel = currentPlan
     ? currentPlan.id === 'basic'
-      ? 'Free'
+      ? 'Starter · Free'
       : `${currentPlan.name} · ${currentBillingCycle}`
-    : 'Free';
+    : 'Starter · Free';
 
   const handleSelectPlan = (planId: PlanId, billingCycle: BillingCycle) => {
     setSubscription({ planId, billingCycle });
