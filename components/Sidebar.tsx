@@ -5,13 +5,11 @@ import {
   Package,
   History,
   Settings,
-  LogOut,
   Home,
   BarChart2,
   X,
   type LucideIcon,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 import { ThemeToggle } from './ThemeToggle';
 import { BrandLogo } from './BrandLogo';
 
@@ -60,8 +58,6 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({
   onClose,
   hideHeader,
 }) => {
-  const { signOut } = useAuth();
-
   const handleNav = () => onNavigate?.();
 
   return (
@@ -101,18 +97,6 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({
         >
           <Home className="w-4 h-4 shrink-0" /> Back to Home
         </NavLink>
-
-        <button
-          type="button"
-          onClick={() => {
-            handleNav();
-            signOut();
-          }}
-          className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-xl transition-all font-medium"
-        >
-          <LogOut className="w-5 h-5 shrink-0" />
-          Sign Out
-        </button>
       </div>
     </>
   );
