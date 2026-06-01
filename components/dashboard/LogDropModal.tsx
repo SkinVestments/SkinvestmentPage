@@ -3,6 +3,7 @@ import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { X, Search, CheckCircle, Folder, TrendingUp, Loader2, Box, Package } from 'lucide-react';
 import { ItemImage } from '@/components/ui/ItemImage';
+import { CustomSelect } from '@/components/ui/CustomSelect';
 
 // --- TYPY DANYCH ---
 
@@ -327,21 +328,23 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
               {/* === SECTION 3: SETTINGS === */}
               <div className="space-y-3 pt-2 border-t border-steam-border">
                 
-                {/* Collection Select */}
-                <div className="flex items-center justify-between p-1">
-                   <div className="flex items-center gap-3 text-steam-secondary">
-                      <Folder className="w-5 h-5 text-steam-tertiary" />
-                      <span className="text-sm font-medium">Add to collection:</span>
-                   </div>
-                   <select 
+                <div className="space-y-2 p-1">
+                  <div className="flex items-center gap-3 text-steam-secondary">
+                    <Folder className="w-5 h-5 text-steam-tertiary shrink-0" />
+                    <span className="text-sm font-medium">Add to vault</span>
+                  </div>
+                  {collections.length > 0 ? (
+                    <CustomSelect
                       value={selectedCollectionId}
-                      onChange={(e) => setSelectedCollectionId(e.target.value)}
-                      className="bg-steam-card border border-steam-border hover:border-steam-border text-steam-text text-sm rounded-lg px-3 py-2 focus:outline-none focus:border-steam-accent transition-colors cursor-pointer"
-                   >
-                      {collections.map(col => (
-                        <option key={col.id} value={col.id}>{col.name}</option>
-                      ))}
-                   </select>
+                      onChange={setSelectedCollectionId}
+                      options={collections.map((col) => ({ value: col.id, label: col.name }))}
+                      placeholder="Choose vault…"
+                      aria-label="Collection vault"
+                      className="w-full"
+                    />
+                  ) : (
+                    <p className="text-xs text-steam-tertiary">No collections</p>
+                  )}
                 </div>
 
                 {/* Investment Toggle */}
