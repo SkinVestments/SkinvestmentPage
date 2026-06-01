@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -29,6 +30,7 @@ import {
 // --- TYPY ---
 interface InventoryItem {
   id: string;
+  item_id: string;
   quantity: number;
   acquired_at: string;
   buy_price: number | null;
@@ -45,6 +47,7 @@ interface InventoryItem {
 
 const Inventory = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +66,7 @@ const Inventory = () => {
       const { data, error } = await supabase
         .from('portfolio_items')
         .select(`
-          id, quantity, acquired_at, buy_price, trade_lock_until,
+          id, item_id, quantity, acquired_at, buy_price, trade_lock_until,
           cs2_items ( market_hash_name, icon_url, price, rarity, type, price_source )
         `)
         .eq('user_id', user.id)
@@ -73,7 +76,7 @@ const Inventory = () => {
         const { data: fallbackData, error: fallbackError } = await supabase
           .from('portfolio_items')
           .select(`
-            id, quantity, acquired_at, buy_price,
+            id, item_id, quantity, acquired_at, buy_price,
             cs2_items ( market_hash_name, icon_url, price, rarity, type )
           `)
           .eq('user_id', user.id)
@@ -145,6 +148,10 @@ const Inventory = () => {
   }, [items, searchQuery, filters, sortBy, showPriceSourceFilter]);
 
   const activeFilterCount = countActiveFilters(filters);
+
+  const openItemDetail = (itemId: string) => {
+    navigate(`/item/${itemId}`, { state: { from: '/inventory' } });
+  };
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
   const totalValue = items.reduce(
@@ -272,7 +279,19 @@ const Inventory = () => {
                 const { status: pnlStatus, gainPct } = getPnlStatus(itemPrice, item.buy_price);
 
                 return (
-                  <div key={item.id} className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-border transition-colors group relative overflow-hidden flex flex-col shadow-lg">
+                  <div
+                    key={item.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => openItemDetail(item.item_id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openItemDetail(item.item_id);
+                      }
+                    }}
+                    className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-accent/40 transition-colors group relative overflow-hidden flex flex-col shadow-lg cursor-pointer"
+                  >
                     
                     {/* Badges */}
                     <div className="absolute top-2 right-2 z-20 flex flex-col items-end gap-1">
@@ -355,7 +374,11 @@ const Inventory = () => {
                       const locked = isItemTradeLocked(item.acquired_at, item.trade_lock_until);
                       const { status: pnlStatus, gainPct } = getPnlStatus(unitPrice, item.buy_price);
                       return (
-                        <tr key={item.id} className="hover:bg-steam-hover transition-colors group">
+                        <tr
+                          key={item.id}
+                          onClick={() => openItemDetail(item.item_id)}
+                          className="hover:bg-steam-hover transition-colors group cursor-pointer"
+                        >
                           <td className="p-3 pl-6">
                             <div className="flex items-center gap-4">
                               <div className={`w-14 h-10 rounded overflow-hidden border-b-2 ${rarityStyle.border}`}>

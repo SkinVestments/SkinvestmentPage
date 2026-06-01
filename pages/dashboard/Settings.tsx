@@ -36,9 +36,6 @@ const Settings = () => {
   
   // Przykładowe stany ustawień
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
-  const [currency, setCurrency] = useState('USD');
-  const [priceSource, setPriceSource] = useState('steam');
-  const [notifications, setNotifications] = useState(true);
   const [nickname, setNickname] = useState(user?.email?.split('@')[0] || 'Trader');
 
   const handleSignOut = async () => {
@@ -227,67 +224,66 @@ const Settings = () => {
               <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">Preferences</h2>
               <div className="bg-steam-card border border-steam-border rounded-2xl shadow-xl overflow-hidden divide-y divide-steam-border/50">
                 
-                {/* Notifications */}
-                <div className="flex items-center justify-between p-5">
-                  <div className="flex items-center gap-4 text-steam-secondary">
+                {/* Notifications — not implemented yet */}
+                <div
+                  className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
+                  title="Coming soon"
+                >
+                  <div className="flex items-center gap-4">
                     <div className="p-3 bg-orange-500/10 text-orange-400 rounded-xl">
                       <Bell className="w-5 h-5" />
                     </div>
-                    <span className="font-bold text-steam-text text-base">Notifications</span>
+                    <div>
+                      <span className="font-bold text-steam-text text-base block">Notifications</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
+                        Coming soon
+                      </span>
+                    </div>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
-                      checked={notifications} 
-                      onChange={() => setNotifications(!notifications)} 
-                    />
-                    <div className="w-12 h-6 bg-steam-elevated peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-steam-card after:border-steam-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-steam-accent shadow-inner"></div>
-                  </label>
+                  <div
+                    className="w-12 h-6 rounded-full bg-steam-elevated border border-steam-border relative"
+                    aria-hidden
+                  >
+                    <span className="absolute top-[2px] left-[2px] w-5 h-5 rounded-full bg-steam-card border border-steam-border" />
+                  </div>
                 </div>
 
-                {/* Currency */}
-                <div className="flex items-center justify-between p-5 hover:bg-steam-hover transition-colors group">
-                  <div className="flex items-center gap-4 text-steam-secondary">
+                {/* Currency — not implemented yet */}
+                <div
+                  className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
+                  title="Coming soon"
+                >
+                  <div className="flex items-center gap-4">
                     <div className="p-3 bg-green-500/10 text-green-400 rounded-xl">
                       <DollarSign className="w-5 h-5" />
                     </div>
-                    <span className="font-bold text-steam-text text-base">Currency</span>
+                    <div>
+                      <span className="font-bold text-steam-text text-base block">Currency</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
+                        Coming soon
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 relative">
-                    <select 
-                      value={currency}
-                      onChange={(e) => setCurrency(e.target.value)}
-                      className="bg-transparent text-steam-secondary text-sm font-bold focus:outline-none cursor-pointer outline-none text-right appearance-none pr-6"
-                    >
-                      <option value="USD" className="bg-steam-card">USD</option>
-                      <option value="EUR" className="bg-steam-card">EUR</option>
-                      <option value="PLN" className="bg-steam-card">PLN</option>
-                    </select>
-                    <ChevronRight className="w-4 h-4 text-steam-tertiary absolute right-0 pointer-events-none group-hover:text-steam-secondary" />
-                  </div>
+                  <span className="text-sm font-bold text-steam-tertiary tabular-nums">USD</span>
                 </div>
 
-                {/* Price Source */}
-                <div className="flex items-center justify-between p-5 hover:bg-steam-hover transition-colors group">
-                  <div className="flex items-center gap-4 text-steam-secondary">
+                {/* Price source — not implemented yet */}
+                <div
+                  className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
+                  title="Coming soon"
+                >
+                  <div className="flex items-center gap-4">
                     <div className="p-3 bg-pink-500/10 text-pink-400 rounded-xl">
                       <ShoppingCart className="w-5 h-5" />
                     </div>
-                    <span className="font-bold text-steam-text text-base">Price Source</span>
+                    <div>
+                      <span className="font-bold text-steam-text text-base block">Price Source</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
+                        Coming soon
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 relative">
-                    <select 
-                      value={priceSource}
-                      onChange={(e) => setPriceSource(e.target.value)}
-                      className="bg-transparent text-steam-secondary text-sm font-bold focus:outline-none cursor-pointer outline-none text-right appearance-none pr-6"
-                    >
-                      <option value="steam" className="bg-steam-card">Steam</option>
-                      <option value="buff" className="bg-steam-card">Buff163</option>
-                      <option value="skinport" className="bg-steam-card">Skinport</option>
-                    </select>
-                    <ChevronRight className="w-4 h-4 text-steam-tertiary absolute right-0 pointer-events-none group-hover:text-steam-secondary" />
-                  </div>
+                  <span className="text-sm font-bold text-steam-tertiary">Steam</span>
                 </div>
                 
                 {/* Appearance */}

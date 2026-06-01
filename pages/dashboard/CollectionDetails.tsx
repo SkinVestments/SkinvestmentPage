@@ -2,8 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabaseClient';
-import { 
-  ArrowLeft, Loader2, Wallet, TrendingUp, TrendingDown, Package, ShieldCheck,ChevronRight
+import {
+  ArrowLeft,
+  ChevronRight,
+  Loader2,
+  Package,
+  ShieldCheck,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
 } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { ItemImage } from '@/components/ui/ItemImage';
@@ -38,11 +45,11 @@ const CollectionDetails = () => {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<CollectionItem[]>([]);
   const [stats, setStats] = useState<CollectionStats | null>(null);
-  const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
-
-    const toggleRow = (itemId: string) => {
-        setExpandedItemId(expandedItemId === itemId ? null : itemId);
-    };
+  const openItemDetail = (itemId: string) => {
+    navigate(`/item/${itemId}`, {
+      state: { from: `/collection/${collectionId}`, collectionId },
+    });
+  };
 
   useEffect(() => {
     const fetchCollectionData = async () => {
@@ -182,14 +189,12 @@ const CollectionDetails = () => {
                 {items.map((item) => {
                     const rarityStyle = getRarityStyle(item.rarity);
                     const totalVal = item.item_price * item.quantity;
-                    const isExpanded = expandedItemId === item.item_id;
 
                     return (
-                    <React.Fragment key={item.item_id}>
-                        {/* WIERSZ GŁÓWNY */}
-                        <tr 
-                        onClick={() => toggleRow(item.item_id)}
-                        className={`hover:bg-steam-hover transition-colors cursor-pointer group ${isExpanded ? 'bg-steam-hover' : ''}`}
+                        <tr
+                        key={item.item_id}
+                        onClick={() => openItemDetail(item.item_id)}
+                        className="hover:bg-steam-hover transition-colors cursor-pointer group"
                         >
                         <td className="p-4 pl-6">
                             <div className="flex items-center gap-4">
@@ -221,62 +226,10 @@ const CollectionDetails = () => {
                         <td className="p-4 text-right pr-6 font-bold text-steam-text font-mono">
                             <div className="flex items-center justify-end gap-2">
                             {formatCurrency(totalVal)}
-                            <ChevronRight className={`w-4 h-4 text-steam-tertiary transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                            <ChevronRight className="w-4 h-4 text-steam-tertiary group-hover:text-steam-accent transition-colors" />
                             </div>
                         </td>
                         </tr>
-
-                        {/* WIERSZ Z BATCHAMI (ROZWINIĘTY) */}
-                        {isExpanded && (
-                        <tr className="bg-steam-bg animate-fade-in">
-                            <td colSpan={5} className="p-0">
-                            <div className="px-6 py-4 border-l-2 border-steam-accent ml-6 my-2 space-y-2">
-                                <p className="text-[10px] font-bold text-steam-tertiary uppercase tracking-widest mb-3">Purchase Batches</p>
-                                
-                                {/* Nagłówki sekcji batchy */}
-                                <div className="grid grid-cols-4 gap-4 pb-2 border-b border-steam-border text-[11px] font-bold text-steam-tertiary uppercase">
-                                <span>Date</span>
-                                <span>Quantity</span>
-                                <span>Buy Price</span>
-                                <span className="text-right">Total Cost</span>
-                                </div>
-
-                                {/* Mapowanie batchy z poprawionymi kluczami */}
-                                {item.batches && item.batches.length > 0 ? (
-                                item.batches.map((batch: any, idx: number) => {
-                                    // Zabezpieczenie daty: szukamy pola 'date' lub 'acquired_at'
-                                    const rawDate = batch.date || batch.acquired_at;
-                                    const formattedDate = rawDate 
-                                    ? new Date(rawDate).toLocaleDateString() 
-                                    : 'Unknown Date';
-
-                                    const bPrice = Number(batch.buy_price) || 0;
-                                    const bQty = Number(batch.quantity) || 0;
-
-                                    return (
-                                    <div key={idx} className="grid grid-cols-4 gap-4 py-2 text-sm text-steam-secondary hover:text-steam-text transition-colors border-b border-steam-border/30 last:border-0">
-                                        <div className="flex items-center gap-2">
-                                        <div className={`w-1.5 h-1.5 rounded-full ${batch.type === 'DROP' ? 'bg-green-500' : 'bg-steam-accent'}`}></div>
-                                        {formattedDate}
-                                        </div>
-                                        <div className="font-medium text-steam-secondary">x{bQty}</div>
-                                        <div className="font-mono text-steam-secondary">
-                                        {batch.type === 'DROP' ? <span className="text-green-500/80 text-[10px] font-bold">DROP</span> : formatCurrency(bPrice)}
-                                        </div>
-                                        <div className="font-mono font-bold text-right text-steam-text">
-                                        {formatCurrency(bPrice * bQty)}
-                                        </div>
-                                    </div>
-                                    );
-                                })
-                                ) : (
-                                <p className="text-steam-tertiary italic py-2">No batch history found.</p>
-                                )}
-                            </div>
-                            </td>
-                        </tr>
-                        )}
-                    </React.Fragment>
                     );
                 })}
                 </tbody>
