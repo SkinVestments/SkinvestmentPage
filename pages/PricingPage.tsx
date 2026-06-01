@@ -25,7 +25,7 @@ export const PricingPage: React.FC = () => {
       icon: Shield,
       features: ["Steam Inventory Tracking", "Weekly Drop Timer", "Basic Portfolio Value", "24h Price Updates", "1 Storage Unit"],
       notIncluded: ["Real-time Volatility", "Stagnation Detector", "Multi-Market Prices", "API Access"],
-      color: "text-gray-400",
+      color: "text-steam-secondary",
       cta: "Start Free",
       highlight: false
     },
@@ -55,17 +55,17 @@ export const PricingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B0D12] pt-32 pb-20 px-6 font-sans">
+    <div className="min-h-screen bg-steam-bg pt-24 sm:pt-32 pb-20 px-4 sm:px-6 font-sans overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
         
         {/* Header & Trial Banner */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-steam-accent/20 to-purple-500/20 border border-steam-accent/30 text-white text-sm font-bold mb-8 animate-pulse">
-            <Sparkles size={16} className="text-yellow-400" />
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-steam-accent/20 to-purple-500/20 border border-steam-accent/30 text-white text-xs sm:text-sm font-bold mb-8 animate-pulse max-w-full text-center">
+            <Sparkles size={16} className="text-yellow-400 shrink-0" />
             <span>Try PRO features for 7 days — No credit card needed.</span>
           </div>
           
-          <h1 className="text-5xl font-bold font-display text-white mb-4">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-steam-text mb-4">
             Invest in your <span className="text-steam-accent">Inventory</span>
           </h1>
           <p className="text-steam-secondary text-lg max-w-2xl mx-auto">
@@ -74,16 +74,16 @@ export const PricingPage: React.FC = () => {
         </div>
 
         {/* Billing Switcher */}
-        <div className="flex justify-center mb-16">
-          <div className="bg-[#161B24] p-1.5 rounded-xl border border-white/10 flex relative">
+        <div className="flex justify-center mb-16 px-1">
+          <div className="bg-steam-card p-1.5 rounded-xl border border-steam-border flex relative w-full max-w-md sm:max-w-none sm:w-auto">
             {(['monthly', 'yearly', 'lifetime'] as BillingCycle[]).map((cycle) => (
               <button
                 key={cycle}
                 onClick={() => setBillingCycle(cycle)}
-                className={`relative z-10 px-6 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 capitalize ${
+                className={`relative z-10 flex-1 sm:flex-none px-3 sm:px-6 py-2.5 rounded-lg text-xs sm:text-sm font-bold transition-all duration-300 capitalize ${
                   billingCycle === cycle 
-                    ? 'text-white shadow-lg' 
-                    : 'text-gray-500 hover:text-gray-300'
+                    ? 'text-steam-text shadow-lg' 
+                    : 'text-steam-tertiary hover:text-steam-secondary'
                 }`}
               >
                 {cycle}
@@ -93,7 +93,7 @@ export const PricingPage: React.FC = () => {
                   </span>
                 )}
                 {cycle === 'lifetime' && (
-                  <span className="absolute -top-3 -right-4 text-[9px] bg-purple-500 text-white px-1.5 py-0.5 rounded-full font-extrabold transform rotate-12 flex items-center gap-0.5">
+                  <span className="absolute -top-3 -right-4 text-[9px] bg-purple-500 text-steam-text px-1.5 py-0.5 rounded-full font-extrabold transform rotate-12 flex items-center gap-0.5">
                     <Infinity size={8} /> DEAL
                   </span>
                 )}
@@ -102,7 +102,7 @@ export const PricingPage: React.FC = () => {
             
             {/* Sliding Background */}
             <div 
-              className={`absolute top-1.5 bottom-1.5 rounded-lg bg-white/10 border border-white/5 transition-all duration-300 ease-in-out w-[calc(33.33%-4px)]`}
+              className={`absolute top-1.5 bottom-1.5 rounded-lg theme-subtle-strong border border-steam-border/50 transition-all duration-300 ease-in-out w-[calc(33.33%-4px)]`}
               style={{
                 left: billingCycle === 'monthly' ? '4px' : billingCycle === 'yearly' ? 'calc(33.33% + 2px)' : 'calc(66.66% + 0px)'
               }}
@@ -117,27 +117,27 @@ export const PricingPage: React.FC = () => {
               key={idx} 
               className={`relative p-8 rounded-3xl border transition-all duration-300 flex flex-col ${
                 plan.highlight 
-                  ? 'bg-[#161B24]/80 border-steam-accent shadow-[0_0_40px_rgba(59,130,246,0.1)] scale-105 z-10 ring-1 ring-steam-accent/50' 
-                  : 'bg-[#12161E]/50 border-white/5 hover:border-white/10'
+                  ? 'bg-steam-card/80 border-steam-accent shadow-[0_0_40px_rgba(59,130,246,0.1)] md:scale-105 z-10 ring-1 ring-steam-accent/50' 
+                  : 'bg-steam-elevated/50 border-steam-border/50 hover:border-steam-border'
               }`}
             >
               {plan.highlight && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-steam-accent text-white text-xs font-bold uppercase tracking-widest rounded-full shadow-lg flex items-center gap-2">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-steam-accent to-steam-accent-dark text-on-accent text-xs font-bold uppercase tracking-widest rounded-full shadow-lg flex items-center gap-2">
                   <Sparkles size={12} /> Most Popular
                 </div>
               )}
               
               <div className="mb-8">
-                <div className={`w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4 ${plan.color}`}>
+                <div className={`w-12 h-12 rounded-xl theme-subtle flex items-center justify-center mb-4 ${plan.color}`}>
                   <plan.icon size={24} />
                 </div>
-                <h3 className="text-xl font-bold text-white">{plan.name}</h3>
+                <h3 className="text-xl font-bold text-steam-text">{plan.name}</h3>
                 
                 {/* Price Display */}
                 <div className="flex items-baseline gap-1 mt-2">
-                  <span className="text-4xl font-bold text-white">{plan.price[billingCycle]}</span>
+                  <span className="text-4xl font-bold text-steam-text">{plan.price[billingCycle]}</span>
                   {plan.name !== "Basic" && (
-                    <span className="text-gray-500 text-sm font-medium">{getPeriodLabel()}</span>
+                    <span className="text-steam-tertiary text-sm font-medium">{getPeriodLabel()}</span>
                   )}
                 </div>
                 
@@ -153,13 +153,13 @@ export const PricingPage: React.FC = () => {
                   </div>
                 )}
 
-                <p className="text-sm text-gray-400 mt-4 leading-relaxed">{plan.desc}</p>
+                <p className="text-sm text-steam-secondary mt-4 leading-relaxed">{plan.desc}</p>
               </div>
 
               {/* Features List */}
               <div className="space-y-4 mb-8 flex-1">
                 {plan.features.map((feat, i) => (
-                  <div key={i} className="flex items-start gap-3 text-sm text-gray-300">
+                  <div key={i} className="flex items-start gap-3 text-sm text-steam-secondary">
                     <div className={`p-1 rounded-full mt-0.5 shrink-0 ${plan.highlight ? 'bg-steam-accent/20 text-steam-accent' : 'bg-green-500/10 text-green-500'}`}>
                       <Check size={10} strokeWidth={3} />
                     </div>
@@ -167,8 +167,8 @@ export const PricingPage: React.FC = () => {
                   </div>
                 ))}
                 {plan.notIncluded.map((feat, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
-                    <div className="p-1 rounded-full bg-white/5 shrink-0"><X size={10} /></div>
+                  <div key={i} className="flex items-center gap-3 text-sm text-steam-tertiary">
+                    <div className="p-1 rounded-full theme-subtle shrink-0"><X size={10} /></div>
                     {feat}
                   </div>
                 ))}
@@ -178,13 +178,13 @@ export const PricingPage: React.FC = () => {
               <div className="mt-auto">
                 <button className={`w-full py-4 rounded-xl font-bold transition-all text-sm uppercase tracking-wider ${
                   plan.highlight 
-                    ? 'bg-steam-accent hover:bg-blue-600 text-white shadow-lg shadow-blue-500/25' 
-                    : 'bg-white/5 hover:bg-white/10 text-white border border-white/5'
+                    ? 'bg-steam-accent hover:opacity-90 text-white shadow-lg theme-shadow-accent' 
+                    : 'theme-subtle hover:bg-steam-hover text-steam-text border border-steam-border/50'
                 }`}>
                   {plan.cta}
                 </button>
                 {plan.subCta && (
-                  <div className="text-center text-[10px] text-gray-500 mt-3 font-medium uppercase tracking-wide">
+                  <div className="text-center text-[10px] text-steam-tertiary mt-3 font-medium uppercase tracking-wide">
                     {plan.subCta}
                   </div>
                 )}
@@ -194,9 +194,9 @@ export const PricingPage: React.FC = () => {
         </div>
 
         {/* FAQ Teaser / Guarantee */}
-        <div className="mt-20 text-center border-t border-white/5 pt-10">
+        <div className="mt-20 text-center border-t border-steam-border/50 pt-10">
           <p className="text-steam-secondary text-sm">
-            Unsure? <span className="text-white font-bold">Start with the 7-day free trial.</span> 
+            Unsure? <span className="text-steam-text font-bold">Start with the 7-day free trial.</span> 
             You can cancel anytime from your dashboard. 
             <br className="hidden md:block"/> 
             For Lifetime plans, we offer a 30-day money-back guarantee.

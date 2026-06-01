@@ -11,7 +11,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (loading) {
     // Możesz tu wstawić ładny spinner ładowania
-    return <div className="text-white p-10">Ładowanie uprawnień...</div>;
+    return <div className="text-steam-text p-10">Ładowanie uprawnień...</div>;
   }
 
   if (!user) {
