@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { formatCurrency } from '@/utils/display';
-import { CalendarDays, Loader2, Grid3X3 } from 'lucide-react';
+import { CalendarDays, Grid3X3 } from 'lucide-react';
+import { HeatmapGridSkeleton } from './AnalyticsSkeletons';
 
 type HeatmapUnit = 'DOW' | 'MONTH';
 type HeatmapMetric = 'profit' | 'revenue' | 'trades';
@@ -229,9 +230,7 @@ export const ProfitHeatmap = () => {
       </div>
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center min-h-[200px]">
-          <Loader2 className="animate-spin text-steam-tertiary w-8 h-8" />
-        </div>
+        <HeatmapGridSkeleton />
       ) : errorMessage ? (
         <div className="flex-1 flex flex-col items-center justify-center text-center min-h-[200px] gap-3">
           <p className="text-sm text-red-400 font-medium">{errorMessage}</p>

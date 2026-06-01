@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Loader2, Lock, TrendingUp } from 'lucide-react';
+import { Lock, TrendingUp } from 'lucide-react';
+import { AreaChartSkeleton } from './AnalyticsSkeletons';
 import { chartProfitStroke, chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
 
 interface DropsChartProps {
@@ -61,7 +62,7 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
 
       <div className="flex-1 min-h-[300px] w-full relative">
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="animate-spin text-steam-tertiary" /></div>
+          <AreaChartSkeleton />
         ) : (
           <div className={`w-full h-full transition-all duration-500 ${!hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''}`}>
             <ResponsiveContainer width="100%" height="100%">

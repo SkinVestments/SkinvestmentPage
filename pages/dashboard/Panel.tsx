@@ -532,7 +532,7 @@ const Panel = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-steam-surface text-steam-tertiary text-xs font-bold uppercase tracking-wider border-b border-steam-border">
-                  <th className="p-5 pl-6">Item</th>
+                  <th className="p-5 pl-6 w-[45%]">Item</th>
                   <th 
                     className="p-5 cursor-pointer hover:text-steam-accent transition-colors"
                     onClick={() => handleSort('quantity')}
@@ -553,10 +553,10 @@ const Panel = () => {
                    const rarityStyle = getRarityStyle(item.cs2_items?.rarity);
                    return (
                     <tr key={item.id} className="hover:bg-steam-hover transition-colors group">
-                      <td className="p-4 pl-6">
-                        <div className="flex items-center gap-4">
+                      <td className="p-4 pl-6 w-[45%] max-w-0">
+                        <div className="flex items-center gap-4 min-w-0">
                           <div className={`
-                            relative w-16 h-12 bg-gradient-to-b from-steam-elevated to-steam-bg 
+                            relative w-16 h-12 shrink-0 bg-gradient-to-b from-steam-elevated to-steam-bg 
                             rounded-md flex items-center justify-center p-1 
                             border-b-[3px] ${rarityStyle.border} ${rarityStyle.shadow}
                             transition-all duration-300 group-hover:scale-105
@@ -568,9 +568,13 @@ const Panel = () => {
                               wrapperClassName="w-full h-full"
                             />
                           </div>
-                          <div className="flex flex-col">
-                             <span className="font-bold text-steam-text group-hover:text-steam-text truncate max-w-[150px]">{item.cs2_items?.market_hash_name}</span>
-                             <span className={`text-[10px] uppercase font-bold tracking-wider ${rarityStyle.text}`}>{item.cs2_items?.rarity || 'Common'}</span>
+                          <div className="flex flex-col min-w-0 flex-1">
+                             <span className="font-bold text-steam-text group-hover:text-steam-text truncate whitespace-nowrap" title={item.cs2_items?.market_hash_name ?? ''}>
+                               {item.cs2_items?.market_hash_name}
+                             </span>
+                             <span className={`text-[10px] uppercase font-bold tracking-wider truncate whitespace-nowrap ${rarityStyle.text}`}>
+                               {item.cs2_items?.rarity || 'Common'}
+                             </span>
                           </div>
                         </div>
                       </td>

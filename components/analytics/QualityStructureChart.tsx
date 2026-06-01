@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, Diamond } from 'lucide-react';
+import { Diamond } from 'lucide-react';
+import { QualityPyramidSkeleton } from './AnalyticsSkeletons';
 
 const RARITY_COLORS: Record<string, string> = {
   contraband: '#EAB308',
@@ -158,11 +159,7 @@ export const QualityStructureChart = () => {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg h-[400px] flex items-center justify-center">
-        <Loader2 className="animate-spin text-steam-tertiary w-8 h-8" />
-      </div>
-    );
+    return <QualityPyramidSkeleton />;
   }
 
   if (data.length === 0) {

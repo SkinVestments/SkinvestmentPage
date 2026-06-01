@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Loader2, PieChart as PieIcon } from 'lucide-react';
+import { PieChart as PieIcon } from 'lucide-react';
+import { AllocationChartSkeleton } from './AnalyticsSkeletons';
 import { chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
 import { formatCurrency } from '@/utils/display';
 
@@ -54,11 +55,7 @@ export const AllocationChart = () => {
   }, [user]);
 
   if (loading) {
-    return (
-      <div className="h-[300px] flex items-center justify-center">
-        <Loader2 className="animate-spin text-steam-tertiary w-8 h-8" />
-      </div>
-    );
+    return <AllocationChartSkeleton />;
   }
 
   if (data.length === 0) {
