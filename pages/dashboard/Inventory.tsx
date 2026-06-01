@@ -43,43 +43,6 @@ interface InventoryItem {
   };
 }
 
-// --- HELPER: PROFESJONALNY GENERATOR WYKRESU (SMOOTH SPARKLINE) ---
-const generateSparklinePath = (seedId: string) => {
-  // 1. Generowanie realistycznego trendu (Random Walk)
-  let hash = 0;
-  for (let i = 0; i < seedId.length; i++) hash = seedId.charCodeAt(i) + ((hash << 5) - hash);
-  
-  const points: [number, number][] = [];
-  let currentValue = 50 + ((hash % 20) - 10); // Start w okolicach środka
-  const trend = (hash % 7) - 3; // Ogólny trend rosnący lub malejący
-  
-  const numPoints = 20; // 20 punktów daje bardzo ładne wygładzenie
-  for (let i = 0; i < numPoints; i++) {
-    // "Szum" giełdowy + trend
-    const noise = (((hash * (i + 1)) % 15) - 7.5); 
-    currentValue += noise + trend;
-    currentValue = Math.max(15, Math.min(85, currentValue)); // Trzymamy z dala od samych krawędzi
-    
-    const x = (i / (numPoints - 1)) * 100;
-    const y = 100 - currentValue;
-    points.push([x, y]);
-  }
-  
-  // 2. Wygładzanie krzywych (Cubic Bezier Curves)
-  let linePath = `M ${points[0][0]},${points[0][1]}`;
-  for (let i = 0; i < points.length - 1; i++) {
-    const curr = points[i];
-    const next = points[i + 1];
-    const midX = (curr[0] + next[0]) / 2;
-    // Tworzy płynne przejście między punktami (jak w Recharts 'monotone')
-    linePath += ` C ${midX},${curr[1]} ${midX},${next[1]} ${next[0]},${next[1]}`;
-  }
-  
-  const areaPath = `${linePath} L 100,100 L 0,100 Z`;
-  
-  return { linePath, areaPath };
-};
-
 const Inventory = () => {
   const { user } = useAuth();
   
@@ -298,7 +261,7 @@ const Inventory = () => {
         </div>
       ) : (
         <>
-          {/* WIDOK SIATKI (GRID) - Z WYKRESEM W TLE */}
+          {/* WIDOK SIATKI (GRID) */}
           {viewMode === 'grid' && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filteredAndSortedItems.map((item) => {
@@ -307,9 +270,6 @@ const Inventory = () => {
                 const totalVal = itemPrice * item.quantity;
                 const locked = isItemTradeLocked(item.acquired_at, item.trade_lock_until);
                 const { status: pnlStatus, gainPct } = getPnlStatus(itemPrice, item.buy_price);
-
-                // Generowanie danych wykresu dla tła
-                const { linePath, areaPath } = generateSparklinePath(item.id);
 
                 return (
                   <div key={item.id} className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-border transition-colors group relative overflow-hidden flex flex-col shadow-lg">
@@ -328,44 +288,7 @@ const Inventory = () => {
                       )}
                     </div>
 
-                    {/* SEKCJA Z OBRAZKIEM I WYKRESEM */}
                     <div className={`relative h-36 w-full flex items-center justify-center p-4 border-b-[3px] ${rarityStyle.border} bg-steam-bg overflow-hidden`}>
-                      
-                      {/* Profesjonalny Wykres w tle */}
-                      <div className="absolute inset-0 z-0 opacity-50 transition-opacity duration-500 group-hover:opacity-100">
-                        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
-                          <defs>
-                            <linearGradient id={`grad-${item.id}`} x1="0" x2="0" y1="0" y2="1">
-                              <stop offset="0%" stopColor={rarityStyle.hex} stopOpacity="0.35" />
-                              <stop offset="100%" stopColor={rarityStyle.hex} stopOpacity="0.0" />
-                            </linearGradient>
-                            
-                            {/* Efekt delikatnego świecenia linii */}
-                            <filter id={`glow-${item.id}`} x="-20%" y="-20%" width="140%" height="140%">
-                              <feGaussianBlur stdDeviation="1.5" result="blur" />
-                              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                            </filter>
-                          </defs>
-
-                          {/* Subtelna Siatka (Grid) przypominająca analitykę */}
-                          <line x1="0" y1="25" x2="100" y2="25" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-                          <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-                          <line x1="0" y1="75" x2="100" y2="75" stroke="rgba(255,255,255,0.03)" strokeWidth="0.5" />
-
-                          {/* Wykres - Wypełnienie i Linia */}
-                          <path d={areaPath} fill={`url(#grad-${item.id})`} />
-                          <path 
-                            d={linePath} 
-                            fill="none" 
-                            stroke={rarityStyle.hex} 
-                            strokeWidth="1.2" 
-                            strokeLinecap="round" 
-                            filter={`url(#glow-${item.id})`} 
-                          />
-                        </svg>
-                      </div>
-
-                      {/* Obrazek Skina */}
                       <ItemImage
                         src={item.cs2_items?.icon_url}
                         alt={item.cs2_items?.market_hash_name ?? ''}

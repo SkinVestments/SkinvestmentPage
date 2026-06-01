@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Mail, MessageSquare, Send, CheckCircle, 
-  Loader2, Users, Activity 
+  Loader2, Activity
 } from 'lucide-react';
 
 export const ContactPage: React.FC = () => {
@@ -58,20 +58,12 @@ export const ContactPage: React.FC = () => {
           </div>
 
           {/* Contact Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ContactCard 
-              icon={<Mail />} 
-              label="Email Support" 
-              value="kjlabs.studio@gmail.com" 
+          <div className="max-w-md">
+            <ContactCard
+              icon={<Mail />}
+              label="Email Support"
+              value="kjlabs.studio@gmail.com"
               sub="Response time: < 2h"
-            />
-            <ContactCard 
-              icon={<Users />} 
-              label="Discord Community" 
-              value="Join 15,000+ Traders" 
-              sub="Instant community help"
-              action="Join Server"
-              comingSoon={true} // <-- Dodana flaga Coming Soon!
             />
           </div>
 
