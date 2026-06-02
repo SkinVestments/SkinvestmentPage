@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Check, Infinity, Lock, Sparkles, X } from 'lucide-react';
+import { AlertCircle, Check, Infinity, Loader2, Sparkles, X } from 'lucide-react';
 import {
   BillingCycle,
   PlanId,
   SUBSCRIPTION_PLANS,
   getPlanPriceDisplay,
 } from '@/constants/subscriptionPlans';
+import { buildRevenueCatCheckoutUrl } from '@/constants/revenuecatPurchaseLinks';
 
 interface ManageSubscriptionModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentPlanId: PlanId;
   currentBillingCycle: BillingCycle;
+  userId?: string;
   onSelectPlan: (planId: PlanId, billingCycle: BillingCycle) => void;
 }
 
@@ -20,6 +22,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
   onClose,
   currentPlanId,
   currentBillingCycle,
+  userId,
   onSelectPlan,
 }) => {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>(currentBillingCycle);
@@ -28,15 +31,43 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
     if (isOpen) {
       setBillingCycle(currentBillingCycle);
       setSelectedPlanId(currentPlanId);
+      setPurchaseError('');
     }
   }, [isOpen, currentBillingCycle, currentPlanId]);
 
   if (!isOpen) return null;
 
-  const handleSelectPlan = (planId: PlanId) => {
-    setSelectedPlanId(planId);
-    onSelectPlan(planId, billingCycle);
-    onClose();
+  const handleConfirm = async () => {
+    setIsSaving(true);
+    setPurchaseError('');
+
+    try {
+      if (selectedPlanId === 'basic') {
+        await new Promise((r) => setTimeout(r, 250));
+        onSelectPlan(selectedPlanId, billingCycle);
+        onClose();
+        return;
+      }
+
+      if (!userId) {
+        throw new Error('Sign in to purchase a subscription.');
+      }
+
+      const checkoutUrl = buildRevenueCatCheckoutUrl(userId, selectedPlanId, billingCycle);
+      if (!checkoutUrl) {
+        throw new Error(
+          `Checkout is not configured for ${selectedPlanId} (${billingCycle}).`,
+        );
+      }
+
+      window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+      onClose();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Cannot open purchase link.';
+      setPurchaseError(message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -201,6 +232,36 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
               );
             })}
           </div>
+        </div>
+        {purchaseError && (
+          <div className="mx-5 sm:mx-6 mt-3 flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>{purchaseError}</span>
+          </div>
+        )}
+
+        <div className="flex flex-col-reverse sm:flex-row gap-3 p-5 sm:p-6 border-t border-steam-border shrink-0 bg-steam-bg/50">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 py-3 rounded-xl font-bold text-steam-secondary hover:text-steam-text hover:bg-steam-hover transition-colors border border-steam-border"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={isSaving}
+            className="flex-1 py-3 rounded-xl font-bold bg-steam-accent hover:opacity-90 text-white transition-colors shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" /> Saving…
+              </>
+            ) : (
+              `Confirm ${SUBSCRIPTION_PLANS.find((p) => p.id === selectedPlanId)?.name ?? 'Plan'}`
+            )}
+          </button>
         </div>
       </div>
     </div>
