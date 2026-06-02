@@ -14,6 +14,7 @@ import { ContactPage } from '@/pages/ContactPage';
 import NotFound from '@/pages/NotFound';
 import TermsAndConditionsPage from '@/pages/TermsAndConditionsPage';
 import Login from '@/pages/auth/Login';
+import AuthCallback from '@/pages/auth/AuthCallback';
 
 import Panel from '@/pages/dashboard/Panel';
 import History from '@/pages/dashboard/History';
@@ -34,6 +35,7 @@ export const AppRoutes = () => (
       <Route path="/roadmap" element={<RoadmapPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/terms" element={<TermsAndConditionsPage />} />
       <Route path="*" element={<NotFound />} />
     </Route>
