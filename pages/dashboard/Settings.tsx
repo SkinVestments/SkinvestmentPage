@@ -358,6 +358,7 @@ const Settings = () => {
         onClose={() => setIsSubscriptionModalOpen(false)}
         currentPlanId={currentPlanId}
         currentBillingCycle={currentBillingCycle}
+        userId={user?.id}
         onSelectPlan={handleSelectPlan}
       />
     </div>

@@ -1,2 +1,0 @@
--- Fix: column "updated_at" does not exist on cs2_items
--- Run the full script: supabase/get_portfolio_item_detail.sql in Supabase SQL Editor.
