@@ -1,0 +1,14 @@
+# https://skinvestments.app
+User-agent: *
+Allow: /
+
+# App / auth — not for indexing
+Disallow: /panel
+Disallow: /history
+Disallow: /inventory
+Disallow: /analytics
+Disallow: /settings
+Disallow: /collection/
+Disallow: /item/
+Disallow: /login
+Disallow: /auth/
