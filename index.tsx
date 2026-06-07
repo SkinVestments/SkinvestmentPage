@@ -1,11 +1,27 @@
+import '@fontsource/outfit/300.css';
+import '@fontsource/outfit/400.css';
+import '@fontsource/outfit/500.css';
+import '@fontsource/outfit/600.css';
+import '@fontsource/outfit/700.css';
+import '@fontsource/space-grotesk/300.css';
+import '@fontsource/space-grotesk/400.css';
+import '@fontsource/space-grotesk/500.css';
+import '@fontsource/space-grotesk/600.css';
+import '@fontsource/space-grotesk/700.css';
+import './index.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { applyThemeToDocument } from './context/ThemeContext';
 import { THEME_STORAGE_KEY } from './constants/appTheme';
 
+import { initDeferredAnalytics } from './utils/analytics';
+
 const storedTheme = localStorage.getItem(THEME_STORAGE_KEY);
 applyThemeToDocument(storedTheme === 'light' ? 'light' : 'dark');
+
+initDeferredAnalytics();
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

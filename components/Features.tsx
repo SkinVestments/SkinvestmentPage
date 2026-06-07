@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { RefreshCw, Wallet, Cloud, Crosshair, Box, Globe, BarChart3 } from 'lucide-react';
 import { Feature } from '../types';
 import { Link } from 'react-router-dom';
@@ -85,47 +85,33 @@ export const Features: React.FC = () => {
 // Zaktualizowany FeatureCard przyjmujący ExtendedFeature
 const FeatureCard: React.FC<{ feature: ExtendedFeature }> = ({ feature }) => {
     const divRef = useRef<HTMLDivElement>(null);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [opacity, setOpacity] = useState(0);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!divRef.current) return;
-        const rect = divRef.current.getBoundingClientRect();
-        setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-        setOpacity(1);
+        const el = divRef.current;
+        if (!el) return;
+        // offsetX/Y — no getBoundingClientRect, no forced reflow
+        el.style.setProperty('--mouse-x', `${e.nativeEvent.offsetX}px`);
+        el.style.setProperty('--mouse-y', `${e.nativeEvent.offsetY}px`);
+        el.dataset.spotlight = 'on';
     };
 
     const handleMouseLeave = () => {
-        setOpacity(0);
+        const el = divRef.current;
+        if (!el) return;
+        el.dataset.spotlight = 'off';
     };
 
     return (
         <div 
             ref={divRef}
+            data-spotlight="off"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="relative p-8 rounded-2xl bg-steam-elevated border border-steam-border/50 overflow-hidden group hover:scale-[1.01] transition-transform duration-300 flex flex-col"
+            className="feature-card-spotlight relative p-8 rounded-2xl bg-steam-elevated border border-steam-border/50 overflow-hidden group hover:scale-[1.01] transition-transform duration-300 flex flex-col"
         >
-            {/* Spotlight Effect */}
-            <div 
-                className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 z-0"
-                style={{
-                    opacity,
-                    background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(59, 130, 246, 0.1), transparent 40%)`,
-                }}
-            />
-            {/* Border Highlight on Hover */}
-             <div 
-                className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100 z-0"
-                style={{
-                    background: `radial-gradient(400px circle at ${position.x}px ${position.y}px, rgba(59, 130, 246, 0.3), transparent 40%)`,
-                    maskImage: 'linear-gradient(black, black)',
-                    WebkitMaskClip: 'content-box',
-                    WebkitMaskComposite: 'xor',
-                    maskComposite: 'exclude',
-                    padding: '1px'
-                }}
-            />
+            {/* Spotlight Effect — driven by CSS vars, no React re-renders */}
+            <div className="pointer-events-none absolute -inset-px feature-card-spotlight-glow z-0" />
+            <div className="pointer-events-none absolute -inset-px feature-card-spotlight-border z-0" />
 
             <div className="relative z-10 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-6">
