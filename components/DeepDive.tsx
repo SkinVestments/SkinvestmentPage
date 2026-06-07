@@ -1,6 +1,7 @@
 import React from 'react';
 import { Package, Lock, BarChart2, ArrowRight, ShieldCheck, XCircle, CheckCircle2 } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
+import { LazyMount } from '@/components/ui/LazyMount';
 export const DeepDive: React.FC = () => {
   return (
     <section className="py-16 sm:py-24 md:py-32 bg-steam-bg relative overflow-hidden">
@@ -95,7 +96,7 @@ export const DeepDive: React.FC = () => {
 
         {/* Feature Spotlight: The Chart */}
         <div className="mt-16 sm:mt-24 md:mt-32 p-6 sm:p-8 md:p-12 bg-gradient-to-b from-steam-elevated to-steam-bg rounded-2xl sm:rounded-3xl border border-steam-border/50 relative overflow-hidden">
-             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
+             <div className="absolute inset-0 bg-[url('/noise.svg')] opacity-10"></div>
              
              <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 relative z-10 min-w-0">
                  <div className="flex-1 space-y-8">
@@ -131,6 +132,7 @@ export const DeepDive: React.FC = () => {
         
         {/* PRAWDZIWY WYKRES RECHARTS (Zamiast divów) */}
         <div className="h-48 w-full min-w-0 pointer-events-none">
+            <LazyMount minHeight="12rem" className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={[
                     { val: 10000 }, { val: 10200 }, { val: 10500 }, { val: 10100 }, 
@@ -154,6 +156,7 @@ export const DeepDive: React.FC = () => {
                     />
                 </AreaChart>
             </ResponsiveContainer>
+            </LazyMount>
         </div>
         
         {/* Oś X (Ręczna, dla efektu wizualnego) */}

@@ -115,6 +115,11 @@ export const Hero: React.FC = () => {
                   <img
                     src={screenSrc}
                     alt="Skinvestments App Interface"
+                    width={1284}
+                    height={2778}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
                     className="w-full h-full object-cover object-center transition-opacity duration-300"
                   />
               </div>
