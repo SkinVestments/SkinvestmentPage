@@ -31,4 +31,4 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "dist/"
-          target: "/home/ubuntu/serwer/strona/" # Ścieżka do folderu na VPS
+          target: "/home/ubuntu/serwer/strona/"
