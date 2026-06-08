@@ -20,28 +20,30 @@ const LEGACY_PLAN_IDS: Record<string, PlanId> = {
   'pro-max': 'pro_max',
 };
 
-function normalizePlanId(id: string): PlanId | null {
+export function normalizePlanId(id: string | null | undefined): PlanId {
+  if (!id) return 'free';
   if (id === 'free' || id === 'pro' || id === 'pro_max') return id;
-  return LEGACY_PLAN_IDS[id] ?? null;
+  return LEGACY_PLAN_IDS[id] ?? 'free';
 }
 
-export function loadSubscription(): SubscriptionState {
+const BILLING_CYCLE_STORAGE_KEY = 'skinvestments_billing_cycle';
+
+export function loadBillingCycle(): BillingCycle {
   try {
-    const raw = localStorage.getItem(SUBSCRIPTION_STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as { planId?: string; billingCycle?: BillingCycle };
-      const planId = parsed.planId ? normalizePlanId(parsed.planId) : null;
-      if (planId && parsed.billingCycle) {
-        return { planId, billingCycle: parsed.billingCycle };
-      }
-    }
+    const raw = localStorage.getItem(BILLING_CYCLE_STORAGE_KEY);
+    if (raw === 'monthly' || raw === 'yearly' || raw === 'lifetime') return raw;
   } catch {
     /* ignore */
   }
-  return DEFAULT_SUBSCRIPTION;
+  return DEFAULT_SUBSCRIPTION.billingCycle;
 }
 
-export function saveSubscription(state: SubscriptionState): void {
-  localStorage.setItem(SUBSCRIPTION_STORAGE_KEY, JSON.stringify(state));
+export function saveBillingCycle(cycle: BillingCycle): void {
+  localStorage.setItem(BILLING_CYCLE_STORAGE_KEY, cycle);
   window.dispatchEvent(new CustomEvent(SUBSCRIPTION_CHANGED_EVENT));
+}
+
+/** @deprecated Plan id comes from profiles.plan_subscription — use loadBillingCycle for UI cycle only. */
+export function loadSubscription(): SubscriptionState {
+  return { planId: 'free', billingCycle: loadBillingCycle() };
 }
