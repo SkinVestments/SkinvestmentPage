@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   User, Settings as SettingsIcon, Shield, LogOut, 
   Moon, Sun, DollarSign, BarChart2, ChevronRight, ArrowLeft,
-  Camera, CreditCard, Link as LinkIcon, Bell, ShoppingCart
+  CreditCard, Link as LinkIcon, Bell, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -13,13 +13,25 @@ import { ChangePasswordModal } from '@/components/dashboard/ChangePasswordModal'
 import { userHasEmailPassword } from '@/utils/authProviders';
 import { BillingCycle, PlanId } from '@/constants/subscriptionPlans';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { useOwnProfile } from '@/hooks/useOwnProfile';
+import { getProfileDisplayName, getSteamProfileLabel } from '@/utils/profile';
 
 const Settings = () => {
   const { user, signOut } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'account' | 'app' | 'privacy'>('account');
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('manageSubscription') !== '1') return;
+    setActiveTab('account');
+    setIsSubscriptionModalOpen(true);
+    const next = new URLSearchParams(searchParams);
+    next.delete('manageSubscription');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const {
     planId: currentPlanId,
@@ -28,9 +40,59 @@ const Settings = () => {
     updateSubscription,
   } = useSubscriptionPlan();
   
-  // Przykładowe stany ustawień
+  const {
+    profile,
+    loading: profileLoading,
+    saving: profileSaving,
+    error: profileError,
+    saveProfile,
+    setError: setProfileError,
+  } = useOwnProfile(user?.id);
+
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
-  const [nickname, setNickname] = useState(user?.email?.split('@')[0] || 'Trader');
+  const [nickname, setNickname] = useState('');
+  const [steamProfileUrl, setSteamProfileUrl] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState(false);
+
+  useEffect(() => {
+    setNickname(getProfileDisplayName(profile, user?.email));
+    setSteamProfileUrl(profile?.steam_profile_url?.trim() ?? '');
+  }, [profile, user?.email]);
+
+  const handleSaveProfile = async () => {
+    setProfileSuccess(false);
+    const trimmedNick = nickname.trim();
+    if (!trimmedNick) {
+      setProfileError('Display name cannot be empty.');
+      return;
+    }
+
+    const trimmedSteam = steamProfileUrl.trim();
+    if (trimmedSteam) {
+      try {
+        new URL(trimmedSteam);
+      } catch {
+        setProfileError('Enter a valid Steam profile URL (https://…).');
+        return;
+      }
+    }
+
+    try {
+      await saveProfile({
+        nickname: trimmedNick,
+        steam_profile_url: trimmedSteam || null,
+      });
+      setProfileSuccess(true);
+      window.setTimeout(() => setProfileSuccess(false), 3000);
+    } catch {
+      /* error set in hook */
+    }
+  };
+
+  const displayInitial = (nickname.trim() || getProfileDisplayName(profile, user?.email))
+    .charAt(0)
+    .toUpperCase();
+  const steamStatus = getSteamProfileLabel(profile?.steam_profile_url);
 
   const handleSignOut = async () => {
     await signOut();
@@ -110,36 +172,86 @@ const Settings = () => {
               <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">Profile</h2>
               <div className="bg-steam-card border border-steam-border rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-8 shadow-xl">
                 {/* Avatar */}
-                <div className="relative group cursor-pointer shrink-0">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-4xl shadow-inner border-[4px] border-steam-bg">
-                    {nickname.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="absolute inset-0 theme-scrim rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
-                    <Camera className="w-8 h-8 text-steam-text" />
-                  </div>
+                <div className="relative shrink-0">
+                  {profile?.avatar ? (
+                    <img
+                      src={profile.avatar}
+                      alt=""
+                      className="w-24 h-24 rounded-full object-cover border-[4px] border-steam-bg shadow-inner"
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-4xl shadow-inner border-[4px] border-steam-bg">
+                      {profileLoading ? '…' : displayInitial}
+                    </div>
+                  )}
                 </div>
 
                 {/* Formularz */}
                 <div className="flex-1 w-full space-y-4">
+                  {profileError && (
+                    <div className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-400">
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <span>{profileError}</span>
+                    </div>
+                  )}
+                  {profileSuccess && (
+                    <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-400">
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
+                      <span>Profile saved.</span>
+                    </div>
+                  )}
+
                   <div>
                     <label className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-1.5 block">Display Name</label>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <input 
-                        type="text" 
-                        value={nickname}
-                        onChange={(e) => setNickname(e.target.value)}
-                        className="flex-1 bg-steam-bg border border-steam-border text-steam-text font-bold rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors"
-                      />
-                      <button className="px-6 py-3 bg-steam-accent hover:opacity-90 text-white font-bold rounded-xl shadow-lg theme-shadow-accent transition-all">
-                        Save
-                      </button>
-                    </div>
+                    <input
+                      type="text"
+                      value={nickname}
+                      onChange={(e) => setNickname(e.target.value)}
+                      disabled={profileLoading}
+                      maxLength={64}
+                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-bold rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors disabled:opacity-60"
+                    />
                   </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-1.5 block">
+                      Steam Profile URL
+                    </label>
+                    <input
+                      type="url"
+                      value={steamProfileUrl}
+                      onChange={(e) => setSteamProfileUrl(e.target.value)}
+                      disabled={profileLoading}
+                      placeholder="https://steamcommunity.com/id/…"
+                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-medium rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors disabled:opacity-60"
+                    />
+                    <p className="text-[10px] text-steam-tertiary mt-1.5">
+                      Leave empty to unlink. Saved via your Supabase profile.
+                    </p>
+                  </div>
+
                   <div>
                     <label className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-1.5 block">Email Address</label>
                     <div className="bg-steam-bg border border-steam-border text-steam-secondary font-medium rounded-xl px-4 py-3 opacity-70 cursor-not-allowed">
                       {user?.email}
                     </div>
+                  </div>
+
+                  <div className="flex justify-end pt-1">
+                    <button
+                      type="button"
+                      onClick={handleSaveProfile}
+                      disabled={profileLoading || profileSaving}
+                      className="px-6 py-3 bg-steam-accent text-white font-bold rounded-xl shadow-lg theme-shadow-accent transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 hover:brightness-110 hover:shadow-xl hover:shadow-blue-500/25 hover:-translate-y-0.5 active:translate-y-0 active:brightness-95"
+                    >
+                      {profileSaving ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" /> Saving…
+                        </>
+                      ) : (
+                        'Save profile'
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -168,18 +280,21 @@ const Settings = () => {
                   </div>
                 </button>
 
-                {/* Steam Account */}
-                <div className="flex items-center justify-between p-5 hover:bg-steam-hover cursor-pointer transition-colors group">
+                {/* Steam Account — status from profile; edit URL in Profile section above */}
+                <div className="flex items-center justify-between p-5">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl group-hover:scale-110 transition-transform">
+                    <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
                       <LinkIcon className="w-5 h-5" />
                     </div>
                     <span className="font-bold text-steam-text text-base">Steam Account</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-steam-tertiary">Not linked</span>
-                    <ChevronRight className="w-5 h-5 text-steam-tertiary group-hover:text-steam-secondary" />
-                  </div>
+                  <span
+                    className={`text-sm font-bold ${
+                      profile?.steam_profile_url ? 'text-steam-accent' : 'text-steam-tertiary'
+                    }`}
+                  >
+                    {profileLoading ? '…' : steamStatus}
+                  </span>
                 </div>
 
                 {/* Change Password */}

@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { formatCurrency } from '@/utils/display';
-import { AlertCircle, Clock, Moon, TrendingUp } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AlertCircle, Clock, Lock, Moon, TrendingUp } from 'lucide-react';
+import { MANAGE_SUBSCRIPTION_SETTINGS_PATH } from '@/constants/settingsLinks';
 import { StagnationListSkeleton } from './AnalyticsSkeletons';
 import { ItemImage } from '@/components/ui/ItemImage';
 
@@ -46,7 +48,11 @@ const formatLastActivity = (iso: string) => {
   }
 };
 
-export const StagnationDetector = () => {
+interface StagnationDetectorProps {
+  hasPremiumAccess: boolean;
+}
+
+export const StagnationDetector = ({ hasPremiumAccess }: StagnationDetectorProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [items, setItems] = useState<StagnantItem[]>([]);
@@ -143,6 +149,7 @@ export const StagnationDetector = () => {
                 key={opt.value}
                 type="button"
                 onClick={() => setDaysThreshold(opt.value)}
+                disabled={!hasPremiumAccess}
                 className={`px-3 py-1.5 text-[10px] sm:text-xs font-bold rounded-md transition-colors whitespace-nowrap ${
                   daysThreshold === opt.value
                     ? 'bg-steam-card text-steam-text shadow-md border border-steam-border'
@@ -155,7 +162,7 @@ export const StagnationDetector = () => {
           </div>
         </div>
 
-        {!loading && items.length > 0 && (
+        {!loading && items.length > 0 && hasPremiumAccess && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4">
             <div className="theme-subtle rounded-xl px-3 py-2 border border-steam-border/50">
               <p className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">Stagnant items</p>
@@ -180,7 +187,7 @@ export const StagnationDetector = () => {
         )}
       </div>
 
-      <div className="flex-1 min-h-0 p-4 sm:p-6 pt-0 sm:pt-0">
+      <div className="flex-1 min-h-0 p-4 sm:p-6 pt-0 sm:pt-0 relative">
         {loading ? (
           <StagnationListSkeleton />
         ) : errorMessage ? (
@@ -197,7 +204,11 @@ export const StagnationDetector = () => {
             </button>
           </div>
         ) : items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center h-48 px-4">
+          <div
+            className={`flex flex-col items-center justify-center text-center h-48 px-4 transition-all duration-500 ${
+              !hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''
+            }`}
+          >
             <TrendingUp className="w-10 h-10 text-steam-profit mb-3 opacity-80" />
             <p className="text-steam-secondary font-bold">No stagnant assets</p>
             <p className="text-steam-tertiary text-xs mt-1 max-w-xs">
@@ -205,7 +216,11 @@ export const StagnationDetector = () => {
             </p>
           </div>
         ) : (
-          <ul className="space-y-2 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
+          <ul
+            className={`space-y-2 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar transition-all duration-500 ${
+              !hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''
+            }`}
+          >
             {items.map((item) => {
               const invested = Number(item.total_invested ?? 0);
               const current = Number(item.current_total_value ?? 0);
@@ -263,6 +278,26 @@ export const StagnationDetector = () => {
               );
             })}
           </ul>
+        )}
+
+        {!hasPremiumAccess && !loading && !errorMessage && (
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-steam-card/50 rounded-xl mx-4 sm:mx-6 mb-4 sm:mb-6">
+            <div className="bg-steam-bg p-6 rounded-2xl border border-steam-border shadow-2xl text-center max-w-sm w-full mx-4">
+              <div className="w-12 h-12 bg-steam-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Lock className="w-6 h-6 text-steam-accent" />
+              </div>
+              <h4 className="text-steam-text font-bold text-lg mb-2">Pro Analytics Required</h4>
+              <p className="text-sm text-steam-secondary mb-6">
+                Unlock stagnation alerts and see which items are tying up your capital.
+              </p>
+              <Link
+                to={MANAGE_SUBSCRIPTION_SETTINGS_PATH}
+                className="block w-full bg-steam-accent hover:opacity-90 text-white font-bold py-3 rounded-xl transition-colors text-center"
+              >
+                Upgrade to PRO
+              </Link>
+            </div>
+          </div>
         )}
       </div>
     </div>
