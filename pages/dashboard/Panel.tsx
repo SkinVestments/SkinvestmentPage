@@ -26,6 +26,7 @@ import {
   normalizePortfolioCurrentValues,
   type PortfolioCurrentValues,
 } from '@/utils/portfolioRpc';
+import { AdSlot } from '@/components/ads/AdSlot';
 
 // --- TYPY DANYCH ---
 interface CS2Item {
@@ -452,6 +453,8 @@ const Panel = () => {
           </div>
         </div>
       </div>
+
+      <AdSlot slotKey="panel" className="mb-8" />
 
       {/* === KOLEKCJE (PEŁNA SZEROKOŚĆ) === */}
       <div className="mb-8">

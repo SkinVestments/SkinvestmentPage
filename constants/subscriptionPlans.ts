@@ -1,7 +1,7 @@
 import { Crown, Shield, Zap, type LucideIcon } from 'lucide-react';
 
 export type BillingCycle = 'monthly' | 'yearly' | 'lifetime';
-export type PlanId = 'basic' | 'pro' | 'pro-max';
+export type PlanId = 'free' | 'pro' | 'pro_max';
 
 export interface PlanFeature {
   text: string;
@@ -13,9 +13,9 @@ export const PLAN_PRICING: Record<
   PlanId,
   { monthly: number; yearlyPerMonth: number; lifetime: number }
 > = {
-  basic: { monthly: 0, yearlyPerMonth: 0, lifetime: 0 },
+  free: { monthly: 0, yearlyPerMonth: 0, lifetime: 0 },
   pro: { monthly: 21.99, yearlyPerMonth: 18.33, lifetime: 1309.99 },
-  'pro-max': { monthly: 38.99, yearlyPerMonth: 32.92, lifetime: 1749.99 },
+  pro_max: { monthly: 38.99, yearlyPerMonth: 32.92, lifetime: 1749.99 },
 };
 
 export interface SubscriptionPlan {
@@ -36,7 +36,7 @@ export interface SubscriptionPlan {
 
 export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
-    id: 'basic',
+    id: 'free',
     name: 'Starter',
     desc: 'For casual players & drop collectors.',
     icon: Shield,
@@ -72,7 +72,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     cta: 'Subscribe to Pro',
   },
   {
-    id: 'pro-max',
+    id: 'pro_max',
     name: 'Pro Max',
     desc: 'Unrestricted access. Never miss a market movement.',
     includesLabel: 'Everything in Pro, plus:',
@@ -98,7 +98,7 @@ export const getPlanPriceDisplay = (
   planId: PlanId,
   cycle: BillingCycle,
 ): { price: string; period: string; yearlyNote?: string } => {
-  if (planId === 'basic') {
+  if (planId === 'free') {
     return { price: 'Free', period: 'forever' };
   }
 

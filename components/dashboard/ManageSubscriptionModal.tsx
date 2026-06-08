@@ -42,7 +42,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
     setPurchaseError('');
 
     try {
-      if (selectedPlanId === 'basic') {
+      if (selectedPlanId === 'free') {
         await new Promise((r) => setTimeout(r, 250));
         onSelectPlan(selectedPlanId, billingCycle);
         onClose();

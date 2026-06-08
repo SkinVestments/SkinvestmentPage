@@ -9,22 +9,8 @@ import {
 import { useTheme } from '@/context/ThemeContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
-import { BillingCycle, PlanId, getPlanById } from '@/constants/subscriptionPlans';
-
-const SUBSCRIPTION_STORAGE_KEY = 'skinvestments_subscription';
-
-const loadSubscription = (): { planId: PlanId; billingCycle: BillingCycle } => {
-  try {
-    const raw = localStorage.getItem(SUBSCRIPTION_STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed.planId && parsed.billingCycle) return parsed;
-    }
-  } catch {
-    /* ignore */
-  }
-  return { planId: 'basic', billingCycle: 'yearly' };
-};
+import { BillingCycle, PlanId } from '@/constants/subscriptionPlans';
+import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
 
 const Settings = () => {
   const { user, signOut } = useAuth();
@@ -32,7 +18,12 @@ const Settings = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'account' | 'app' | 'privacy'>('account');
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
-  const [{ planId: currentPlanId, billingCycle: currentBillingCycle }, setSubscription] = useState(loadSubscription);
+  const {
+    planId: currentPlanId,
+    billingCycle: currentBillingCycle,
+    plan: currentPlan,
+    updateSubscription,
+  } = useSubscriptionPlan();
   
   // Przykładowe stany ustawień
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
@@ -43,16 +34,14 @@ const Settings = () => {
     navigate('/');
   };
 
-  const currentPlan = getPlanById(currentPlanId);
   const subscriptionLabel = currentPlan
-    ? currentPlan.id === 'basic'
+    ? currentPlan.id === 'free'
       ? 'Starter · Free'
       : `${currentPlan.name} · ${currentBillingCycle}`
     : 'Starter · Free';
 
   const handleSelectPlan = (planId: PlanId, billingCycle: BillingCycle) => {
-    setSubscription({ planId, billingCycle });
-    localStorage.setItem(SUBSCRIPTION_STORAGE_KEY, JSON.stringify({ planId, billingCycle }));
+    updateSubscription(planId, billingCycle);
   };
 
   return (

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '../components/Sidebar';
 import { BrandLogo } from '../components/BrandLogo';
+import { AdSenseScript } from '@/components/ads/AdSenseScript';
 import { Menu, X } from 'lucide-react';
 
 export const DashboardLayout = () => {
@@ -23,6 +24,7 @@ export const DashboardLayout = () => {
 
   return (
     <div className="flex h-screen bg-steam-bg text-steam-text overflow-hidden w-full max-w-[100vw]">
+      <AdSenseScript />
       <Sidebar mobileOpen={mobileNavOpen} onMobileClose={() => setMobileNavOpen(false)} />
 
       <div className="flex-1 flex flex-col md:ml-64 h-screen overflow-hidden min-w-0 w-full">
