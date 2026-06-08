@@ -4,13 +4,13 @@ import type { BillingCycle, PlanId } from '@/constants/subscriptionPlans';
 export const RC_PURCHASE_BASE = 'https://pay.rev.cat/amtaebmynffvulpg';
 
 /** package_id from RevenueCat → Offerings → Packages */
-const PACKAGE_IDS: Record<Exclude<PlanId, 'basic'>, Record<BillingCycle, string>> = {
+const PACKAGE_IDS: Record<Exclude<PlanId, 'free'>, Record<BillingCycle, string>> = {
   pro: {
     monthly: 'pro_monthly',
     yearly: 'pro_annual',
     lifetime: 'pro_lifetime',
   },
-  'pro-max': {
+  pro_max: {
     monthly: 'promax_monthly',
     yearly: 'promax_annual',
     lifetime: 'promax_lifetime',
@@ -25,7 +25,7 @@ export const buildRevenueCatCheckoutUrl = (
   planId: PlanId,
   billingCycle: BillingCycle,
 ): string | null => {
-  if (planId === 'basic' || !userId.trim()) return null;
+  if (planId === 'free' || !userId.trim()) return null;
 
   const packageId = PACKAGE_IDS[planId]?.[billingCycle];
   if (!packageId) return null;

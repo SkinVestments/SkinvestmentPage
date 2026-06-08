@@ -20,6 +20,13 @@ jobs:
         env:
             VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
             VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+            VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
+            VITE_ADSENSE_SLOT: ${{ secrets.VITE_ADSENSE_SLOT }}
+            VITE_ADSENSE_SLOT_PANEL: ${{ secrets.VITE_ADSENSE_SLOT_PANEL }}
+            VITE_ADSENSE_SLOT_INVENTORY: ${{ secrets.VITE_ADSENSE_SLOT_INVENTORY }}
+            VITE_ADSENSE_SLOT_ANALYTICS: ${{ secrets.VITE_ADSENSE_SLOT_ANALYTICS }}
+            VITE_ADSENSE_SLOT_HISTORY: ${{ secrets.VITE_ADSENSE_SLOT_HISTORY }}
+            VITE_ADSENSE_SLOT_SIDEBAR: ${{ secrets.VITE_ADSENSE_SLOT_SIDEBAR }}
         run: |
           npm install
           npm run build

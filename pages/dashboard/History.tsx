@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Loader2, ArrowDownUp, Calendar, Package, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { ItemImage } from '@/components/ui/ItemImage';
+import { AdSlot } from '@/components/ads/AdSlot';
 
 // --- TYPY ZGODNE Z TWOJĄ BAZĄ ---
 type TransactionType = 'DROP' | 'BUY' | 'SELL';
@@ -107,6 +108,8 @@ const History = () => {
           ))}
         </div>
       </div>
+
+      <AdSlot slotKey="history" className="mb-6" />
 
       {/* Tabela */}
       <div className="bg-steam-card rounded-2xl border border-steam-border shadow-xl overflow-hidden">

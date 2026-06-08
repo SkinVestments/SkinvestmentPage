@@ -5,10 +5,13 @@ import { DropsChart } from '../../components/analytics/DropsChart';
 import { QualityStructureChart } from '../../components/analytics/QualityStructureChart';
 import { StagnationDetector } from '../../components/analytics/StagnationDetector';
 import { ProfitHeatmap } from '../../components/analytics/ProfitHeatmap';
+import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
+import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { AdSlot } from '@/components/ads/AdSlot';
 
 const Analytics = () => {
-  const userHasPremium = true; 
+  const { hasPremium: userHasPremium } = useSubscriptionPlan();
 
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
@@ -21,14 +24,19 @@ const Analytics = () => {
         </div>
         
         {!userHasPremium && (
-           <button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2">
+           <Link
+             to="/settings"
+             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2"
+           >
              <Sparkles className="w-4 h-4" /> Upgrade to PRO
-           </button>
+           </Link>
         )}
       </div>
 
       {/* RZĄD 1: METRYKI */}
       <SummaryCards />
+
+      <AdSlot slotKey="analytics" className="mb-6" />
 
       {/* RZĄD 2: GŁÓWNE WYKRESY */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

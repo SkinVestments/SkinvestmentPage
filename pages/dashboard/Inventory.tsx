@@ -26,6 +26,7 @@ import {
   normalizePriceSource,
   normalizeRarityTier,
 } from '@/utils/inventoryFilters';
+import { AdSlot } from '@/components/ads/AdSlot';
 
 // --- TYPY ---
 interface InventoryItem {
@@ -254,6 +255,8 @@ const Inventory = () => {
         resultCount={filteredAndSortedItems.length}
         totalCount={items.length}
       />
+
+      <AdSlot slotKey="inventory" className="mb-6" />
 
       {/* KONTENT EKWIPUNKU */}
       {loading ? (
