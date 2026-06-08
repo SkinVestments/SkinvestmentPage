@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { Link } from 'react-router-dom';
 import { Lock, TrendingUp } from 'lucide-react';
+import { MANAGE_SUBSCRIPTION_SETTINGS_PATH } from '@/constants/settingsLinks';
 import { AreaChartSkeleton } from './AnalyticsSkeletons';
 import { chartProfitStroke, chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
 
@@ -95,9 +97,12 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
                </div>
                <h4 className="text-steam-text font-bold text-lg mb-2">Pro Analytics Required</h4>
                <p className="text-sm text-steam-secondary mb-6">Unlock deep insights into your drop history and advanced portfolio charting.</p>
-               <button className="w-full bg-steam-accent hover:opacity-90 text-white font-bold py-3 rounded-xl transition-colors">
+               <Link
+                 to={MANAGE_SUBSCRIPTION_SETTINGS_PATH}
+                 className="block w-full bg-steam-accent hover:opacity-90 text-white font-bold py-3 rounded-xl transition-colors text-center"
+               >
                  Upgrade to PRO
-               </button>
+               </Link>
             </div>
           </div>
         )}

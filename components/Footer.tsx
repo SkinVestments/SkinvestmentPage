@@ -1,8 +1,9 @@
 import React from 'react';
-import { Github, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 
 export const Footer: React.FC = () => {
+  const { user } = useAuth();
   return (
     <footer className="bg-steam-bg border-t border-steam-border/50 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -15,21 +16,20 @@ export const Footer: React.FC = () => {
               We help CS2 players treat their inventory like a real asset class. 
               Secure, private, and precise tracking for the digital economy.
             </p>
-            <div className="mt-6 flex gap-4">
-                <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:bg-steam-accent transition-all">
-                    <Twitter size={16} />
-                </a>
-                <a href="#" className="w-8 h-8 rounded bg-steam-surface flex items-center justify-center text-steam-secondary hover:text-steam-text hover:theme-subtle-strong transition-all">
-                    <Github size={16} />
-                </a>
-            </div>
           </div>
           
           <div>
             <h4 className="text-steam-text font-bold uppercase text-xs tracking-wider mb-6">Product</h4>
             <ul className="space-y-3 text-sm">
               <li><Link to="/features" className="text-steam-tertiary hover:text-steam-accent transition-colors">Features</Link></li>
-              <li><span className="text-steam-tertiary cursor-not-allowed">Web Dashboard (Beta)</span></li>
+              <li>
+                <Link
+                  to={user ? '/panel' : '/login'}
+                  className="text-steam-tertiary hover:text-steam-accent transition-colors"
+                >
+                  Web Dashboard
+                </Link>
+              </li>
               <li><span className="text-steam-tertiary cursor-not-allowed">API Access</span></li>
               <li><Link to="/pricing" className="text-steam-tertiary hover:text-steam-accent transition-colors">Pricing</Link></li>
               <li><Link to="/roadmap" className="text-steam-tertiary hover:text-steam-accent transition-colors">Roadmap</Link></li>

@@ -18,7 +18,9 @@ const FAQPage = lazy(() => import('@/pages/FAQPage').then((m) => ({ default: m.F
 const RoadmapPage = lazy(() =>
   import('@/pages/RoadmapPage').then((m) => ({ default: m.RoadmapPage })),
 );
-const ContactPage = lazy(() => import('@/pages/ContactPage'));
+const ContactPage = lazy(() =>
+  import('@/pages/ContactPage').then((m) => ({ default: m.ContactPage })),
+);
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const TermsAndConditionsPage = lazy(() => import('@/pages/TermsAndConditionsPage'));
 const Login = lazy(() => import('@/pages/auth/Login'));
