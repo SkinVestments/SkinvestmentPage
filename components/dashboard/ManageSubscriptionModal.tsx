@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, Check, Infinity, Loader2, Sparkles, X } from 'lucide-react';
+import { AlertCircle, Check, Infinity, Loader2, Lock, Sparkles, X } from 'lucide-react';
 import {
   BillingCycle,
   PlanId,
@@ -27,6 +27,9 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
 }) => {
   const [billingCycle, setBillingCycle] = useState<BillingCycle>(currentBillingCycle);
   const [selectedPlanId, setSelectedPlanId] = useState<PlanId>(currentPlanId);
+  const [isSaving, setIsSaving] = useState(false);
+  const [purchaseError, setPurchaseError] = useState('');
+
   useEffect(() => {
     if (isOpen) {
       setBillingCycle(currentBillingCycle);
@@ -151,7 +154,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                 <button
                   key={plan.id}
                   type="button"
-                  onClick={() => handleSelectPlan(plan.id)}
+                  onClick={() => setSelectedPlanId(plan.id)}
                   className={`relative text-left p-5 rounded-2xl border transition-all flex flex-col ${
                     isSelected
                       ? 'border-steam-accent bg-steam-accent/10 ring-2 ring-steam-accent/40'
