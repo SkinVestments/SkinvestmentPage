@@ -27,7 +27,9 @@
     <meta name="author" content="KJ Labs Studio" />
 
     <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-    <!-- Consent Mode v2 defaults (EEA/UK/CH) — updated when user accepts via Google CMP -->
+    <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin>
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+    <!-- Consent Mode v2 — defaults until user accepts (Google CMP or fallback banner) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -36,10 +38,11 @@
         ad_user_data: 'denied',
         ad_personalization: 'denied',
         analytics_storage: 'denied',
-        wait_for_update: 500
+        wait_for_update: 2000
       });
     </script>
-    <!-- Google certified CMP (Funding Choices) — pair with AdSense → Privacy & messaging -->
+    <!-- Google CMP: publish BOTH in AdSense → Privacy & messaging (EU + US state regulations) -->
+    <!-- ?ers=1 = European message; US state message loads via same tag when published in dashboard -->
     <script async src="https://fundingchoicesmessages.google.com/i/pub-8332580005201318?ers=1"></script>
     <!-- AdSense publisher -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8332580005201318" crossorigin="anonymous"></script>
@@ -49,6 +52,19 @@
     <title>Skinvestments - The Ultimate CS2 Portfolio Tracker</title>
   </head>
   <body>
+    <script>
+      (function signalGooglefcPresent() {
+        if (window.frames['googlefcPresent']) return;
+        if (!document.body) {
+          document.addEventListener('DOMContentLoaded', signalGooglefcPresent);
+          return;
+        }
+        var f = document.createElement('iframe');
+        f.name = 'googlefcPresent';
+        f.style.cssText = 'width:0;height:0;border:0;position:absolute;left:-9999px;top:-9999px';
+        document.body.appendChild(f);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
