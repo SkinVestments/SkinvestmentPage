@@ -9,6 +9,8 @@ import {
 import { useTheme } from '@/context/ThemeContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
+import { ChangePasswordModal } from '@/components/dashboard/ChangePasswordModal';
+import { userHasEmailPassword } from '@/utils/authProviders';
 import { BillingCycle, PlanId } from '@/constants/subscriptionPlans';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
 
@@ -18,6 +20,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'account' | 'app' | 'privacy'>('account');
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const {
     planId: currentPlanId,
     billingCycle: currentBillingCycle,
@@ -180,15 +183,26 @@ const Settings = () => {
                 </div>
 
                 {/* Change Password */}
-                <div className="flex items-center justify-between p-5 hover:bg-steam-hover cursor-pointer transition-colors group">
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordModalOpen(true)}
+                  className="w-full flex items-center justify-between p-5 hover:bg-steam-hover cursor-pointer transition-colors group text-left"
+                >
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-purple-500/10 text-purple-400 rounded-xl group-hover:scale-110 transition-transform">
                       <Shield className="w-5 h-5" />
                     </div>
-                    <span className="font-bold text-steam-text text-base">Change Password</span>
+                    <div>
+                      <span className="font-bold text-steam-text text-base block">Change Password</span>
+                      {!userHasEmailPassword(user) && (
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
+                          Google sign-in
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <ChevronRight className="w-5 h-5 text-steam-tertiary group-hover:text-steam-secondary" />
-                </div>
+                </button>
 
               </div>
             </section>
@@ -349,6 +363,12 @@ const Settings = () => {
         currentBillingCycle={currentBillingCycle}
         userId={user?.id}
         onSelectPlan={handleSelectPlan}
+      />
+
+      <ChangePasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        user={user}
       />
     </div>
   );
