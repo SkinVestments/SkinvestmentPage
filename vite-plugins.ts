@@ -26,6 +26,20 @@ export function cacheHeadersPlugin(): Plugin {
   };
 }
 
+/** Optional meta tag from AdSense → Sites → Verify → HTML tag method */
+export function googleSiteVerificationPlugin(): Plugin {
+  return {
+    name: 'google-site-verification',
+    transformIndexHtml(html) {
+      const token = process.env.VITE_GOOGLE_SITE_VERIFICATION;
+      if (!token) return html;
+      const tag = `<meta name="google-site-verification" content="${token}" />`;
+      if (html.includes('google-site-verification')) return html;
+      return html.replace('</head>', `    ${tag}\n  </head>`);
+    },
+  };
+}
+
 /** Replace blocking stylesheet links with preload + onload (hashed paths from Vite build). */
 export function asyncCssPlugin(): Plugin {
   return {
