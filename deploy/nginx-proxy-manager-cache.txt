@@ -1,0 +1,19 @@
+# Nginx Proxy Manager — BEZPIECZNY snippet cache (Advanced tab)
+# Tylko JEDEN blok. Bez osobnych location dla /assets, noise.svg, index.html.
+#
+# Hosts → Proxy Hosts → skinvestments.app → Advanced → Custom Nginx Configuration
+#
+# UWAGA: Jeśli strona padnie — usuń cały kod z Advanced i Save.
+
+location ~* \.(woff2|woff|svg|webp|png|jpe?g|gif|ico|css|js)$ {
+    include conf.d/include/proxy.conf;
+    proxy_pass $forward_scheme://$server:$port$request_uri;
+    add_header Cache-Control "public, max-age=31536000, immutable" always;
+}
+
+# --- NIE używaj w NPM (psuje SSL / proxy): ---
+# - wielu location naraz (/assets/, = /index.html, = /noise.svg)
+# - ręczne proxy_set_header Upgrade / Connection obok include proxy.conf
+# - duplikat proxy_pass w wielu blokach
+#
+# Lepsze długoterminowo: cache na nginxie który serwuje pliki (deploy/nginx-cache.conf)
