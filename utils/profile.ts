@@ -4,7 +4,7 @@ import type { UpdateOwnProfileParams, UserProfile } from '@/types/profile';
 export async function fetchOwnProfile(userId: string): Promise<UserProfile | null> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, nickname, steam_profile_url, avatar, notify_accept')
+    .select('id, nickname, steam_profile_url, avatar, notify_accept, plan_subscription')
     .eq('id', userId)
     .maybeSingle();
 

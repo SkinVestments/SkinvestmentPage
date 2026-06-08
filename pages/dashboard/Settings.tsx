@@ -105,11 +105,13 @@ const Settings = () => {
   const subscriptionLabel = currentPlan
     ? currentPlan.id === 'free'
       ? 'Starter · Free'
-      : `${currentPlan.name} · ${currentBillingCycle}`
+      : currentBillingCycle
+        ? `${currentPlan.name} · ${currentBillingCycle}`
+        : currentPlan.name
     : 'Starter · Free';
 
-  const handleSelectPlan = (planId: PlanId, billingCycle: BillingCycle) => {
-    updateSubscription(planId, billingCycle);
+  const handleSelectPlan = (_planId: PlanId, billingCycle: BillingCycle) => {
+    updateSubscription(_planId, billingCycle);
   };
 
   return (
@@ -362,10 +364,10 @@ const Settings = () => {
                     </div>
                   </div>
                   <div
-                    className="w-12 h-6 rounded-full bg-steam-elevated border border-steam-border relative"
+                    className="inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-steam-border bg-steam-elevated p-0.5 self-center"
                     aria-hidden
                   >
-                    <span className="absolute top-[2px] left-[2px] w-5 h-5 rounded-full bg-steam-card border border-steam-border" />
+                    <span className="h-5 w-5 shrink-0 rounded-full border border-steam-border bg-steam-card" />
                   </div>
                 </div>
 
