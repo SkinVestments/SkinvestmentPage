@@ -7,8 +7,8 @@ import { useTheme } from '@/context/ThemeContext';
 import { useWeeklyReset } from '../utils/utils';
 
 const HERO_SCREEN = {
-  dark: '/images/screen-b.png',
-  light: '/images/screen-w.png',
+  dark: '/images/screen-b.webp',
+  light: '/images/screen-w.webp',
 } as const;
 
 export const Hero: React.FC = () => {
