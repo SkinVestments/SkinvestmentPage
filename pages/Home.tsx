@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Hero } from '../components/Hero';
-import { DeepDive } from '../components/DeepDive';
-import { Features } from '../components/Features';
+
+const DeepDive = lazy(() =>
+  import('../components/DeepDive').then((m) => ({ default: m.DeepDive })),
+);
+const Features = lazy(() =>
+  import('../components/Features').then((m) => ({ default: m.Features })),
+);
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <DeepDive />
-      <Features />
+      <Suspense fallback={null}>
+        <DeepDive />
+        <Features />
+      </Suspense>
     </>
   );
 }
