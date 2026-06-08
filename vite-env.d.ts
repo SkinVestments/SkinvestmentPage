@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_ADSENSE_SLOT_ANALYTICS?: string
   readonly VITE_ADSENSE_SLOT_HISTORY?: string
   readonly VITE_ADSENSE_SLOT_SIDEBAR?: string
+  readonly VITE_GOOGLE_SITE_VERIFICATION?: string
 }
 
 interface ImportMeta {

@@ -2,7 +2,7 @@ import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { asyncCssPlugin, cacheHeadersPlugin } from './vite-plugins';
+import { asyncCssPlugin, cacheHeadersPlugin, googleSiteVerificationPlugin } from './vite-plugins';
 
 export default defineConfig(({ mode }) => {
   loadEnv(mode, '.', '');
@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       host: '0.0.0.0',
     },
-    plugins: [react(), tailwindcss(), asyncCssPlugin(), cacheHeadersPlugin()],
+    plugins: [react(), tailwindcss(), googleSiteVerificationPlugin(), asyncCssPlugin(), cacheHeadersPlugin()],
     base: '/',
     resolve: {
       alias: {

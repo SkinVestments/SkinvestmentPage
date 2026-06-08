@@ -10,6 +10,7 @@ export function AdSenseScript() {
 
   useEffect(() => {
     if (!ADSENSE_CLIENT || !hasAds) return;
+    if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
     if (document.querySelector(`script[${SCRIPT_ATTR}]`)) return;
 
     const script = document.createElement('script');
