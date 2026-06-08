@@ -13,9 +13,11 @@ export function initDeferredAnalytics(): void {
     if (document.querySelector(`script[src*="googletagmanager.com/gtag/js"]`)) return;
 
     window.dataLayer = window.dataLayer ?? [];
-    window.gtag = function gtag(...args: unknown[]) {
-      window.dataLayer?.push(args);
-    };
+    if (!window.gtag) {
+      window.gtag = function gtag(...args: unknown[]) {
+        window.dataLayer?.push(args);
+      };
+    }
 
     const script = document.createElement('script');
     script.async = true;
@@ -23,7 +25,7 @@ export function initDeferredAnalytics(): void {
     document.head.appendChild(script);
 
     window.gtag('js', new Date());
-    window.gtag('config', GA_ID);
+    window.gtag('config', GA_ID, { anonymize_ip: true });
   };
 
   if ('requestIdleCallback' in window) {

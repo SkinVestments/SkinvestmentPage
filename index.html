@@ -27,7 +27,21 @@
     <meta name="author" content="KJ Labs Studio" />
 
     <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-    <!-- AdSense site verification + publisher (required in static HTML for Google crawler) -->
+    <!-- Consent Mode v2 defaults (EEA/UK/CH) — updated when user accepts via Google CMP -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
+    </script>
+    <!-- Google certified CMP (Funding Choices) — pair with AdSense → Privacy & messaging -->
+    <script async src="https://fundingchoicesmessages.google.com/i/pub-8332580005201318?ers=1"></script>
+    <!-- AdSense publisher -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8332580005201318" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <!-- LCP hero — responsive default (dark theme, md for retina) -->
