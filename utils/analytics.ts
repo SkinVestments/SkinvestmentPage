@@ -1,3 +1,5 @@
+import { applyConsent, getStoredConsent } from '@/utils/consent';
+
 const GA_ID = 'G-6VT5X6FJBQ';
 
 declare global {
@@ -25,11 +27,15 @@ export function initDeferredAnalytics(): void {
     document.head.appendChild(script);
 
     window.gtag('js', new Date());
+
+    const stored = getStoredConsent();
+    if (stored) applyConsent(stored);
+
     window.gtag('config', GA_ID, { anonymize_ip: true });
   };
 
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(load, { timeout: 5000 });
+  if (typeof window.requestIdleCallback === 'function') {
+    window.requestIdleCallback(load, { timeout: 5000 });
   } else {
     window.addEventListener('load', () => window.setTimeout(load, 3000), { once: true });
   }
