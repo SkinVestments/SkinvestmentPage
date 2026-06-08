@@ -15,6 +15,7 @@ import { BillingCycle, PlanId } from '@/constants/subscriptionPlans';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
 import { useOwnProfile } from '@/hooks/useOwnProfile';
 import { getProfileDisplayName, getSteamProfileLabel } from '@/utils/profile';
+import { ExportDataPanel } from '@/components/dashboard/ExportDataPanel';
 
 const Settings = () => {
   const { user, signOut } = useAuth();
@@ -38,6 +39,8 @@ const Settings = () => {
     billingCycle: currentBillingCycle,
     plan: currentPlan,
     updateSubscription,
+    canExportCsv,
+    canExportFull,
   } = useSubscriptionPlan();
   
   const {
@@ -465,6 +468,17 @@ const Settings = () => {
                 </div>
               </div>
 
+            </section>
+
+            <section>
+              <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">
+                Data portability
+              </h2>
+              <ExportDataPanel
+                userId={user?.id}
+                canExportCsv={canExportCsv}
+                canExportFull={canExportFull}
+              />
             </section>
           </div>
         )}

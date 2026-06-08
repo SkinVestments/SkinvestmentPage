@@ -31,6 +31,8 @@ export function useSubscriptionPlan() {
   const plan = getPlanById(subscription.planId);
   const isFreePlan = subscription.planId === 'free';
   const hasAds = isFreePlan;
+  const hasProMax = subscription.planId === 'pro_max';
+  const hasPro = subscription.planId === 'pro' || hasProMax;
 
   return {
     ...subscription,
@@ -38,6 +40,10 @@ export function useSubscriptionPlan() {
     isFreePlan,
     hasAds,
     hasPremium: !isFreePlan,
+    hasPro,
+    hasProMax,
+    canExportCsv: hasPro,
+    canExportFull: hasProMax,
     updateSubscription,
     resetSubscription: () => {
       saveSubscription(DEFAULT_SUBSCRIPTION);

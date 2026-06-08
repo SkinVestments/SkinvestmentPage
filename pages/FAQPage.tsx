@@ -97,8 +97,14 @@ const FAQ_SECTIONS: FaqSection[] = [
       },
       {
         question: 'Can I export my data?',
-        answer:
-          'Pro and Pro Max include custom transaction exports. Portfolio and history features are available from the dashboard depending on your plan limits.',
+        answer: (
+          <>
+            <strong className="text-steam-text">Pro</strong> users can download portfolio and
+            transaction CSV files. <strong className="text-steam-text">Pro Max</strong> adds a full
+            JSON archive (account, profile, Steam connections, collections, snapshots). Go to{' '}
+            <strong className="text-steam-text">Settings → Privacy → Data portability</strong>.
+          </>
+        ),
       },
     ],
   },

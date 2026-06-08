@@ -79,6 +79,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
     icon: Crown,
     color: 'text-yellow-500',
     features: [
+      { text: 'Full data export (JSON archive)' },
       { text: 'Link & sync up to 15 Steam accounts' },
       { text: 'Unlimited collections & items' },
       { text: 'Priority 24/7 support' },
