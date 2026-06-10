@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { SocialLinks } from '@/components/SocialLinks';
 
 export const Footer: React.FC = () => {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export const Footer: React.FC = () => {
               We help CS2 players treat their inventory like a real asset class. 
               Secure, private, and precise tracking for the digital economy.
             </p>
+            <SocialLinks className="mt-6" />
           </div>
           
           <div>
