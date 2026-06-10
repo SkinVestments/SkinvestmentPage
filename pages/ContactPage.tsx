@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Mail, MessageSquare, Lock, Activity } from 'lucide-react';
+import { SocialLinks } from '@/components/SocialLinks';
 
 const SUPPORT_EMAIL = 'kjlabs.studio@gmail.com';
 
@@ -45,7 +46,7 @@ export const ContactPage: React.FC = () => {
           </div>
 
           {/* Contact Details Grid */}
-          <div className="max-w-md">
+          <div className="max-w-md space-y-8">
             <ContactCard
               icon={<Mail />}
               label="Email Support"
@@ -53,6 +54,13 @@ export const ContactPage: React.FC = () => {
               sub="Response time: < 2h"
               href={`mailto:${SUPPORT_EMAIL}`}
             />
+
+            <div>
+              <p className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3">
+                Follow us
+              </p>
+              <SocialLinks />
+            </div>
           </div>
 
           {/* System Status Panel */}
