@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "generate:hero-images": "node scripts/generate-hero-images.mjs",
-    "prebuild": "node scripts/generate-hero-images.mjs",
+    "generate:favicons": "node scripts/generate-favicons.mjs",
+    "prebuild": "node scripts/generate-hero-images.mjs && node scripts/generate-favicons.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },
