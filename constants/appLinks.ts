@@ -3,5 +3,5 @@ export const GOOGLE_PLAY_URL = 'https://play.google.com/store/apps/details?id=co
 
 export const SOCIAL_LINKS = {
   tiktok: 'https://www.tiktok.com/@skinvestments2',
-  x: 'https://x.com/skinvestmentscs',
+  x: 'https://x.com/SkinVestmentspp',
 } as const;
