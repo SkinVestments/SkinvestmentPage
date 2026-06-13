@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Lock, HelpCircle, ChevronDown } from 'lucide-react';
+import { usePageSeo } from '@/hooks/usePageSeo';
 
 interface FaqItem {
   question: string;
@@ -142,6 +143,13 @@ const FAQ_SECTIONS: FaqSection[] = [
 ];
 
 export const FAQPage: React.FC = () => {
+  usePageSeo({
+    title: 'FAQ — CS2 Portfolio Tracker | Skinvestments',
+    description:
+      'Answers about Skinvestments CS2 portfolio tracker: Steam safety, pricing, subscriptions, exports, and the web dashboard.',
+    path: '/faq',
+  });
+
   useEffect(() => window.scrollTo(0, 0), []);
 
   const [openKey, setOpenKey] = useState<string | null>('0-0');

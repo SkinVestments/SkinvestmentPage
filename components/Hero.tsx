@@ -43,17 +43,17 @@ export const Hero: React.FC = () => {
             <span className="text-[10px] sm:text-xs font-bold text-steam-secondary uppercase tracking-wide sm:tracking-widest font-display">Multi-Market Aggregation</span>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold leading-[0.95] tracking-tight font-display text-steam-text break-words">
-            Master the <br/>
-            <span className="text-gradient-accent">
-              Economy.
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight font-display text-steam-text break-words">
+            CS2 Portfolio Tracker
+            <span className="block text-gradient-accent mt-2">
+              Master the skin economy.
             </span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl text-steam-secondary max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
-            The advanced portfolio tracker for CS2. Real-time valuation from 
-            <span className="text-steam-text font-medium mx-1">Steam, Skinport & Buff</span>. 
-            Stop guessing, start profiting.
+            Skinvestments is a portfolio tracker for CS2 skins with real-time valuation from
+            <span className="text-steam-text font-medium mx-1">Steam, Skinport & Buff</span>.
+            Track profits, drops, and inventory value on web and mobile.
           </p>
           
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-4 w-full max-w-sm sm:max-w-none mx-auto lg:mx-0">
@@ -122,7 +122,7 @@ export const Hero: React.FC = () => {
                     src={screen.src}
                     srcSet={screen.srcSet}
                     sizes="(max-width: 400px) 335px, 670px"
-                    alt="Skinvestments App Interface"
+                    alt="Skinvestments CS2 portfolio tracker app on iPhone"
                     width={335}
                     height={725}
                     loading="eager"

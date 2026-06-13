@@ -4,8 +4,16 @@ import {
   TrendingUp, Clock, Pyramid, Zap, ShieldCheck, Search,
   Activity, Target, Rocket, Moon
 } from 'lucide-react';
+import { usePageSeo } from '@/hooks/usePageSeo';
 
 export const FullFeaturesPage: React.FC = () => {
+  usePageSeo({
+    title: 'Features — CS2 Portfolio Tracker | Skinvestments',
+    description:
+      'CS2 portfolio tracker features: inventory sync, profit analytics, drop tracking, stagnation alerts, and multi-market pricing.',
+    path: '/features',
+  });
+
   // Reset scroll position on mount
   useEffect(() => {
     window.scrollTo(0, 0);
