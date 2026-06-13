@@ -2,6 +2,8 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://skinvestments.app/sitemap.xml
+
 # App / auth — not for indexing
 Disallow: /panel
 Disallow: /history
