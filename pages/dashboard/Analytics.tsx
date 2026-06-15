@@ -5,6 +5,7 @@ import { DropsChart } from '../../components/analytics/DropsChart';
 import { QualityStructureChart } from '../../components/analytics/QualityStructureChart';
 import { StagnationDetector } from '../../components/analytics/StagnationDetector';
 import { ProfitHeatmap } from '../../components/analytics/ProfitHeatmap';
+import { PortfolioDiversityTreemap } from '../../components/analytics/PortfolioDiversityTreemap';
 import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
@@ -49,7 +50,12 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* RZĄD 3: JAKOŚĆ I DODATKI */}
+      {/* RZĄD 3: DIVERSITY TREEMAP */}
+      <div className="mb-6">
+        <PortfolioDiversityTreemap />
+      </div>
+
+      {/* RZĄD 4: JAKOŚĆ I DODATKI */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="lg:col-span-1">
           <QualityStructureChart />
@@ -60,7 +66,7 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* RZĄD 4: PROFIT HEATMAP */}
+      {/* RZĄD 5: PROFIT HEATMAP */}
       <div className="grid grid-cols-1 gap-6">
         <ProfitHeatmap />
       </div>

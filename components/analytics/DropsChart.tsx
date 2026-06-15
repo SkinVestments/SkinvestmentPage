@@ -62,12 +62,12 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
         </select>
       </div>
 
-      <div className="flex-1 min-h-[300px] w-full relative">
+      <div className="w-full min-h-[300px] relative">
         {loading ? (
           <AreaChartSkeleton />
         ) : (
-          <div className={`w-full h-full transition-all duration-500 ${!hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''}`}>
-            <ResponsiveContainer width="100%" height="100%">
+          <div className={`w-full min-h-[300px] transition-all duration-500 ${!hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''}`}>
+            <ResponsiveContainer width="100%" height={300} minWidth={0}>
               <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="colorPortfolio" x1="0" y1="0" x2="0" y2="1">

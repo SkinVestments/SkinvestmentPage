@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Apple, ShieldCheck, Globe, Package } from 'lucide-react';
 import { Button } from './Button';
 import { GooglePlayIcon } from './icons/GooglePlayIcon';
@@ -21,6 +21,25 @@ export const Hero: React.FC = () => {
   const resetTimer = useWeeklyReset();
   const { theme } = useTheme();
   const screen = theme === 'light' ? HERO_SCREEN.light : HERO_SCREEN.dark;
+
+  useEffect(() => {
+    const id = 'hero-lcp-preload';
+    let link = document.getElementById(id) as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'preload';
+      link.as = 'image';
+      link.type = 'image/webp';
+      document.head.appendChild(link);
+    }
+    if (link.getAttribute('href') === screen.src) return;
+    link.setAttribute('href', screen.src);
+
+    return () => {
+      document.getElementById(id)?.remove();
+    };
+  }, [screen.src]);
   
   return (
     <section className="relative min-h-[90vh] sm:min-h-[95vh] flex items-center pt-24 sm:pt-32 pb-16 sm:pb-24 bg-steam-bg">

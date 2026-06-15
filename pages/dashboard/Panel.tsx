@@ -284,7 +284,7 @@ const Panel = () => {
                 </div>
               ) : null}
 
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={320} minWidth={0}>
                 <AreaChart
                   data={chartData}
                   className={chartLoading ? 'opacity-30' : ''}

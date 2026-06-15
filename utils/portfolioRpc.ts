@@ -91,3 +91,172 @@ export function normalizePortfolioItemDetail(data: unknown): PortfolioItemDetail
     history_realized_profit: Number(r.history_realized_profit ?? 0),
   };
 }
+
+/** Flat row from get_portfolio_treemap_data() RETURNS TABLE */
+export interface TreemapRpcRow {
+  category: string | null;
+  item_name: string | null;
+  total_value: number | string | null;
+}
+
+/** ApexCharts-style series (legacy / docs) */
+export interface TreemapSeriesPoint {
+  x: string;
+  y: number;
+}
+
+export interface TreemapSeries {
+  name: string;
+  data: TreemapSeriesPoint[];
+}
+
+export interface TreemapChartNode {
+  name: string;
+  size?: number;
+  fill?: string;
+  category?: string;
+  /** True when several small items were merged for readability */
+  isGrouped?: boolean;
+  children?: TreemapChartNode[];
+}
+
+const TREEMAP_CATEGORY_COLORS: Record<string, string> = {
+  case: '#3b82f6',
+  cases: '#3b82f6',
+  capsule: '#8b5cf6',
+  capsules: '#8b5cf6',
+  skin: '#10b981',
+  skins: '#10b981',
+  weapon: '#10b981',
+  agent: '#f59e0b',
+  agents: '#f59e0b',
+  sticker: '#ec4899',
+  stickers: '#ec4899',
+  graffiti: '#06b6d4',
+  inne: '#6b7280',
+  other: '#6b7280',
+};
+
+const TREEMAP_FALLBACK_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#06b6d4'];
+
+function treemapCategoryColor(name: string | null | undefined, index: number): string {
+  const key = (name ?? 'other').toLowerCase();
+  for (const [segment, color] of Object.entries(TREEMAP_CATEGORY_COLORS)) {
+    if (key.includes(segment)) return color;
+  }
+  return TREEMAP_FALLBACK_COLORS[index % TREEMAP_FALLBACK_COLORS.length];
+}
+
+function shadeColor(hex: string, step: number): string {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.max(0, ((n >> 16) & 0xff) - step);
+  const g = Math.max(0, ((n >> 8) & 0xff) - step);
+  const b = Math.max(0, (n & 0xff) - step);
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+}
+
+function parseTreemapValue(value: unknown): number {
+  const n = typeof value === 'number' ? value : parseFloat(String(value ?? 0));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function isTreemapRpcRow(row: unknown): row is TreemapRpcRow {
+  if (!row || typeof row !== 'object') return false;
+  const r = row as Record<string, unknown>;
+  if (Array.isArray(r.data)) return false;
+  return 'item_name' in r && ('total_value' in r || 'category' in r);
+}
+
+function isTreemapSeries(group: unknown): group is TreemapSeries {
+  if (!group || typeof group !== 'object') return false;
+  const g = group as Record<string, unknown>;
+  return Array.isArray(g.data) && ('name' in g || 'category' in g);
+}
+
+/** Group flat SQL rows by category → Recharts treemap nodes */
+function normalizeTreemapRows(rows: TreemapRpcRow[]): TreemapChartNode[] {
+  const byCategory = new Map<string, TreemapChartNode[]>();
+
+  for (const row of rows) {
+    const category = String(row.category ?? 'Other').trim() || 'Other';
+    const itemName = String(row.item_name ?? 'Unknown').trim() || 'Unknown';
+    const size = parseTreemapValue(row.total_value);
+    if (size <= 0) continue;
+
+    const list = byCategory.get(category) ?? [];
+    list.push({ name: itemName, size, category });
+    byCategory.set(category, list);
+  }
+
+  return Array.from(byCategory.entries())
+    .map(([category, items], groupIndex) => {
+      const base = treemapCategoryColor(category, groupIndex);
+      const children = items
+        .map((item, itemIndex) => ({
+          name: item.name,
+          size: item.size,
+          fill: shadeColor(base, itemIndex * 14),
+          category,
+        }))
+        .sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
+
+      const groupTotal = children.reduce((sum, c) => sum + (c.size ?? 0), 0);
+      return { name: category, children, size: groupTotal, fill: base };
+    })
+    .sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
+}
+
+/** RPC get_portfolio_treemap_data — flat rows or legacy series format */
+export function normalizePortfolioTreemapData(data: unknown): TreemapChartNode[] {
+  if (data == null) return [];
+
+  if (Array.isArray(data)) {
+    if (data.length === 0) return [];
+    if (isTreemapRpcRow(data[0])) {
+      return normalizeTreemapRows(data as TreemapRpcRow[]);
+    }
+    if (isTreemapSeries(data[0])) {
+      return normalizeTreemapSeries(data as TreemapSeries[]);
+    }
+  }
+
+  if (typeof data === 'object') {
+    const obj = data as Record<string, unknown>;
+    if (Array.isArray(obj.rows)) return normalizeTreemapRows(obj.rows as TreemapRpcRow[]);
+    if (Array.isArray(obj.series)) return normalizeTreemapSeries(obj.series as TreemapSeries[]);
+    if (Array.isArray(obj.data)) {
+      const arr = obj.data;
+      if (arr.length === 0) return [];
+      if (isTreemapRpcRow(arr[0])) return normalizeTreemapRows(arr as TreemapRpcRow[]);
+      if (isTreemapSeries(arr[0])) return normalizeTreemapSeries(arr as TreemapSeries[]);
+    }
+  }
+
+  return [];
+}
+
+function normalizeTreemapSeries(series: TreemapSeries[]): TreemapChartNode[] {
+  return series
+    .map((group, groupIndex) => {
+      const category = String(group.name ?? 'Other').trim() || 'Other';
+      const base = treemapCategoryColor(category, groupIndex);
+      const children = (group.data ?? [])
+        .map((point, itemIndex) => {
+          const size = parseTreemapValue(point.y);
+          if (size <= 0) return null;
+          const itemName = String(point.x ?? 'Unknown').trim() || 'Unknown';
+          return {
+            name: itemName,
+            size,
+            fill: shadeColor(base, itemIndex * 14),
+            category,
+          } satisfies TreemapChartNode;
+        })
+        .filter((node): node is TreemapChartNode => node !== null);
+
+      if (children.length === 0) return null;
+      const groupTotal = children.reduce((sum, c) => sum + (c.size ?? 0), 0);
+      return { name: category, children, size: groupTotal, fill: base } satisfies TreemapChartNode;
+    })
+    .filter((node): node is TreemapChartNode => node !== null);
+}

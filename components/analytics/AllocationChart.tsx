@@ -75,8 +75,8 @@ export const AllocationChart = () => {
         <h3 className="font-bold text-steam-text">Portfolio Allocation</h3>
       </div>
       
-      <div className="flex-1 min-h-[250px] relative">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="min-h-[250px] w-full relative">
+        <ResponsiveContainer width="100%" height={250} minWidth={0}>
           <PieChart>
             <Pie
               data={data}
