@@ -1,5 +1,8 @@
 const CONSENT_KEY = 'sv_cookie_consent';
 
+export const CONSENT_PREFERENCES_REQUEST_EVENT = 'skinvestments:consent-preferences';
+export const CONSENT_UPDATED_EVENT = 'skinvestments:consent-updated';
+
 export type ConsentChoice = 'granted' | 'denied';
 export type PrivacyRegion = 'eea' | 'us' | 'other';
 
@@ -7,6 +10,7 @@ declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
     __tcfapi?: (...args: unknown[]) => void;
+    googlefc?: { showRevocationMessage?: () => void };
   }
 }
 
@@ -56,11 +60,41 @@ export function applyConsent(choice: ConsentChoice): void {
       analytics_storage: granted ? 'granted' : 'denied',
     });
   }
+
+  window.dispatchEvent(new CustomEvent(CONSENT_UPDATED_EVENT));
 }
 
 /** Google Funding Choices UI loaded (not our googlefcPresent signal iframe). */
 export function isGoogleCmpPresent(): boolean {
   if (typeof window.__tcfapi === 'function') return true;
+  if (typeof window.googlefc?.showRevocationMessage === 'function') return true;
   if (document.querySelector('[id*="fc-consent"], [class*="fc-consent"], .fc-dialog')) return true;
   return false;
+}
+
+export function clearStoredConsent(): void {
+  localStorage.removeItem(CONSENT_KEY);
+}
+
+export function getConsentLabel(choice: ConsentChoice | null): string {
+  if (choice === 'granted') return 'Non-essential cookies accepted';
+  if (choice === 'denied') return 'Non-essential cookies rejected';
+  return 'No choice saved yet';
+}
+
+/** Re-open Google CMP or fallback cookie banner. */
+export function openConsentPreferences(): void {
+  clearStoredConsent();
+
+  if (typeof window.googlefc?.showRevocationMessage === 'function') {
+    window.googlefc.showRevocationMessage();
+    return;
+  }
+
+  if (typeof window.__tcfapi === 'function') {
+    window.__tcfapi('displayConsentUi', 2, () => {});
+    return;
+  }
+
+  window.dispatchEvent(new CustomEvent(CONSENT_PREFERENCES_REQUEST_EVENT));
 }

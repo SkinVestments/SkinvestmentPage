@@ -256,7 +256,11 @@ const Inventory = () => {
         totalCount={items.length}
       />
 
-      <AdSlot slotKey="inventory" className="mb-6" />
+      <AdSlot
+        slotKey="inventory"
+        className="mb-6"
+        contentReady={!loading && items.length > 0}
+      />
 
       {/* KONTENT EKWIPUNKU */}
       {loading ? (

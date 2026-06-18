@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/utils/supabaseClient';
+import { usePageSeo } from '@/hooks/usePageSeo';
 
 const AuthCallback = () => {
+  usePageSeo({
+    title: 'Signing in — Skinvestments',
+    description: 'Completing sign-in to Skinvestments.',
+    path: '/auth/callback',
+    robots: 'noindex, nofollow',
+  });
+
   const navigate = useNavigate();
   const [error, setError] = useState<string>('');
 

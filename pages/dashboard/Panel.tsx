@@ -454,7 +454,15 @@ const Panel = () => {
         </div>
       </div>
 
-      <AdSlot slotKey="panel" className="mb-8" />
+      <AdSlot
+        slotKey="panel"
+        className="mb-8"
+        contentReady={
+          !loading &&
+          !chartLoading &&
+          ((portfolioStats?.total_portfolio_value ?? 0) > 0 || items.length > 0)
+        }
+      />
 
       {/* === KOLEKCJE (PEŁNA SZEROKOŚĆ) === */}
       <div className="mb-8">
@@ -618,7 +626,7 @@ const Panel = () => {
            </button>
         </div>
       </div>
-      
+
       <LogDropModal 
         isOpen={isDropModalOpen}
         onClose={() => setIsDropModalOpen(false)}

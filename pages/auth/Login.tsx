@@ -3,8 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabaseClient';
 import { Eye, EyeOff } from 'lucide-react';
+import { usePageSeo } from '@/hooks/usePageSeo';
 
 const Login = () => {
+  usePageSeo({
+    title: 'Sign in — Skinvestments',
+    description: 'Sign in to your Skinvestments CS2 portfolio tracker account.',
+    path: '/login',
+    robots: 'noindex, nofollow',
+  });
+
   const [isSignUp, setIsSignUp] = useState<boolean>(false); 
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   applyConsent,
+  CONSENT_PREFERENCES_REQUEST_EVENT,
   getPrivacyRegion,
   getStoredConsent,
   isGoogleCmpPresent,
@@ -65,6 +66,18 @@ export const CookieConsentBanner: React.FC = () => {
     }, 3500);
 
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const showFallbackBanner = () => {
+      const r = getPrivacyRegion();
+      setRegion(r === 'other' ? 'eea' : r);
+      if (isGoogleCmpPresent()) return;
+      setVisible(true);
+    };
+
+    window.addEventListener(CONSENT_PREFERENCES_REQUEST_EVENT, showFallbackBanner);
+    return () => window.removeEventListener(CONSENT_PREFERENCES_REQUEST_EVENT, showFallbackBanner);
   }, []);
 
   if (!visible) return null;

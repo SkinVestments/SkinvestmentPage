@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
-import { AD_SLOTS, ADSENSE_CLIENT, type AdSlotKey, isAdSenseConfigured } from '@/constants/adSlots';
-import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { AD_SLOTS, ADSENSE_CLIENT, type AdSlotKey } from '@/constants/adSlots';
+import { useAdSenseEligible } from '@/hooks/useAdSenseEligible';
 
 interface AdSlotProps {
   slotKey: AdSlotKey;
@@ -11,6 +11,8 @@ interface AdSlotProps {
   minHeight?: number;
   lazy?: boolean;
   showUpgradeHint?: boolean;
+  /** Wait until page has loaded meaningful publisher content (not loading/empty shells). */
+  contentReady?: boolean;
 }
 
 export const AdSlot: React.FC<AdSlotProps> = ({
@@ -19,13 +21,15 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   minHeight = 90,
   lazy = true,
   showUpgradeHint = true,
+  contentReady = true,
 }) => {
-  const { hasAds } = useSubscriptionPlan();
+  const eligible = useAdSenseEligible();
   const containerRef = useRef<HTMLDivElement>(null);
   const pushedRef = useRef(false);
   const [visible, setVisible] = useState(!lazy);
 
   const slotId = AD_SLOTS[slotKey];
+  const mayShowAd = eligible && contentReady && Boolean(slotId && ADSENSE_CLIENT);
 
   useEffect(() => {
     if (!lazy || !containerRef.current) return;
@@ -46,7 +50,7 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   }, [lazy]);
 
   useEffect(() => {
-    if (!visible || !hasAds || !isAdSenseConfigured() || !slotId || pushedRef.current) return;
+    if (!mayShowAd || !visible || pushedRef.current) return;
 
     const timer = window.setTimeout(() => {
       try {
@@ -58,9 +62,9 @@ export const AdSlot: React.FC<AdSlotProps> = ({
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [visible, hasAds, slotId]);
+  }, [mayShowAd, visible, slotId]);
 
-  if (!hasAds || !isAdSenseConfigured() || !slotId) {
+  if (!mayShowAd) {
     return null;
   }
 
