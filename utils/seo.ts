@@ -11,15 +11,25 @@ export function setPageSeo({
   title,
   description,
   path = '/',
+  robots = 'index, follow',
 }: {
   title: string;
   description: string;
   path?: string;
+  robots?: string;
 }) {
   document.title = title;
 
   const descriptionMeta = document.querySelector('meta[name="description"]');
   if (descriptionMeta) descriptionMeta.setAttribute('content', description);
+
+  let robotsMeta = document.querySelector('meta[name="robots"]');
+  if (!robotsMeta) {
+    robotsMeta = document.createElement('meta');
+    robotsMeta.setAttribute('name', 'robots');
+    document.head.appendChild(robotsMeta);
+  }
+  robotsMeta.setAttribute('content', robots);
 
   const ogTitle = document.querySelector('meta[property="og:title"]');
   if (ogTitle) ogTitle.setAttribute('content', title);

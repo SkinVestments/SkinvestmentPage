@@ -38,7 +38,7 @@ const Analytics = () => {
       {/* RZĄD 1: METRYKI */}
       <SummaryCards />
 
-      <AdSlot slotKey="analytics" className="mb-6" />
+      <AdSlot slotKey="analytics" className="mb-6" contentReady />
 
       {/* RZĄD 2: GŁÓWNE WYKRESY */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

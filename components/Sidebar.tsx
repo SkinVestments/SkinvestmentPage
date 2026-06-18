@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { BrandLogo } from './BrandLogo';
-import { AdSlot } from '@/components/ads/AdSlot';
 
 const navItems: { icon: LucideIcon; label: string; path: string }[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/panel' },
@@ -86,10 +85,6 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({
       </nav>
 
       <div className="p-4 border-t border-steam-border/50 bg-steam-elevated shrink-0 space-y-3">
-        <div className="hidden md:block px-1">
-          <AdSlot slotKey="sidebar" minHeight={250} lazy />
-        </div>
-
         <div className="px-1">
           <p className="text-[10px] font-bold uppercase tracking-widest text-steam-tertiary mb-2">Appearance</p>
           <ThemeToggle variant="segmented" className="w-full" />

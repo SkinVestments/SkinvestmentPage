@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { ADSENSE_CLIENT } from '@/constants/adSlots';
-import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { useAdSenseEligible } from '@/hooks/useAdSenseEligible';
 
 const SCRIPT_ATTR = 'data-skinvestments-adsense';
 
-/** Loads AdSense script once for free-plan dashboard users. */
+/** Loads AdSense script only on free-plan content dashboard routes. */
 export function AdSenseScript() {
-  const { hasAds } = useSubscriptionPlan();
+  const eligible = useAdSenseEligible();
 
   useEffect(() => {
-    if (!ADSENSE_CLIENT || !hasAds) return;
+    if (!eligible || !ADSENSE_CLIENT) return;
     if (document.querySelector('script[src*="adsbygoogle.js"]')) return;
     if (document.querySelector(`script[${SCRIPT_ATTR}]`)) return;
 
@@ -19,7 +19,7 @@ export function AdSenseScript() {
     script.crossOrigin = 'anonymous';
     script.setAttribute(SCRIPT_ATTR, 'true');
     document.head.appendChild(script);
-  }, [hasAds]);
+  }, [eligible]);
 
   return null;
 }

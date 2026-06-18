@@ -109,7 +109,11 @@ const History = () => {
         </div>
       </div>
 
-      <AdSlot slotKey="history" className="mb-6" />
+      <AdSlot
+        slotKey="history"
+        className="mb-6"
+        contentReady={!loading && transactions.length > 0}
+      />
 
       {/* Tabela */}
       <div className="bg-steam-card rounded-2xl border border-steam-border shadow-xl overflow-hidden">
