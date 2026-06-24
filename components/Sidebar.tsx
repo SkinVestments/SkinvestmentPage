@@ -7,6 +7,7 @@ import {
   Settings,
   Home,
   BarChart2,
+  Library,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -16,6 +17,7 @@ import { BrandLogo } from './BrandLogo';
 const navItems: { icon: LucideIcon; label: string; path: string }[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/panel' },
   { icon: Package, label: 'Inventory', path: '/inventory' },
+  { icon: Library, label: 'Catalog', path: '/catalog' },
   { icon: BarChart2, label: 'Analytics', path: '/analytics' },
   { icon: History, label: 'History', path: '/history' },
   { icon: Settings, label: 'Settings', path: '/settings' },
