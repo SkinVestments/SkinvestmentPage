@@ -8,6 +8,7 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
+  Heart,
 } from 'lucide-react';
 import { ItemImage } from '@/components/ui/ItemImage';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
@@ -51,6 +52,9 @@ const SORT_OPTIONS = [
 ] as const;
 
 type SortValue = (typeof SORT_OPTIONS)[number]['value'];
+interface WishlistListRow {
+  item_id: string;
+}
 
 const Catalog = () => {
   const [searchInput, setSearchInput] = useState('');
@@ -63,6 +67,9 @@ const Catalog = () => {
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
+  const [wishlistItemIds, setWishlistItemIds] = useState<Set<string>>(new Set());
+  const [wishlistLoadingItemId, setWishlistLoadingItemId] = useState<string | null>(null);
+  const [showOnlyWishlist, setShowOnlyWishlist] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => setSearchQuery(searchInput.trim()), 350);
@@ -142,7 +149,55 @@ const Catalog = () => {
     fetchCatalog();
   }, [page, searchQuery, selectedCollection, sortBy]);
 
+  useEffect(() => {
+    const fetchWishlistIds = async () => {
+      const { data, error } = await supabase.rpc('wishlist_list_items');
+      if (error) {
+        return;
+      }
+      const ids = new Set(
+        (((data as WishlistListRow[] | null) ?? []).map((row) => row.item_id).filter(Boolean) as string[]),
+      );
+      setWishlistItemIds(ids);
+    };
+
+    fetchWishlistIds();
+  }, []);
+
+  const displayedItems = useMemo(() => {
+    if (!showOnlyWishlist) return items;
+    return items.filter((item) => wishlistItemIds.has(item.id));
+  }, [items, showOnlyWishlist, wishlistItemIds]);
+
   const totalPages = useMemo(() => Math.max(1, Math.ceil(totalCount / PAGE_SIZE)), [totalCount]);
+
+  const toggleWishlist = async (itemId: string) => {
+    const isSaved = wishlistItemIds.has(itemId);
+    setWishlistLoadingItemId(itemId);
+
+    if (isSaved) {
+      const { data, error } = await supabase.rpc('wishlist_remove_item', { p_item_id: itemId });
+      if (!error && data === true) {
+        setWishlistItemIds((prev) => {
+          const next = new Set(prev);
+          next.delete(itemId);
+          return next;
+        });
+      }
+      setWishlistLoadingItemId(null);
+      return;
+    }
+
+    const { error } = await supabase.rpc('wishlist_add_item', { p_item_id: itemId });
+    if (!error) {
+      setWishlistItemIds((prev) => {
+        const next = new Set(prev);
+        next.add(itemId);
+        return next;
+      });
+    }
+    setWishlistLoadingItemId(null);
+  };
 
   useEffect(() => {
     if (page > totalPages) {
@@ -165,7 +220,7 @@ const Catalog = () => {
           </div>
           <div className="px-3 sm:px-4">
             <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Visible</p>
-            <p className="text-xl font-bold text-steam-accent">{items.length}</p>
+            <p className="text-xl font-bold text-steam-accent">{displayedItems.length}</p>
           </div>
         </div>
       </div>
@@ -202,6 +257,21 @@ const Catalog = () => {
             </div>
 
             <div className="relative min-w-[180px]">
+              <button
+                type="button"
+                onClick={() => setShowOnlyWishlist((prev) => !prev)}
+                className={`w-full inline-flex items-center justify-center gap-2 border rounded-xl py-2.5 px-3 text-sm transition-colors ${
+                  showOnlyWishlist
+                    ? 'border-red-500/30 text-red-400 bg-red-500/10'
+                    : 'border-steam-border text-steam-secondary hover:text-steam-text bg-steam-bg'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${showOnlyWishlist ? 'fill-current' : ''}`} />
+                {showOnlyWishlist ? 'Only wishlisted' : 'All items'}
+              </button>
+            </div>
+
+            <div className="relative min-w-[180px]">
               <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-steam-tertiary" />
               <select
                 value={sortBy}
@@ -230,19 +300,25 @@ const Catalog = () => {
           <h3 className="text-xl font-bold text-red-400 mb-2">Catalog error</h3>
           <p className="text-sm text-steam-secondary">{error}</p>
         </div>
-      ) : items.length === 0 ? (
+      ) : displayedItems.length === 0 ? (
         <div className="bg-steam-card rounded-2xl border border-steam-border p-14 text-center">
           <Layers className="w-12 h-12 mx-auto text-steam-tertiary mb-4" />
-          <h3 className="text-xl font-bold text-steam-text mb-2">No skins found</h3>
+          <h3 className="text-xl font-bold text-steam-text mb-2">
+            {showOnlyWishlist ? 'No wishlisted skins on this page' : 'No skins found'}
+          </h3>
           <p className="text-steam-tertiary text-sm">
-            Try another phrase in search or change selected collection.
+            {showOnlyWishlist
+              ? 'Disable the wishlist filter or add more items to wishlist.'
+              : 'Try another phrase in search or change selected collection.'}
           </p>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-          {items.map((item) => {
+          {displayedItems.map((item) => {
             const rarityStyle = getRarityStyle(item.rarity);
+            const isWishlisted = wishlistItemIds.has(item.id);
+            const isWishlistLoading = wishlistLoadingItemId === item.id;
 
             return (
               <article
@@ -261,6 +337,23 @@ const Catalog = () => {
                   <span className="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md bg-steam-bg/90 border border-steam-border text-steam-secondary">
                     {item.rarity ?? 'Common'}
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => toggleWishlist(item.id)}
+                    disabled={isWishlistLoading}
+                    className={`absolute top-2 right-2 z-20 p-1.5 rounded-md border transition-colors ${
+                      isWishlisted
+                        ? 'bg-red-500/15 text-red-400 border-red-500/30'
+                        : 'bg-steam-bg/90 text-steam-tertiary border-steam-border hover:text-red-400'
+                    } disabled:opacity-60`}
+                    aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+                  >
+                    {isWishlistLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
+                    )}
+                  </button>
                 </div>
 
                 <div className="p-4 flex flex-col flex-1">

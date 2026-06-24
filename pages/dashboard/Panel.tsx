@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabaseClient';
 import { 
   ChevronLeft, ChevronRight, ArrowUpDown, Loader2, 
-  TrendingUp, TrendingDown, Package, Plus, CheckCircle, Wallet, ArrowRight 
+  TrendingUp, TrendingDown, Package, Plus, CheckCircle, Wallet, ArrowRight, Heart, Target
 } from 'lucide-react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis, YAxis, Legend } from 'recharts';
 import { useWeeklyReset } from '@/utils/utils';
@@ -45,6 +45,16 @@ interface PortfolioItem {
   cs2_items: CS2Item;
 }
 
+interface WishlistWidgetItem {
+  item_id: string;
+  market_hash_name: string;
+  icon_url: string | null;
+  rarity: string | null;
+  current_price: number;
+  target_buy_price: number;
+  distance_pct: number;
+}
+
 const ITEMS_PER_PAGE = 5;
 
 const Panel = () => {
@@ -64,6 +74,8 @@ const Panel = () => {
   // --- STANY DLA KOLEKCJI ---
   const [collections, setCollections] = useState<any[]>([]);
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
+  const [wishlistItems, setWishlistItems] = useState<WishlistWidgetItem[]>([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   // Paginacja i sortowanie tabeli
   const [page, setPage] = useState(1);
@@ -173,6 +185,41 @@ const Panel = () => {
     }
   };
 
+  const fetchWishlistCandidates = async () => {
+    if (!user) return;
+    try {
+      setWishlistLoading(true);
+      const { data, error } = await supabase.rpc('wishlist_list_items');
+      if (error) throw error;
+
+      const mapped = (((data as Array<Record<string, unknown>> | null) ?? [])
+        .map((row) => {
+          const current = Number(row.current_price ?? 0);
+          const target = Number(row.target_buy_price ?? 0);
+          if (!Number.isFinite(current) || !Number.isFinite(target) || target <= 0) return null;
+          return {
+            item_id: String(row.item_id ?? ''),
+            market_hash_name: String(row.market_hash_name ?? ''),
+            icon_url: row.icon_url ? String(row.icon_url) : null,
+            rarity: row.rarity ? String(row.rarity) : null,
+            current_price: current,
+            target_buy_price: target,
+            distance_pct: Math.abs(((current - target) / target) * 100),
+          } as WishlistWidgetItem;
+        })
+        .filter((row): row is WishlistWidgetItem => Boolean(row && row.item_id && row.market_hash_name))
+        .sort((a, b) => a.distance_pct - b.distance_pct)
+        .slice(0, 5));
+
+      setWishlistItems(mapped);
+    } catch (error) {
+      console.error('Error fetching wishlist candidates:', error);
+      setWishlistItems([]);
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchPortfolio();
   }, [user, page, sortBy, sortOrder]);
@@ -182,6 +229,10 @@ const Panel = () => {
     fetchCollections();
     fetchPortfolioStats(); 
   }, [user, timeRange]);
+
+  useEffect(() => {
+    fetchWishlistCandidates();
+  }, [user]);
 
   const handleDropSuccess = () => {
     fetchPortfolio(); 
@@ -417,6 +468,78 @@ const Panel = () => {
               <p className="text-xl font-bold text-steam-text">{formatCurrency(currentWithdrawn)}</p>
               <p className="text-[10px] text-steam-tertiary mt-1 uppercase tracking-wider">Period: {periodLabel}</p>
             </div>
+          </div>
+
+          <div className="bg-steam-card rounded-2xl border border-steam-border/50 shadow-xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <Heart className="w-4 h-4 text-red-400" />
+                </div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">
+                  Wishlist Opportunities
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/wishlist')}
+                className="text-[11px] font-bold uppercase tracking-wider text-steam-accent hover:text-steam-text"
+              >
+                Open
+              </button>
+            </div>
+
+            {wishlistLoading ? (
+              <div className="py-6 flex justify-center">
+                <Loader2 className="w-5 h-5 animate-spin text-steam-accent" />
+              </div>
+            ) : wishlistItems.length === 0 ? (
+              <p className="text-xs text-steam-tertiary">No target prices set in wishlist yet.</p>
+            ) : (
+              <div className="space-y-2.5">
+                {wishlistItems.map((item) => {
+                  const rarityStyle = getRarityStyle(item.rarity);
+                  const isReady = item.current_price <= item.target_buy_price;
+                  return (
+                    <button
+                      key={item.item_id}
+                      type="button"
+                      onClick={() => navigate('/wishlist')}
+                      className="w-full text-left flex items-center gap-2.5 p-2 rounded-xl hover:bg-steam-hover transition-colors"
+                    >
+                      <div className={`w-10 h-8 rounded overflow-hidden border-b-2 ${rarityStyle.border}`}>
+                        <ItemImage
+                          src={item.icon_url}
+                          alt={item.market_hash_name}
+                          className="max-w-full max-h-full object-contain"
+                          wrapperClassName="w-full h-full"
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-steam-text truncate">{item.market_hash_name}</p>
+                        <p className="text-[10px] text-steam-tertiary">
+                          Current {formatCurrency(item.current_price)} / Target {formatCurrency(item.target_buy_price)}
+                        </p>
+                      </div>
+                      <span
+                        className={`text-[10px] font-bold px-2 py-1 rounded border ${
+                          isReady
+                            ? 'text-green-400 border-green-500/30 bg-green-500/10'
+                            : item.distance_pct <= 5
+                              ? 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10'
+                              : item.distance_pct <= 15
+                                ? 'text-amber-300 border-amber-500/30 bg-amber-500/10'
+                                : 'text-red-300 border-red-500/30 bg-red-500/10'
+                        }`}
+                      >
+                        <Target className="inline w-3 h-3 mr-1" />
+                        {item.distance_pct.toFixed(1)}%
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* WEEKLY DROP */}
