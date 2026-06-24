@@ -208,6 +208,7 @@ const Panel = () => {
   const currentInventoryValue = portfolioStats?.inventory_value || 0;
   const currentDeposited = portfolioStats?.deposited || 0;
   const currentWithdrawn = portfolioStats?.withdrawn || 0;
+  const periodLabel = timeRange === 'ALL' ? 'all time' : timeRange;
 
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
@@ -272,6 +273,9 @@ const Panel = () => {
                 ))}
               </div>
             </div>
+            <p className="relative z-10 mt-3 text-[11px] text-steam-tertiary">
+              Deposited and Withdrawn cards below follow selected period: <span className="font-bold text-steam-secondary">{periodLabel}</span>.
+            </p>
 
             <div className="h-[320px] mt-6 w-full relative shrink-0">
               {chartLoading ? (
@@ -404,12 +408,14 @@ const Panel = () => {
             <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
               <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Deposited</p>
               <p className="text-xl font-bold text-steam-text">{formatCurrency(currentDeposited)}</p>
+              <p className="text-[10px] text-steam-tertiary mt-1 uppercase tracking-wider">Period: {periodLabel}</p>
             </div>
 
             {/* Withdrawn */}
             <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
               <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Withdrawn</p>
               <p className="text-xl font-bold text-steam-text">{formatCurrency(currentWithdrawn)}</p>
+              <p className="text-[10px] text-steam-tertiary mt-1 uppercase tracking-wider">Period: {periodLabel}</p>
             </div>
           </div>
 
