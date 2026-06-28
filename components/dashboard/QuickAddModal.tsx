@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { DayPicker } from 'react-day-picker';
+import { createPortal } from 'react-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -31,6 +33,7 @@ interface ItemRef {
   icon_url: string | null;
   marketPrice: number;
   ownedQty: number;
+  avgBuyPrice: number;
 }
 
 interface CartLine {
@@ -53,6 +56,14 @@ interface Cs2SearchItem {
 }
 
 const PORTFOLIO_PREVIEW = 8;
+const CSGO_RELEASE_DATE = '2012-08-21';
+const CSGO_RELEASE_DATE_OBJ = new Date('2012-08-21T00:00:00');
+const formatInputDate = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
 
 const getErrorMessage = (err: unknown, fallback: string): string => {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -69,6 +80,8 @@ const newLineKey = () =>
 
 export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { user } = useAuth();
+  const datePickerRef = useRef<HTMLDivElement | null>(null);
+  const datePopoverRef = useRef<HTMLDivElement | null>(null);
 
   const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -84,7 +97,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   const [portfolioFilter, setPortfolioFilter] = useState('');
   const [showAllPortfolio, setShowAllPortfolio] = useState(false);
 
-  const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(() => formatInputDate(new Date()));
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [datePickerPosition, setDatePickerPosition] = useState({ top: 0, left: 0 });
   const [collectionId, setCollectionId] = useState('');
   const [isInvestment, setIsInvestment] = useState(true);
   const [applySteamFee, setApplySteamFee] = useState(true);
@@ -118,11 +133,67 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
     setSearchError(null);
     setPortfolioFilter('');
     setShowAllPortfolio(false);
-    setDate(new Date().toISOString().split('T')[0]);
+    setDate(formatInputDate(new Date()));
+    setIsDatePickerOpen(false);
     setIsInvestment(true);
     setApplySteamFee(true);
     setSubmitError(null);
   }, []);
+
+  const selectedDate = useMemo(() => {
+    const parsed = new Date(`${date}T00:00:00`);
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  }, [date]);
+
+  const formattedDate = useMemo(
+    () =>
+      selectedDate.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }),
+    [selectedDate],
+  );
+
+  const updateDatePickerPosition = useCallback(() => {
+    if (!datePickerRef.current) return;
+    const rect = datePickerRef.current.getBoundingClientRect();
+    const calendarWidth = 320;
+    const viewportWidth = window.innerWidth;
+    const left = Math.min(
+      Math.max(12, rect.right - calendarWidth),
+      Math.max(12, viewportWidth - calendarWidth - 12),
+    );
+    setDatePickerPosition({
+      top: rect.bottom + 8,
+      left,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isDatePickerOpen) return;
+    updateDatePickerPosition();
+
+    const onOutsideClick = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const clickedTrigger = datePickerRef.current?.contains(target);
+      const clickedPopover = datePopoverRef.current?.contains(target);
+      if (!clickedTrigger && !clickedPopover) {
+        setIsDatePickerOpen(false);
+      }
+    };
+
+    const onScrollOrResize = () => updateDatePickerPosition();
+
+    document.addEventListener('mousedown', onOutsideClick);
+    window.addEventListener('resize', onScrollOrResize);
+    window.addEventListener('scroll', onScrollOrResize, true);
+    return () => {
+      document.removeEventListener('mousedown', onOutsideClick);
+      window.removeEventListener('resize', onScrollOrResize);
+      window.removeEventListener('scroll', onScrollOrResize, true);
+    };
+  }, [isDatePickerOpen, updateDatePickerPosition]);
 
   const switchType = (next: 'BUY' | 'SELL') => {
     setType(next);
@@ -146,6 +217,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
           `
           item_id,
           quantity,
+          buy_price,
           cs2_items ( id, market_hash_name, icon_url, price )
         `,
         )
@@ -154,16 +226,21 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
       if (error) throw error;
 
-      const byItem = new Map<string, ItemRef>();
+      type AggregatedItem = ItemRef & { totalCost: number };
+      const byItem = new Map<string, AggregatedItem>();
       (data ?? []).forEach((row: Record<string, unknown>) => {
         const cs2 = row.cs2_items as Record<string, unknown> | null;
         const itemId = String(row.item_id ?? cs2?.id ?? '');
         if (!itemId) return;
 
         const qty = Number(row.quantity ?? 0);
+        const buyPrice = Number(row.buy_price ?? 0);
+        const rowCost = qty * buyPrice;
         const existing = byItem.get(itemId);
         if (existing) {
           existing.ownedQty += qty;
+          existing.totalCost += rowCost;
+          existing.avgBuyPrice = existing.ownedQty > 0 ? existing.totalCost / existing.ownedQty : 0;
           return;
         }
 
@@ -173,12 +250,14 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
           icon_url: cs2?.icon_url != null ? String(cs2.icon_url) : null,
           marketPrice: Number(cs2?.price ?? 0),
           ownedQty: qty,
+          avgBuyPrice: qty > 0 ? rowCost / qty : 0,
+          totalCost: rowCost,
         });
       });
 
-      const list = Array.from(byItem.values()).sort((a, b) =>
-        a.market_hash_name.localeCompare(b.market_hash_name),
-      );
+      const list = Array.from(byItem.values())
+        .map(({ totalCost: _totalCost, ...item }) => item)
+        .sort((a, b) => a.market_hash_name.localeCompare(b.market_hash_name));
       setPortfolio(list);
     } catch (err) {
       console.error('Portfolio load error:', err);
@@ -297,6 +376,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
       prev.map((line) => {
         if (line.key !== key) return line;
         let quantity = patch.quantity ?? line.quantity;
+        quantity = Math.floor(quantity);
         if (!isBuy) {
           const maxQ = ownershipMap.get(line.item.id) ?? line.item.ownedQty;
           quantity = Math.min(maxQ, Math.max(1, quantity));
@@ -368,6 +448,11 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
       const unitPrice = parseFloat(line.price);
       const fee =
         type === 'SELL' && applySteamFee ? unitPrice * line.quantity * 0.13 : 0;
+      const avgBuyPrice = line.item.avgBuyPrice || 0;
+      const realizedProfit =
+        type === 'SELL'
+          ? unitPrice * line.quantity - avgBuyPrice * line.quantity - fee
+          : 0;
       return {
         item_id: line.item.id,
         quantity: line.quantity,
@@ -377,7 +462,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
         transaction_date: new Date(date).toISOString(),
         collection_id: collectionId || '',
         fee_deducted: fee,
-        realized_profit: 0,
+        realized_profit: realizedProfit,
       };
     });
 
@@ -420,7 +505,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   const hiddenPortfolioCount = Math.max(0, filteredPortfolio.length - PORTFOLIO_PREVIEW);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:pl-[17.5rem]">
       <div className="absolute inset-0 bg-steam-bg/80 backdrop-blur-sm" onClick={onClose} aria-hidden />
 
       <div
@@ -697,9 +782,21 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                               >
                                 <Minus className="w-3.5 h-3.5" />
                               </button>
-                              <span className="w-8 text-center text-sm font-bold font-mono tabular-nums">
-                                {line.quantity}
-                              </span>
+                              <input
+                                type="number"
+                                min={1}
+                                max={!isBuy && maxQ !== undefined ? maxQ : undefined}
+                                step={1}
+                                value={line.quantity}
+                                onChange={(e) => {
+                                  const raw = e.target.value;
+                                  const next = Number(raw);
+                                  if (!Number.isFinite(next)) return;
+                                  updateLine(line.key, { quantity: next });
+                                }}
+                                className="w-16 bg-transparent px-1 text-center text-sm font-bold font-mono tabular-nums text-steam-text [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none focus:outline-none"
+                                aria-label="Quantity"
+                              />
                               <button
                                 type="button"
                                 onClick={() => updateLine(line.key, { quantity: line.quantity + 1 })}
@@ -734,21 +831,78 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                 )}
               </div>
 
-              <div className="bg-steam-bg border border-steam-border rounded-xl overflow-hidden divide-y divide-steam-border/60">
+              <div className="bg-steam-bg border border-steam-border rounded-xl overflow-visible divide-y divide-steam-border/60">
                 <div className="flex items-center justify-between gap-4 px-4 py-3">
                   <div className="flex items-center gap-2 text-steam-secondary">
                     <Calendar className="w-4 h-4" />
                     <span className="text-sm font-medium">Date</span>
                   </div>
-                  <input
-                    type="date"
-                    value={date}
-                    onChange={(e) => {
-                      setDate(e.target.value);
-                      setSubmitError(null);
-                    }}
-                    className="bg-transparent text-steam-text text-sm font-bold focus:outline-none"
-                  />
+                  <div className="relative" ref={datePickerRef}>
+                    <button
+                      type="button"
+                      onClick={() => setIsDatePickerOpen((prev) => !prev)}
+                      className="min-w-[132px] inline-flex items-center justify-between gap-2 rounded-lg border border-steam-border bg-steam-card px-3 py-1.5 text-sm font-bold text-steam-text hover:border-steam-accent/60 focus:outline-none"
+                    >
+                      <span>{formattedDate}</span>
+                      <Calendar className="w-3.5 h-3.5 text-steam-tertiary" />
+                    </button>
+
+                    {isDatePickerOpen &&
+                      createPortal(
+                        <div
+                          ref={datePopoverRef}
+                          className="fixed z-[220] rounded-xl border border-steam-border bg-steam-surface p-3 shadow-2xl"
+                          style={{ top: `${datePickerPosition.top}px`, left: `${datePickerPosition.left}px` }}
+                        >
+                          <DayPicker
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={(pickedDate) => {
+                              if (!pickedDate) return;
+                              const safeDate = new Date(pickedDate);
+                              safeDate.setHours(0, 0, 0, 0);
+                              setDate(formatInputDate(safeDate));
+                              setSubmitError(null);
+                              setIsDatePickerOpen(false);
+                            }}
+                            fromDate={CSGO_RELEASE_DATE_OBJ}
+                            toDate={new Date()}
+                            captionLayout="dropdown"
+                            startMonth={CSGO_RELEASE_DATE_OBJ}
+                            endMonth={new Date()}
+                            className="text-sm"
+                            classNames={{
+                              root: 'text-steam-text',
+                              month: 'space-y-2',
+                              month_caption: 'relative flex items-center justify-center pb-1',
+                              caption_label: 'sr-only',
+                              dropdowns:
+                                'flex items-center justify-center gap-2 text-sm font-bold text-steam-text',
+                              dropdown_root: 'relative',
+                              dropdown:
+                                'bg-steam-card border border-steam-border rounded-md px-2 py-1 text-xs font-bold text-steam-text focus:outline-none',
+                              nav: 'absolute inset-x-0 top-0 flex items-center justify-between',
+                              button_previous:
+                                'inline-flex h-7 w-7 items-center justify-center rounded-md border border-steam-border bg-steam-card text-steam-secondary hover:text-steam-text',
+                              button_next:
+                                'inline-flex h-7 w-7 items-center justify-center rounded-md border border-steam-border bg-steam-card text-steam-secondary hover:text-steam-text',
+                              month_grid: 'w-full border-collapse',
+                              weekdays: 'text-steam-tertiary',
+                              weekday: 'h-8 w-9 text-[10px] font-bold uppercase',
+                              week: '',
+                              day: 'h-9 w-9 p-0 text-center',
+                              day_button:
+                                'h-9 w-9 rounded-md text-sm font-medium text-steam-text hover:bg-steam-hover',
+                              selected: 'bg-steam-accent text-white hover:bg-steam-accent',
+                              today: 'border border-steam-accent/40',
+                              outside: 'text-steam-tertiary/40',
+                              disabled: 'text-steam-tertiary/40 pointer-events-none',
+                            }}
+                          />
+                        </div>,
+                        document.body,
+                      )}
+                  </div>
                 </div>
                 <div className="px-4 py-3.5 space-y-2">
                   <div className="flex items-center gap-2 text-steam-secondary">

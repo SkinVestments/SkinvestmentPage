@@ -282,12 +282,12 @@ const Panel = () => {
       </div>
 
       {/* === GRID GŁÓWNY (WYKRES + PRAWA KOLUMNA) === */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-12">
         
         {/* KOLUMNA 1 (Szeroka): WYKRES */}
         <div className="xl:col-span-2">
           
-          <div className="bg-steam-card rounded-2xl p-6 border border-steam-border shadow-xl relative overflow-x-hidden group h-full flex flex-col justify-between">
+          <div className="bg-steam-card rounded-2xl p-5 border border-steam-border shadow-xl relative overflow-x-hidden group flex flex-col">
             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
               <TrendingUp className="w-40 h-40 text-steam-accent" />
             </div>
@@ -328,7 +328,7 @@ const Panel = () => {
               Deposited and Withdrawn cards below follow selected period: <span className="font-bold text-steam-secondary">{periodLabel}</span>.
             </p>
 
-            <div className="h-[320px] mt-6 w-full relative shrink-0">
+            <div className="h-[260px] mt-4 w-full relative shrink-0">
               {chartLoading ? (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
                   <Loader2 className="w-8 h-8 text-steam-accent animate-spin" />
@@ -339,7 +339,7 @@ const Panel = () => {
                 </div>
               ) : null}
 
-              <ResponsiveContainer width="100%" height={320} minWidth={0}>
+              <ResponsiveContainer width="100%" height={260} minWidth={0}>
                 <AreaChart
                   data={chartData}
                   className={chartLoading ? 'opacity-30' : ''}
@@ -436,40 +436,34 @@ const Panel = () => {
               </ResponsiveContainer>
             </div>
           </div>
-        </div>
 
-        {/* KOLUMNA 2 (Wąska): STATYSTYKI I DROPY */}
-        <div className="space-y-6">
-          
-          {/* SIATKA MAŁYCH STATYSTYK (2x2) */}
-          <div className="grid grid-cols-2 gap-4">
-            {/* Investments */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
             <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
               <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Investments</p>
               <p className="text-xl font-bold text-steam-text">{formatCurrency(currentInvestmentsValue)}</p>
             </div>
-            
-            {/* Inventory */}
+
             <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
               <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Inventory</p>
               <p className="text-xl font-bold text-steam-text">{formatCurrency(currentInventoryValue)}</p>
             </div>
 
-            {/* Deposited */}
             <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
               <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Deposited</p>
               <p className="text-xl font-bold text-steam-text">{formatCurrency(currentDeposited)}</p>
               <p className="text-[10px] text-steam-tertiary mt-1 uppercase tracking-wider">Period: {periodLabel}</p>
             </div>
 
-            {/* Withdrawn */}
             <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
               <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Withdrawn</p>
               <p className="text-xl font-bold text-steam-text">{formatCurrency(currentWithdrawn)}</p>
               <p className="text-[10px] text-steam-tertiary mt-1 uppercase tracking-wider">Period: {periodLabel}</p>
             </div>
           </div>
+        </div>
 
+        {/* KOLUMNA 2 (Wąska): STATYSTYKI I DROPY */}
+        <div className="space-y-6">
           <div className="bg-steam-card rounded-2xl border border-steam-border/50 shadow-xl p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">

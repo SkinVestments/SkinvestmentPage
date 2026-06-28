@@ -181,7 +181,6 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
       transaction_date: dropAt,
       collection_id: selectedCollectionId || '',
       fee_deducted: 0,
-      realized_profit: 0,
     };
 
     try {
