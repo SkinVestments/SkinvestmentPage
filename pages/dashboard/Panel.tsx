@@ -27,6 +27,7 @@ import {
   type PortfolioCurrentValues,
 } from '@/utils/portfolioRpc';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 
 // --- TYPY DANYCH ---
 interface CS2Item {
@@ -60,6 +61,7 @@ const ITEMS_PER_PAGE = 5;
 const Panel = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const adsContentReady = usePublisherContentReady();
 
   // --- STANY TABELI PORTFOLIO ---
   const [items, setItems] = useState<PortfolioItem[]>([]);
@@ -583,7 +585,8 @@ const Panel = () => {
         contentReady={
           !loading &&
           !chartLoading &&
-          ((portfolioStats?.total_portfolio_value ?? 0) > 0 || items.length > 0)
+          ((portfolioStats?.total_portfolio_value ?? 0) > 0 || items.length > 0) &&
+          adsContentReady
         }
       />
 

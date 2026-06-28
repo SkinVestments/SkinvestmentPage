@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Lock, HelpCircle, ChevronDown } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
+import { AdSlot } from '@/components/ads/AdSlot';
 
 interface FaqItem {
   question: string;
@@ -223,6 +224,14 @@ export const FAQPage: React.FC = () => {
             </div>
           ))}
         </div>
+
+        <AdSlot
+          slotKey="faq"
+          className="mt-10"
+          contentReady
+          minHeight={120}
+          showUpgradeHint={false}
+        />
 
         <div className="mt-16 pt-10 border-t border-steam-border/50 grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
           <div className="p-4 rounded-xl theme-subtle">

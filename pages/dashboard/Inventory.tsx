@@ -27,6 +27,7 @@ import {
   normalizeRarityTier,
 } from '@/utils/inventoryFilters';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 
 // --- TYPY ---
 interface InventoryItem {
@@ -49,6 +50,7 @@ interface InventoryItem {
 const Inventory = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const adsContentReady = usePublisherContentReady();
   
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,26 +69,13 @@ const Inventory = () => {
       const { data, error } = await supabase
         .from('portfolio_items')
         .select(`
-          id, item_id, quantity, acquired_at, buy_price, trade_lock_until,
-          cs2_items ( market_hash_name, icon_url, price, rarity, type, price_source )
+          id, item_id, quantity, acquired_at, buy_price,
+          cs2_items ( market_hash_name, icon_url, price, rarity, type )
         `)
         .eq('user_id', user.id)
         .gt('quantity', 0);
 
-      if (error) {
-        const { data: fallbackData, error: fallbackError } = await supabase
-          .from('portfolio_items')
-          .select(`
-            id, item_id, quantity, acquired_at, buy_price,
-            cs2_items ( market_hash_name, icon_url, price, rarity, type )
-          `)
-          .eq('user_id', user.id)
-          .gt('quantity', 0);
-
-        if (fallbackError) throw fallbackError;
-        if (fallbackData) setItems(fallbackData as InventoryItem[]);
-        return;
-      }
+      if (error) throw error;
 
       if (data) setItems(data as InventoryItem[]);
     } catch (error) {
@@ -259,7 +248,7 @@ const Inventory = () => {
       <AdSlot
         slotKey="inventory"
         className="mb-6"
-        contentReady={!loading && items.length > 0}
+        contentReady={!loading && items.length > 0 && adsContentReady}
       />
 
       {/* KONTENT EKWIPUNKU */}
