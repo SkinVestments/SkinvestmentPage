@@ -6,8 +6,11 @@ const SHARED_SLOT = import.meta.env.VITE_ADSENSE_SLOT ?? '';
 const slot = (specific: string | undefined) => specific || SHARED_SLOT;
 
 export const AD_SLOTS = {
+  features: slot(import.meta.env.VITE_ADSENSE_SLOT_FEATURES),
+  faq: slot(import.meta.env.VITE_ADSENSE_SLOT_FAQ),
   panel: slot(import.meta.env.VITE_ADSENSE_SLOT_PANEL),
   inventory: slot(import.meta.env.VITE_ADSENSE_SLOT_INVENTORY),
+  catalog: slot(import.meta.env.VITE_ADSENSE_SLOT_CATALOG),
   analytics: slot(import.meta.env.VITE_ADSENSE_SLOT_ANALYTICS),
   history: slot(import.meta.env.VITE_ADSENSE_SLOT_HISTORY),
   sidebar: slot(import.meta.env.VITE_ADSENSE_SLOT_SIDEBAR),

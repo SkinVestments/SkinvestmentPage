@@ -11,6 +11,15 @@ import {
   TrendingUp,
   Wallet,
 } from 'lucide-react';
+import {
+  LineChart,
+  Line,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+} from 'recharts';
 import { supabase } from '@/utils/supabaseClient';
 import { useAuth } from '@/context/AuthContext';
 import { formatCurrency } from '@/utils/display';
@@ -23,6 +32,14 @@ import {
   normalizePortfolioItemDetail,
   type PortfolioItemDetail,
 } from '@/utils/portfolioRpc';
+import {
+  chartAxisLineStyle,
+  chartAxisTickStyle,
+  chartTooltipItemStyle,
+  chartTooltipStyle,
+  formatChartXAxis,
+  formatChartYAxis,
+} from '@/utils/chartTheme';
 
 const formatDateTime = (iso: string | null) => {
   if (!iso) return '—';
@@ -37,6 +54,7 @@ const formatDateTime = (iso: string | null) => {
 };
 
 const ItemDetail = () => {
+  const PERIOD_OPTIONS = ['7D', '1M', '3M', '6M', '1Y', 'ALL'] as const;
   const { itemId } = useParams<{ itemId: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -49,6 +67,9 @@ const ItemDetail = () => {
   const [batches, setBatches] = useState<PurchaseBatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [batchesLoading, setBatchesLoading] = useState(true);
+  const [chartLoading, setChartLoading] = useState(false);
+  const [chartPeriod, setChartPeriod] = useState<(typeof PERIOD_OPTIONS)[number]>('1M');
+  const [chartData, setChartData] = useState<Array<{ chart_date: string; price: number }>>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const fetchBatches = useCallback(async () => {
@@ -147,6 +168,65 @@ const ItemDetail = () => {
     }
   }, [itemId]);
 
+  const fetchItemChart = useCallback(async () => {
+    if (!itemId) return;
+    setChartLoading(true);
+    try {
+      const attempts: Array<Record<string, string>> = [
+        { input_item_id: itemId, period_text: chartPeriod },
+        { itemID: itemId, period: chartPeriod },
+        { p_item_id: itemId, p_period: chartPeriod },
+        { item_id: itemId, period: chartPeriod },
+      ];
+
+      let rpcData: unknown = null;
+      let lastError: unknown = null;
+
+      for (const args of attempts) {
+        const { data, error } = await supabase.rpc('get_chart_data', args);
+        if (!error) {
+          rpcData = data;
+          lastError = null;
+          break;
+        }
+        lastError = error;
+      }
+
+      if (lastError) throw lastError;
+
+      const rawRows = Array.isArray(rpcData)
+        ? rpcData
+        : rpcData && typeof rpcData === 'object' && 'data' in rpcData
+          ? ((rpcData as { data?: unknown[] }).data ?? [])
+          : [];
+
+      const normalized = (rawRows as Array<Record<string, unknown>>)
+        .map((row) => {
+          const dateCandidate =
+            row.chart_date ?? row.date ?? row.timestamp ?? row.price_updated_at ?? row.updated_at;
+          const priceCandidate =
+            row.price ?? row.value ?? row.market_price ?? row.avg_price ?? row.close ?? row.y;
+
+          const parsedPrice = Number(priceCandidate ?? 0);
+          const parsedDate = String(dateCandidate ?? '');
+          if (!parsedDate || !Number.isFinite(parsedPrice)) return null;
+
+          return {
+            chart_date: parsedDate,
+            price: parsedPrice,
+          };
+        })
+        .filter((r): r is { chart_date: string; price: number } => Boolean(r));
+
+      setChartData(normalized);
+    } catch (err) {
+      console.error('Error fetching item chart:', err);
+      setChartData([]);
+    } finally {
+      setChartLoading(false);
+    }
+  }, [itemId, chartPeriod]);
+
   useEffect(() => {
     fetchDetail();
   }, [fetchDetail]);
@@ -154,6 +234,10 @@ const ItemDetail = () => {
   useEffect(() => {
     fetchBatches();
   }, [fetchBatches]);
+
+  useEffect(() => {
+    fetchItemChart();
+  }, [fetchItemChart]);
 
   if (loading) {
     return (
@@ -296,6 +380,75 @@ const ItemDetail = () => {
       </div>
 
       <div className="mb-8">
+        <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg overflow-hidden mb-6">
+          <div className="p-5 border-b border-steam-border bg-steam-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">Price chart</h2>
+            <div className="flex bg-steam-bg rounded-lg p-1 border border-steam-border/50">
+              {PERIOD_OPTIONS.map((period) => (
+                <button
+                  key={period}
+                  type="button"
+                  onClick={() => setChartPeriod(period)}
+                  className={`px-2.5 py-1.5 text-xs font-bold rounded transition-colors ${
+                    chartPeriod === period
+                      ? 'bg-steam-accent text-white shadow-md'
+                      : 'text-steam-tertiary hover:text-steam-text'
+                  }`}
+                >
+                  {period}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-4 sm:p-5 h-[300px] relative">
+            {chartLoading ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="w-7 h-7 text-steam-accent animate-spin" />
+              </div>
+            ) : chartData.length === 0 ? (
+              <div className="absolute inset-0 flex items-center justify-center text-steam-tertiary text-sm">
+                No chart data for selected period.
+              </div>
+            ) : null}
+
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
+                <CartesianGrid stroke="var(--color-card-border)" strokeOpacity={0.25} vertical={false} />
+                <XAxis
+                  dataKey="chart_date"
+                  tick={chartAxisTickStyle}
+                  axisLine={chartAxisLineStyle}
+                  tickLine={false}
+                  tickFormatter={formatChartXAxis}
+                  minTickGap={24}
+                />
+                <YAxis
+                  tick={chartAxisTickStyle}
+                  axisLine={chartAxisLineStyle}
+                  tickLine={false}
+                  tickFormatter={formatChartYAxis}
+                  width={52}
+                />
+                <Tooltip
+                  formatter={(value: number) => [formatCurrency(Number(value ?? 0)), 'Price']}
+                  labelFormatter={(label) => `Date: ${formatChartXAxis(String(label))}`}
+                  contentStyle={chartTooltipStyle}
+                  itemStyle={chartTooltipItemStyle}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="price"
+                  stroke="var(--color-accent)"
+                  strokeWidth={2.5}
+                  dot={false}
+                  activeDot={{ r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
         <ItemPurchaseBatches
           batches={batches}
           loading={batchesLoading}

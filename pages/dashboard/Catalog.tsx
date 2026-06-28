@@ -13,6 +13,8 @@ import {
 import { ItemImage } from '@/components/ui/ItemImage';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { supabase } from '@/utils/supabaseClient';
+import { AdSlot } from '@/components/ads/AdSlot';
+import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 
 interface CatalogItem {
   id: string;
@@ -57,6 +59,7 @@ interface WishlistListRow {
 }
 
 const Catalog = () => {
+  const adsContentReady = usePublisherContentReady();
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCollection, setSelectedCollection] = useState(COLLECTION_ALL);
@@ -70,6 +73,7 @@ const Catalog = () => {
   const [wishlistItemIds, setWishlistItemIds] = useState<Set<string>>(new Set());
   const [wishlistLoadingItemId, setWishlistLoadingItemId] = useState<string | null>(null);
   const [showOnlyWishlist, setShowOnlyWishlist] = useState(false);
+  const [inlineAdIndex, setInlineAdIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => setSearchQuery(searchInput.trim()), 350);
@@ -168,6 +172,20 @@ const Catalog = () => {
     if (!showOnlyWishlist) return items;
     return items.filter((item) => wishlistItemIds.has(item.id));
   }, [items, showOnlyWishlist, wishlistItemIds]);
+
+  useEffect(() => {
+    if (displayedItems.length === 0) {
+      setInlineAdIndex(null);
+      return;
+    }
+
+    // Random ad position limited to places 1..15 (1-based).
+    const minIndex = 0;
+    const maxIndex = Math.min(14, displayedItems.length - 1);
+    const randomIndex =
+      Math.floor(Math.random() * (maxIndex - minIndex + 1)) + minIndex;
+    setInlineAdIndex(randomIndex);
+  }, [page, searchQuery, selectedCollection, sortBy, showOnlyWishlist, displayedItems.length]);
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(totalCount / PAGE_SIZE)), [totalCount]);
 
@@ -314,15 +332,23 @@ const Catalog = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
-          {displayedItems.map((item) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {displayedItems.map((item, index) => {
             const rarityStyle = getRarityStyle(item.rarity);
             const isWishlisted = wishlistItemIds.has(item.id);
             const isWishlistLoading = wishlistLoadingItemId === item.id;
 
             return (
+              <React.Fragment key={item.id}>
+                {index === inlineAdIndex && (
+                  <AdSlot
+                    slotKey="catalog"
+                    className="h-full"
+                    minHeight={260}
+                    contentReady={adsContentReady && inlineAdIndex != null}
+                  />
+                )}
               <article
-                key={item.id}
                 className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-accent/40 transition-colors group overflow-hidden shadow-lg h-full flex flex-col"
               >
                 <div
@@ -380,6 +406,7 @@ const Catalog = () => {
                   </div>
                 </div>
               </article>
+              </React.Fragment>
             );
           })}
           </div>

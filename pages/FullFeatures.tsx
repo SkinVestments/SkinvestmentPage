@@ -5,6 +5,7 @@ import {
   Activity, Target, Rocket, Moon
 } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
+import { AdSlot } from '@/components/ads/AdSlot';
 
 export const FullFeaturesPage: React.FC = () => {
   usePageSeo({
@@ -320,6 +321,14 @@ export const FullFeaturesPage: React.FC = () => {
               desc="Track in USD, EUR, CNY, or PLN with automated real-time exchange rate updates." 
             />
           </div>
+
+          <AdSlot
+            slotKey="features"
+            className="mt-10"
+            contentReady
+            minHeight={120}
+            showUpgradeHint={false}
+          />
 
         </div>
       </div>
