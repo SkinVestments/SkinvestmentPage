@@ -27,6 +27,7 @@ jobs:
             VITE_ADSENSE_SLOT_ANALYTICS: ${{ secrets.VITE_ADSENSE_SLOT_ANALYTICS }}
             VITE_ADSENSE_SLOT_HISTORY: ${{ secrets.VITE_ADSENSE_SLOT_HISTORY }}
             VITE_ADSENSE_SLOT_SIDEBAR: ${{ secrets.VITE_ADSENSE_SLOT_SIDEBAR }}
+            VITE_ADSENSE_SLOT_CATALOG: ${{ secrets.VITE_ADSENSE_SLOT_CATALOG }}
         run: |
           npm install
           npm run build
