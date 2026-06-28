@@ -18,6 +18,11 @@ interface Transaction {
   transaction_date: string;
   realized_profit: number; // Tylko dla SELL
   is_investment: boolean;
+  item_id?: string;
+  collection_id?: string;
+  created_at?: string;
+  item_name?: string | null;
+  icon_url?: string | null;
   cs2_items: {
     market_hash_name: string;
     icon_url: string | null;
@@ -41,34 +46,46 @@ const History = () => {
       setLoading(true);
       if (!user) return;
 
-      const from = (page - 1) * ITEMS_PER_PAGE;
-      const to = from + ITEMS_PER_PAGE - 1;
-
-      // Budowanie zapytania
-      let query = supabase
-        .from('transactions')
-        .select(`
-          *,
-          cs2_items (
-            market_hash_name,
-            icon_url,
-            rarity
-          )
-        `, { count: 'exact' })
-        .eq('user_id', user.id)
-        .order('transaction_date', { ascending: false }) // Sortowanie po Twojej kolumnie
-        .range(from, to);
-
-      if (filterType !== 'ALL') {
-        query = query.eq('type', filterType);
-      }
-
-      const { data, error, count } = await query;
+      const { data, error } = await supabase.rpc('get_paginated_transactions', {
+        p_user_id: user.id,
+        p_page: page,
+        p_page_size: ITEMS_PER_PAGE,
+        p_type_filter: filterType !== 'ALL' ? filterType : null,
+        p_is_investment: null,
+        p_search_query: null,
+      });
 
       if (error) throw error;
-      
-      if (data) setTransactions(data as any);
-      if (count) setTotalPages(Math.ceil(count / ITEMS_PER_PAGE));
+
+      const payload = (data ?? {}) as {
+        transactions?: Array<Record<string, unknown>>;
+        total_count?: number;
+      };
+
+      const mapped: Transaction[] = (payload.transactions ?? []).map((row) => ({
+        id: String(row.id ?? ''),
+        type: (String(row.type ?? 'BUY') as TransactionType),
+        quantity: Number(row.quantity ?? 0),
+        price: Number(row.price ?? 0),
+        fee_deducted: Number(row.fee_deducted ?? 0),
+        transaction_date: String(row.transaction_date ?? ''),
+        realized_profit: Number(row.realized_profit ?? 0),
+        is_investment: Boolean(row.is_investment ?? false),
+        item_id: row.item_id ? String(row.item_id) : undefined,
+        collection_id: row.collection_id ? String(row.collection_id) : undefined,
+        created_at: row.created_at ? String(row.created_at) : undefined,
+        item_name: row.item_name ? String(row.item_name) : null,
+        icon_url: row.icon_url ? String(row.icon_url) : null,
+        cs2_items: {
+          market_hash_name: row.item_name ? String(row.item_name) : 'Unknown item',
+          icon_url: row.icon_url ? String(row.icon_url) : null,
+          rarity: null,
+        },
+      }));
+
+      setTransactions(mapped);
+      const totalCount = Number(payload.total_count ?? 0);
+      setTotalPages(Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE)));
 
     } catch (error) {
       console.error('Error fetching history:', error);

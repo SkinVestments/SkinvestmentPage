@@ -29,6 +29,8 @@ const AuthCallback = lazy(() => import('@/pages/auth/AuthCallback'));
 const Panel = lazy(() => import('@/pages/dashboard/Panel'));
 const History = lazy(() => import('@/pages/dashboard/History'));
 const Inventory = lazy(() => import('@/pages/dashboard/Inventory'));
+const Catalog = lazy(() => import('@/pages/dashboard/Catalog'));
+const Wishlist = lazy(() => import('@/pages/dashboard/Wishlist'));
 const Analytics = lazy(() => import('@/pages/dashboard/Analytics'));
 const CollectionDetails = lazy(() => import('@/pages/dashboard/CollectionDetails'));
 const ItemDetail = lazy(() => import('@/pages/dashboard/ItemDetail'));
@@ -61,6 +63,8 @@ export const AppRoutes = () => (
         <Route path="/panel" element={<Panel />} />
         <Route path="/history" element={<History />} />
         <Route path="/inventory" element={<Inventory />} />
+        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/collection/:id" element={<CollectionDetails />} />
         <Route path="/item/:itemId" element={<ItemDetail />} />
