@@ -11,9 +11,11 @@ import { Sparkles } from 'lucide-react';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { MANAGE_SUBSCRIPTION_SETTINGS_PATH } from '@/constants/settingsLinks';
+import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 
 const Analytics = () => {
   const { hasPremium: userHasPremium } = useSubscriptionPlan();
+  const adsContentReady = usePublisherContentReady();
 
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
@@ -38,7 +40,7 @@ const Analytics = () => {
       {/* RZĄD 1: METRYKI */}
       <SummaryCards />
 
-      <AdSlot slotKey="analytics" className="mb-6" contentReady />
+      <AdSlot slotKey="analytics" className="mb-6" contentReady={adsContentReady} />
 
       {/* RZĄD 2: GŁÓWNE WYKRESY */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

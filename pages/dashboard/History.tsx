@@ -5,6 +5,7 @@ import { Loader2, ArrowDownUp, Calendar, Package, TrendingUp, TrendingDown, Doll
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { ItemImage } from '@/components/ui/ItemImage';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 
 // --- TYPY ZGODNE Z TWOJĄ BAZĄ ---
 type TransactionType = 'DROP' | 'BUY' | 'SELL';
@@ -34,6 +35,7 @@ const ITEMS_PER_PAGE = 15;
 
 const History = () => {
   const { user } = useAuth();
+  const adsContentReady = usePublisherContentReady();
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -129,7 +131,7 @@ const History = () => {
       <AdSlot
         slotKey="history"
         className="mb-6"
-        contentReady={!loading && transactions.length > 0}
+        contentReady={!loading && transactions.length > 0 && adsContentReady}
       />
 
       {/* Tabela */}
