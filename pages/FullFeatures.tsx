@@ -5,15 +5,11 @@ import {
   Activity, Target, Rocket, Moon
 } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
+import { PAGE_SEO } from '@/utils/seo';
 import { AdSlot } from '@/components/ads/AdSlot';
 
 export const FullFeaturesPage: React.FC = () => {
-  usePageSeo({
-    title: 'Features — CS2 Portfolio Tracker | Skinvestments',
-    description:
-      'CS2 portfolio tracker features: inventory sync, profit analytics, drop tracking, stagnation alerts, and multi-market pricing.',
-    path: '/features',
-  });
+  usePageSeo(PAGE_SEO.features);
 
   // Reset scroll position on mount
   useEffect(() => {

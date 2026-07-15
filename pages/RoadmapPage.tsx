@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { CheckCircle2, Circle, GitCommit, Rocket } from 'lucide-react';
+import { usePageSeo } from '@/hooks/usePageSeo';
+import { PAGE_SEO } from '@/utils/seo';
 
 export const RoadmapPage: React.FC = () => {
+  usePageSeo(PAGE_SEO.roadmap);
   useEffect(() => window.scrollTo(0, 0), []);
 
   const milestones = [

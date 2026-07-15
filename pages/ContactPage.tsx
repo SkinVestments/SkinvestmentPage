@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react';
 import { Mail, MessageSquare, Lock, Activity } from 'lucide-react';
 import { SocialLinks } from '@/components/SocialLinks';
+import { usePageSeo } from '@/hooks/usePageSeo';
+import { PAGE_SEO } from '@/utils/seo';
 
 const SUPPORT_EMAIL = 'kjlabs.studio@gmail.com';
 
 export const ContactPage: React.FC = () => {
+  usePageSeo(PAGE_SEO.contact);
   useEffect(() => window.scrollTo(0, 0), []);
 
   return (
