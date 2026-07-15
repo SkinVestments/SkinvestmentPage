@@ -1,10 +1,11 @@
 /**
- * AdSense Program Policies — ads only on public, high-content pages.
- * Keep ads off utility dashboard screens to reduce low-value-content risk.
+ * AdSense — public marketing/content pages only (not dashboard).
+ * Everyone sees ads here; Pro only removes ads inside the authenticated app.
  */
 export const ADSENSE_ELIGIBLE_PATHS = [
   '/features',
   '/faq',
+  '/blog',
 ] as const;
 
 export function isAdSenseEligiblePath(pathname: string): boolean {

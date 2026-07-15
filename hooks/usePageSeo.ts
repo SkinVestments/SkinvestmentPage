@@ -1,18 +1,14 @@
 import { useEffect } from 'react';
-import { setPageSeo } from '@/utils/seo';
+import { setPageSeo, type PageSeo } from '@/utils/seo';
 
 export function usePageSeo({
   title,
   description,
   path = '/',
   robots = 'index, follow',
-}: {
-  title: string;
-  description: string;
-  path?: string;
-  robots?: string;
-}) {
+  ogImage,
+}: PageSeo) {
   useEffect(() => {
-    setPageSeo({ title, description, path, robots });
-  }, [title, description, path, robots]);
+    setPageSeo({ title, description, path, robots, ogImage });
+  }, [title, description, path, robots, ogImage]);
 }

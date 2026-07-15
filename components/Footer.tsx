@@ -35,6 +35,7 @@ export const Footer: React.FC = () => {
               <li><span className="text-steam-tertiary cursor-not-allowed">API Access</span></li>
               <li><Link to="/pricing" className="text-steam-tertiary hover:text-steam-accent transition-colors">Pricing</Link></li>
               <li><Link to="/roadmap" className="text-steam-tertiary hover:text-steam-accent transition-colors">Roadmap</Link></li>
+              <li><Link to="/blog" className="text-steam-tertiary hover:text-steam-accent transition-colors">Blog</Link></li>
             </ul>
           </div>
 
@@ -54,9 +55,9 @@ export const Footer: React.FC = () => {
             © {new Date().getFullYear()} Skinvestments. 
             Powered by Steam. Not affiliated with Valve Corp.
           </p>
-          <div className="flex gap-2">
-            <span className="w-2 h-2 rounded-full bg-steam-success"></span>
-            <span className="text-xs text-steam-tertiary">System Operational</span>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-steam-success shrink-0" aria-hidden />
+            <span className="text-xs text-steam-tertiary leading-none">System Operational</span>
           </div>
         </div>
       </div>

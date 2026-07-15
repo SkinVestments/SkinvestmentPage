@@ -2,9 +2,11 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
+import { AdSenseScript } from '@/components/ads/AdSenseScript';
 
 export const PublicShell = () => (
   <div className="min-h-screen bg-steam-bg text-steam-text selection:bg-steam-accent selection:text-steam-text font-sans flex flex-col overflow-x-hidden w-full">
+    <AdSenseScript />
     <Navbar />
     <main className="flex-grow">
       <Outlet />
