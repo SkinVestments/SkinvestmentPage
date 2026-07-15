@@ -1,10 +1,13 @@
 const SITE_ORIGIN = 'https://skinvestments.app';
+const DEFAULT_OG_IMAGE = `${SITE_ORIGIN}/images/og-image.png`;
 
 export type PageSeo = {
   title: string;
   description: string;
   path: string;
   robots?: string;
+  /** Absolute URL preferred; relative paths are resolved against SITE_ORIGIN. */
+  ogImage?: string;
 };
 
 export const PAGE_SEO = {
@@ -56,6 +59,12 @@ export const PAGE_SEO = {
       'Terms of use for Skinvestments, the CS2 portfolio tracker for Steam skins on web, iOS, and Android.',
     path: '/terms',
   },
+  blog: {
+    title: 'Blog — CS2 Portfolio Insights | Skinvestments',
+    description:
+      'Guides on CS2 inventory tracking, multi-market pricing (Steam, Skinport, Buff163), and treating skins like an asset class.',
+    path: '/blog',
+  },
 } as const satisfies Record<string, PageSeo>;
 
 /** @deprecated Use PAGE_SEO.home */
@@ -68,11 +77,33 @@ export function canonicalUrl(path: string) {
   return `${SITE_ORIGIN}${path === '/' ? '/' : path}`;
 }
 
+function resolveOgImage(ogImage?: string) {
+  if (!ogImage) return DEFAULT_OG_IMAGE;
+  if (ogImage.startsWith('http://') || ogImage.startsWith('https://')) return ogImage;
+  return `${SITE_ORIGIN}${ogImage.startsWith('/') ? ogImage : `/${ogImage}`}`;
+}
+
+function upsertMeta(
+  selector: string,
+  attr: 'name' | 'property',
+  key: string,
+  content: string,
+) {
+  let el = document.querySelector(selector);
+  if (!el) {
+    el = document.createElement('meta');
+    el.setAttribute(attr, key);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('content', content);
+}
+
 export function setPageSeo({
   title,
   description,
   path = '/',
   robots = 'index, follow',
+  ogImage,
 }: PageSeo) {
   document.title = title;
 
@@ -91,6 +122,7 @@ export function setPageSeo({
   robotsMeta.setAttribute('content', robots);
 
   const url = canonicalUrl(path);
+  const image = resolveOgImage(ogImage);
 
   const ogTitle = document.querySelector('meta[property="og:title"]');
   if (ogTitle) ogTitle.setAttribute('content', title);
@@ -103,6 +135,9 @@ export function setPageSeo({
 
   const twitterDescription = document.querySelector('meta[property="twitter:description"]');
   if (twitterDescription) twitterDescription.setAttribute('content', description);
+
+  upsertMeta('meta[property="og:image"]', 'property', 'og:image', image);
+  upsertMeta('meta[property="twitter:image"]', 'property', 'twitter:image', image);
 
   let canonical = document.querySelector('link[rel="canonical"]');
   if (!canonical) {
@@ -120,49 +155,71 @@ export function setPageSeo({
 }
 
 /** Inject per-route SEO tags into the built index.html shell (build-time prerender). */
-export function injectPageSeoHtml(html: string, { title, description, path, robots = 'index, follow' }: PageSeo) {
+export function injectPageSeoHtml(
+  html: string,
+  { title, description, path, robots = 'index, follow', ogImage }: PageSeo,
+) {
   const url = canonicalUrl(path);
+  const image = resolveOgImage(ogImage);
 
   return html
-    .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+    .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`)
     .replace(
       /<meta name="title" content="[^"]*">/,
-      `<meta name="title" content="${title}">`,
+      `<meta name="title" content="${escapeAttr(title)}">`,
     )
     .replace(
       /<meta name="description" content="[^"]*">/,
-      `<meta name="description" content="${description}">`,
+      `<meta name="description" content="${escapeAttr(description)}">`,
     )
     .replace(
       /<meta name="robots" content="[^"]*" \/>/,
-      `<meta name="robots" content="${robots}" />`,
+      `<meta name="robots" content="${escapeAttr(robots)}" />`,
     )
     .replace(
       /<meta property="og:url" content="[^"]*">/,
-      `<meta property="og:url" content="${url}">`,
+      `<meta property="og:url" content="${escapeAttr(url)}">`,
     )
     .replace(
       /<meta property="og:title" content="[^"]*">/,
-      `<meta property="og:title" content="${title}">`,
+      `<meta property="og:title" content="${escapeAttr(title)}">`,
     )
     .replace(
       /<meta property="og:description" content="[^"]*">/,
-      `<meta property="og:description" content="${description}">`,
+      `<meta property="og:description" content="${escapeAttr(description)}">`,
+    )
+    .replace(
+      /<meta property="og:image" content="[^"]*">/,
+      `<meta property="og:image" content="${escapeAttr(image)}">`,
     )
     .replace(
       /<meta property="twitter:url" content="[^"]*">/,
-      `<meta property="twitter:url" content="${url}">`,
+      `<meta property="twitter:url" content="${escapeAttr(url)}">`,
     )
     .replace(
       /<meta property="twitter:title" content="[^"]*">/,
-      `<meta property="twitter:title" content="${title}">`,
+      `<meta property="twitter:title" content="${escapeAttr(title)}">`,
     )
     .replace(
       /<meta property="twitter:description" content="[^"]*">/,
-      `<meta property="twitter:description" content="${description}">`,
+      `<meta property="twitter:description" content="${escapeAttr(description)}">`,
+    )
+    .replace(
+      /<meta property="twitter:image" content="[^"]*">/,
+      `<meta property="twitter:image" content="${escapeAttr(image)}">`,
     )
     .replace(
       /<link rel="canonical" href="[^"]*" \/>/,
-      `<link rel="canonical" href="${url}" />`,
+      `<link rel="canonical" href="${escapeAttr(url)}" />`,
     );
 }
+
+function escapeAttr(value: string) {
+  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function escapeHtml(value: string) {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+export { SITE_ORIGIN, DEFAULT_OG_IMAGE };

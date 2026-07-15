@@ -9,41 +9,53 @@ export const RoadmapPage: React.FC = () => {
 
   const milestones = [
     {
-      date: "Q3 2025",
-      title: "Project Inception",
-      desc: "Core engine development and connection with Steam Inventory API.",
-      status: "completed"
+      date: 'Q3 2025',
+      title: 'Project Inception',
+      desc: 'Core engine development and connection with Steam Inventory API.',
+      status: 'completed',
     },
     {
-      date: "Q4 2025",
-      title: "Beta Launch v0.5",
-      desc: "First 100 users. Basic portfolio tracking and valuation.",
-      status: "completed"
+      date: 'Q4 2025',
+      title: 'Beta Launch v0.5',
+      desc: 'First 100 users. Basic portfolio tracking and valuation.',
+      status: 'completed',
     },
     {
-      date: "Q1 2026",
-      title: "Multi-Market Aggregation",
-      desc: "Integration with Skinport for real cash prices.",
-      status: "completed"
+      date: 'Q1 2026',
+      title: 'Multi-Market Aggregation',
+      desc: 'Integration with Skinport and Buff163 for real market prices alongside Steam.',
+      status: 'completed',
     },
     {
-      date: "NOW",
-      title: "Public Launch v1.0",
-      desc: "Portfolio Pulse, Stagnation Detector, and Mobile Widgets.",
-      status: "active"
+      date: 'Q2 2026',
+      title: 'Public Launch v1.0',
+      desc: 'Web dashboard, Portfolio Pulse, Stagnation Detector, subscriptions, and mobile apps.',
+      status: 'completed',
     },
     {
-      date: "Q3 2026",
-      title: "AI Price Prediction",
-      desc: "Machine Learning models to predict trend reversals based on market volume.",
-      status: "upcoming"
+      date: 'Jul 2026',
+      title: 'Skinvestments Journal',
+      desc: 'Public blog with SEO, feature images, and CS2 portfolio insights for players and investors.',
+      status: 'completed',
     },
     {
-      date: "Q4 2026",
-      title: "Wearables & App",
-      desc: "Native iOS/Android App and Apple Watch complications.",
-      status: "upcoming"
-    }
+      date: 'NEXT',
+      title: 'Weekly Drop Scanner',
+      desc: 'Scan and surface weekly CS2 drops across your inventory — faster logging, clearer drop history.',
+      status: 'active',
+    },
+    {
+      date: 'Q3 2026',
+      title: 'Advanced Charts',
+      desc: 'New portfolio charts and widgets for deeper performance, allocation, and trend views.',
+      status: 'upcoming',
+    },
+    {
+      date: 'Q4 2026',
+      title: 'AI Insights',
+      desc: 'AI-assisted portfolio insights — spotlight stagnant positions, unusual moves, and market context.',
+      status: 'upcoming',
+    },
   ];
 
   return (
@@ -77,7 +89,11 @@ export const RoadmapPage: React.FC = () => {
                       <span className={`text-xs font-bold uppercase tracking-widest ${
                         item.status === 'active' ? 'text-steam-accent' : 'text-steam-tertiary'
                       }`}>{item.date}</span>
-                      {item.status === 'active' && <span className="animate-pulse text-[10px] bg-steam-accent px-2 rounded text-white font-bold">CURRENT</span>}
+                      {item.status === 'active' && (
+                        <span className="animate-pulse text-[10px] bg-steam-accent px-2 rounded text-white font-bold">
+                          NEXT UP
+                        </span>
+                      )}
                     </div>
                     <h3 className={`text-xl font-bold mb-2 ${item.status === 'upcoming' ? 'text-steam-secondary' : 'text-steam-text'}`}>
                       {item.title}

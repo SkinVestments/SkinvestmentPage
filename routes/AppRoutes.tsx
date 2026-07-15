@@ -21,6 +21,8 @@ const RoadmapPage = lazy(() =>
 const ContactPage = lazy(() =>
   import('@/pages/ContactPage').then((m) => ({ default: m.ContactPage })),
 );
+const BlogIndex = lazy(() => import('@/pages/blog/BlogIndex'));
+const BlogPost = lazy(() => import('@/pages/blog/BlogPost'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const TermsAndConditionsPage = lazy(() => import('@/pages/TermsAndConditionsPage'));
 const Login = lazy(() => import('@/pages/auth/Login'));
@@ -47,6 +49,8 @@ export const AppRoutes = () => (
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/roadmap" element={<RoadmapPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blog" element={<BlogIndex />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/terms" element={<TermsAndConditionsPage />} />

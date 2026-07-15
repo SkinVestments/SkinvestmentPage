@@ -4,7 +4,7 @@ import { useAdSenseEligible } from '@/hooks/useAdSenseEligible';
 
 const SCRIPT_ATTR = 'data-skinvestments-adsense';
 
-/** Loads AdSense script only on free-plan content dashboard routes. */
+/** Loads AdSense script on public eligible routes (blog, FAQ, features). */
 export function AdSenseScript() {
   const eligible = useAdSenseEligible();
 
