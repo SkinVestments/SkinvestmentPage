@@ -1,10 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield } from 'lucide-react';
+import { usePageSeo } from '@/hooks/usePageSeo';
+import { PAGE_SEO } from '@/utils/seo';
 
 const LAST_UPDATED = 'June 8, 2026';
 
 export default function PrivacyPolicyPage() {
+  usePageSeo(PAGE_SEO.privacy);
+
   return (
     <div className="pt-24 sm:pt-32 pb-24 px-4 sm:px-6 min-h-screen bg-steam-bg relative overflow-x-hidden">
       <div className="max-w-3xl mx-auto relative z-10">

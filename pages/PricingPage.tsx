@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Check, Lock, Sparkles, Infinity } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
+import { PAGE_SEO } from '@/utils/seo';
 import {
   SUBSCRIPTION_PLANS,
   type BillingCycle,
@@ -8,12 +9,7 @@ import {
 } from '@/constants/subscriptionPlans';
 
 export const PricingPage: React.FC = () => {
-  usePageSeo({
-    title: 'Pricing — CS2 Portfolio Tracker | Skinvestments',
-    description:
-      'Plans for the Skinvestments CS2 portfolio tracker. Free Starter, Pro, and Pro Max — web dashboard and mobile apps.',
-    path: '/pricing',
-  });
+  usePageSeo(PAGE_SEO.pricing);
 
   useEffect(() => window.scrollTo(0, 0), []);
 

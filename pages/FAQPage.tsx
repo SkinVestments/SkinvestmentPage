@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Lock, HelpCircle, ChevronDown } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
+import { PAGE_SEO } from '@/utils/seo';
 import { AdSlot } from '@/components/ads/AdSlot';
 
 interface FaqItem {
@@ -144,12 +145,7 @@ const FAQ_SECTIONS: FaqSection[] = [
 ];
 
 export const FAQPage: React.FC = () => {
-  usePageSeo({
-    title: 'FAQ — CS2 Portfolio Tracker | Skinvestments',
-    description:
-      'Answers about Skinvestments CS2 portfolio tracker: Steam safety, pricing, subscriptions, exports, and the web dashboard.',
-    path: '/faq',
-  });
+  usePageSeo(PAGE_SEO.faq);
 
   useEffect(() => window.scrollTo(0, 0), []);
 
