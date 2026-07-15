@@ -1,20 +1,26 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Skinvestments marketing site + web app
 
-# Run and deploy your AI Studio app
+Vite + React SPA. Production origin: https://skinvestments.app
 
-This contains everything you need to run your app locally.
+## Run locally
 
-View your app in AI Studio: https://ai.studio/apps/drive/1WZvLen0lQneZmBlMqVF5fN2_6DFvc4NA
+1. `npm install`
+2. Copy env vars (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, …)
+3. `npm run dev`
 
-## Run Locally
+## Blog (Supabase CMS)
 
-**Prerequisites:**  Node.js
+1. Apply the SQL migration in the Supabase SQL editor:
+   [`supabase/migrations/20260715_blog.sql`](supabase/migrations/20260715_blog.sql)
+   (creates `blog_posts`, public `blog-images` bucket, RLS for published reads, 2 seed posts).
+2. Manage drafts / publish in Table Editor; upload feature images to Storage → `blog-images`.
+3. Public routes: `/blog`, `/blog/:slug`.
 
+### SEO + Deploy Hook
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+At `npm run build`, Vite fetches published posts and writes:
+
+- `dist/blog/{slug}/index.html` — meta / canonical / og:image shells for crawlers
+- `dist/sitemap.xml` — marketing URLs + every published slug
+
+After you set a post to **published**, trigger a **Vercel Deploy Hook** (or redeploy) so those shells and the sitemap refresh. Without a rebuild, browsers still get live content from Supabase; crawlers may keep stale meta until the next deploy.

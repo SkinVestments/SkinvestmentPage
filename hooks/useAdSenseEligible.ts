@@ -1,12 +1,13 @@
 import { useLocation } from 'react-router-dom';
 import { isAdSenseConfigured } from '@/constants/adSlots';
 import { isAdSenseEligiblePath } from '@/constants/adsensePolicy';
-import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
 
-/** True when ads may load: free plan, configured client, allowed route. */
+/**
+ * True on public high-content routes when AdSense is configured.
+ * Plan (Pro / free) does not matter — these pages are not behind login.
+ */
 export function useAdSenseEligible(): boolean {
   const { pathname } = useLocation();
-  const { hasAds } = useSubscriptionPlan();
 
-  return hasAds && isAdSenseConfigured() && isAdSenseEligiblePath(pathname);
+  return isAdSenseConfigured() && isAdSenseEligiblePath(pathname);
 }
