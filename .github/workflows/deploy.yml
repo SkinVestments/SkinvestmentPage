@@ -22,14 +22,8 @@ jobs:
             VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
             VITE_ADSENSE_CLIENT: ${{ secrets.VITE_ADSENSE_CLIENT }}
             VITE_ADSENSE_SLOT: ${{ secrets.VITE_ADSENSE_SLOT }}
-            VITE_ADSENSE_SLOT_PANEL: ${{ secrets.VITE_ADSENSE_SLOT_PANEL }}
-            VITE_ADSENSE_SLOT_INVENTORY: ${{ secrets.VITE_ADSENSE_SLOT_INVENTORY }}
-            VITE_ADSENSE_SLOT_ANALYTICS: ${{ secrets.VITE_ADSENSE_SLOT_ANALYTICS }}
-            VITE_ADSENSE_SLOT_HISTORY: ${{ secrets.VITE_ADSENSE_SLOT_HISTORY }}
-            VITE_ADSENSE_SLOT_SIDEBAR: ${{ secrets.VITE_ADSENSE_SLOT_SIDEBAR }}
-            VITE_ADSENSE_SLOT_CATALOG: ${{ secrets.VITE_ADSENSE_SLOT_CATALOG }}
-            VITE_ADSENSE_SLOT_FEATURES: ${{ secrets.VITE_ADSENSE_SLOT_FEATURES }}
-            VITE_ADSENSE_SLOT_FAQ: ${{ secrets.VITE_ADSENSE_SLOT_FAQ }}
+            VITE_ADSENSE_SLOT_BLOG_INDEX: ${{ secrets.VITE_ADSENSE_SLOT_PANEL }}
+            VITE_ADSENSE_SLOT_BLOG_POST: ${{ secrets.VITE_ADSENSE_SLOT_INVENTORY }}
         run: |
           npm install
           npm run build
