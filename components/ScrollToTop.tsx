@@ -1,25 +1,13 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
+/** Scroll to top on client-side route changes. Trailing slash / HTTPS redirects are handled server-side. */
 export const ScrollToTop = () => {
-  const { pathname, search, hash } = useLocation();
-  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    if (import.meta.env.PROD && window.location.protocol === 'http:') {
-      window.location.replace(
-        `https://${window.location.host}${pathname}${search}${hash}`,
-      );
-      return;
-    }
-
-    if (pathname.length > 1 && pathname.endsWith('/')) {
-      navigate(`${pathname.replace(/\/+$/, '')}${search}${hash}`, { replace: true });
-      return;
-    }
-
     window.scrollTo(0, 0);
-  }, [pathname, search, hash, navigate]);
+  }, [pathname]);
 
   return null;
 };

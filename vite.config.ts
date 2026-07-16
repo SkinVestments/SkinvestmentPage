@@ -37,11 +37,12 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (!id.includes('node_modules')) return;
 
-            if (id.includes('react-dom') || id.includes('/react/')) {
+            if (
+              id.includes('react-dom') ||
+              id.includes('/react/') ||
+              id.includes('react-router')
+            ) {
               return 'react-vendor';
-            }
-            if (id.includes('react-router')) {
-              return 'router';
             }
             if (id.includes('recharts')) {
               return 'charts';
