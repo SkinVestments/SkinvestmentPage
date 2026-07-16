@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <meta name="title" content="Skinvestments — CS2 Portfolio Tracker">
     <meta name="description" content="Free CS2 portfolio tracker for Steam skins. Track inventory value, profits, drops, and market trends on web, iOS, and Android.">
 
@@ -89,6 +90,7 @@
         }
         var f = document.createElement('iframe');
         f.name = 'googlefcPresent';
+        f.src = 'about:blank';
         f.style.cssText = 'width:0;height:0;border:0;position:absolute;left:-9999px;top:-9999px';
         document.body.appendChild(f);
       })();

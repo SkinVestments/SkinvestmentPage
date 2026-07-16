@@ -9,11 +9,31 @@ const LIST_SELECT =
 const DETAIL_SELECT =
   'id, slug, title, excerpt, body_md, status, published_at, scheduled_for, feature_image_path, feature_image_alt, meta_title, meta_description, canonical_path, og_image_path, tags, author_name, created_at, updated_at';
 
+function forceHttps(url: string): string {
+  return url.replace(/^http:\/\//i, 'https://');
+}
+
+/** Coerce Supabase `text[]` / occasional string values into a safe string array. */
+export function normalizeBlogTags(tags: unknown): string[] {
+  if (Array.isArray(tags)) {
+    return tags.map((tag) => String(tag).trim()).filter(Boolean);
+  }
+  if (typeof tags === 'string') {
+    return tags
+      .replace(/^\{|\}$/g, '')
+      .split(',')
+      .map((tag) => tag.replace(/^"|"$/g, '').trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
 /** Public URL for a path stored in the blog-images bucket. */
 export function blogImagePublicUrl(path: string | null | undefined): string | null {
   if (!path) return null;
   const { data } = supabase.storage.from(BLOG_IMAGES_BUCKET).getPublicUrl(path);
-  return data.publicUrl || null;
+  if (!data.publicUrl) return null;
+  return forceHttps(data.publicUrl);
 }
 
 /** Prefer dedicated OG path, then feature image, else site default OG. */
@@ -36,7 +56,10 @@ export async function fetchPublishedBlogPosts(): Promise<BlogPostListItem[]> {
     .order('published_at', { ascending: false });
 
   if (error) throw error;
-  return (data ?? []) as BlogPostListItem[];
+  return ((data ?? []) as BlogPostListItem[]).map((post) => ({
+    ...post,
+    tags: normalizeBlogTags(post.tags),
+  }));
 }
 
 export async function fetchPublishedBlogPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -48,7 +71,11 @@ export async function fetchPublishedBlogPostBySlug(slug: string): Promise<BlogPo
     .maybeSingle();
 
   if (error) throw error;
-  return (data as BlogPost | null) ?? null;
+  if (!data) return null;
+  return {
+    ...(data as BlogPost),
+    tags: normalizeBlogTags((data as BlogPost).tags),
+  };
 }
 
 export function blogPostPath(slug: string) {
