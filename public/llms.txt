@@ -1,0 +1,28 @@
+# SkinVestments
+
+> SkinVestments is a mobile and web app for tracking your CS2 skin portfolio: real-time collection valuation, price history, and alerts on value changes.
+
+SkinVestments runs on a freemium model. The free tier lets you track your collection's value, and the paid plan adds push notifications for price changes and market alerts. Price data comes from integrations including the Skinport API (price history, daily OHLC). The links below point to the pages that best describe the product, pricing, and terms of use.
+
+## Product
+
+- [Home](https://skinvestments.app/): Overview of the app and its main features.
+- [Features](https://skinvestments.app/features/): Portfolio tracking, price history, notifications.
+- [Pricing](https://skinvestments.app/pricing): Free and paid plans (push notifications).
+- [App Store](https://apps.apple.com/us/app/skinvestments-cs2-investments/id6757268598): Download for iOS.
+- [Google Play](https://play.google.com/store/apps/details?id=com.steamvestments): Download for Android.
+
+## Support
+
+- [FAQ](https://skinvestments.app/faq): Common questions about how the app works.
+- [Contact](https://skinvestments.app/contact): Reporting issues and getting help.
+
+## Legal
+
+- [Privacy Policy](https://skinvestments.app/privacy/): How data is processed.
+- [Terms of Service](https://skinvestments.app/terms): Conditions for using the service.
+
+## Optional
+
+- [Blog](https://skinvestments.app/blog): Updates, guides, and skin market analysis.
+- [KJ Labs Studio](https://kjlabs.studio/): The studio behind SkinVestments.
