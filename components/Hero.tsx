@@ -111,10 +111,10 @@ export const Hero: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: 3D Composition */}
-        <div className="relative flex justify-center lg:justify-end mt-8 lg:mt-0 w-full max-w-full overflow-visible perspective-1000 group">
-          <div className="relative shrink-0 pr-20 sm:pr-24 md:pr-28">
-            {/* Floating Weekly Drop — w połowie na mockupie (środek karty = prawa krawędź telefonu) */}
+        {/* Right Column: app mockup */}
+        <div className="relative flex justify-center w-full mt-8 lg:mt-0 perspective-1000 group">
+          <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none mx-auto md:pr-28">
+            {/* Floating Weekly Drop — desktop only */}
             <div className="absolute top-[18%] right-0 translate-x-[calc(50%+50px)] z-40 animate-float-delayed hidden md:block w-max pointer-events-none">
               <div className="glass-panel p-4 rounded-xl border-l-4 border-l-steam-profit shadow-2xl backdrop-blur-xl bg-steam-card/90 whitespace-nowrap">
                 <div className="flex items-center gap-3">
@@ -129,26 +129,23 @@ export const Hero: React.FC = () => {
               </div>
             </div>
 
-            {/* The Phone */}
-            <div className="relative w-[min(100%,240px)] h-[520px] sm:w-[280px] sm:h-[600px] md:w-[340px] md:h-[740px] bg-steam-bg rounded-[2rem] sm:rounded-[2.5rem] md:rounded-[3.5rem] border-[5px] sm:border-[6px] md:border-[8px] border-steam-border shadow-[0_0_50px_rgba(59,130,246,0.15)] z-20 ring-1 ring-white/10 transform transition-transform duration-500 lg:rotate-y-12 group-hover:rotate-y-0 group-hover:scale-[1.02]">
-              
-              {/* Glossy Reflection */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent z-40 pointer-events-none rounded-[2rem] sm:rounded-[3rem]"></div>
+            {/* Phone frame */}
+            <div className="relative mx-auto w-[240px] h-[520px] sm:w-[280px] sm:h-[600px] md:w-[340px] md:h-[740px] bg-steam-bg rounded-[2rem] sm:rounded-[2.5rem] md:rounded-[3.5rem] border-[5px] sm:border-[6px] md:border-[8px] border-steam-border shadow-[0_0_50px_rgba(59,130,246,0.15)] z-20 ring-1 ring-white/10 transform transition-transform duration-500 lg:rotate-y-12 group-hover:rotate-y-0 group-hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent z-40 pointer-events-none rounded-[1.6rem] sm:rounded-[2.2rem] md:rounded-[3rem]" />
 
-              {/* Screen Content - Idealne wycentrowanie z dopasowanym zaokrągleniem rogu */}
-              <div className="absolute inset-0 z-30 overflow-hidden rounded-[2rem] sm:rounded-[3rem] bg-steam-bg flex items-center justify-center">
-                  <img
-                    src={screen.src}
-                    srcSet={screen.srcSet}
-                    sizes="(max-width: 400px) 335px, 670px"
-                    alt="Skinvestments CS2 portfolio tracker app on iPhone"
-                    width={335}
-                    height={725}
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    className="w-full h-full object-cover object-center transition-opacity duration-300"
-                  />
+              <div className="absolute inset-[3px] sm:inset-1 z-30 overflow-hidden rounded-[1.5rem] sm:rounded-[2rem] md:rounded-[2.8rem] bg-steam-bg">
+                <img
+                  src={screen.src}
+                  srcSet={screen.srcSet}
+                  sizes="(max-width: 640px) 240px, (max-width: 768px) 280px, 340px"
+                  alt="Skinvestments CS2 portfolio tracker app on iPhone"
+                  width={335}
+                  height={725}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="block w-full h-full object-cover object-top"
+                />
               </div>
             </div>
           </div>

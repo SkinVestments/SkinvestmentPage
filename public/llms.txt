@@ -1,0 +1,26 @@
+# Skinvestments
+
+> Skinvestments helps CS2 players track a skin portfolio with valuations, price history, and alerts on web and mobile.
+
+## Product
+
+- [Home](https://skinvestments.app/): Main overview and core product value.
+- [Features](https://skinvestments.app/features): Portfolio tracking, charts, and notifications.
+- [Pricing](https://skinvestments.app/pricing): Free and paid plans for tracking and alerts.
+- [App Store](https://apps.apple.com/us/app/skinvestments-cs2-investments/id6757268598): iOS app download page.
+- [Google Play](https://play.google.com/store/apps/details?id=com.steamvestments): Android app download page.
+
+## Support
+
+- [FAQ](https://skinvestments.app/faq): Answers about Steam linking, billing, and exports.
+- [Contact](https://skinvestments.app/contact): Support and issue reporting.
+
+## Legal
+
+- [Privacy Policy](https://skinvestments.app/privacy): How data is processed and protected.
+- [Terms of Service](https://skinvestments.app/terms): Terms for using Skinvestments.
+
+## Optional
+
+- [Blog](https://skinvestments.app/blog): Updates and guides for CS2 skin investing.
+- [KJ Labs Studio](https://kjlabs.studio/): The studio behind Skinvestments.
