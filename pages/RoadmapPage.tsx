@@ -46,6 +46,12 @@ export const RoadmapPage: React.FC = () => {
     },
     {
       date: 'Q3 2026',
+      title: 'New Price Providers',
+      desc: 'Add more market data sources beyond Steam, Skinport, and Buff163 for broader and more reliable pricing coverage.',
+      status: 'upcoming',
+    },
+    {
+      date: 'Q3 2026',
       title: 'Advanced Charts',
       desc: 'New portfolio charts and widgets for deeper performance, allocation, and trend views.',
       status: 'upcoming',
