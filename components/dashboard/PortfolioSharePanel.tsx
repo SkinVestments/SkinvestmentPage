@@ -70,7 +70,14 @@ const SECTION_OPTIONS: Array<{
   },
 ];
 
-export const PortfolioSharePanel: React.FC = () => {
+interface PortfolioSharePanelProps {
+  /** Flat layout for use inside a modal (no outer card chrome). */
+  embedded?: boolean;
+}
+
+export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
+  embedded = false,
+}) => {
   const [share, setShare] = useState<PortfolioShareRow | null>(null);
   const [visibility, setVisibility] = useState<PortfolioShareVisibility>(
     visibilityFromShareRow(null),
@@ -166,10 +173,18 @@ export const PortfolioSharePanel: React.FC = () => {
   };
 
   return (
-    <div className="bg-steam-card border border-steam-border rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-xl">
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none -mr-4">
-        <Share2 className="w-64 h-64" />
-      </div>
+    <div
+      className={
+        embedded
+          ? 'relative'
+          : 'bg-steam-card border border-steam-border rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-xl'
+      }
+    >
+      {!embedded && (
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none -mr-4">
+          <Share2 className="w-64 h-64" />
+        </div>
+      )}
 
       <div className="relative z-10 space-y-6">
         <div className="flex items-start justify-between gap-4">
@@ -207,9 +222,9 @@ export const PortfolioSharePanel: React.FC = () => {
         )}
 
         {enabled && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 pt-2 border-t border-steam-border/50">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2 border-t border-steam-border/50">
             {/* Options list */}
-            <div>
+            <div className="min-w-0">
               <p className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3">
                 What to include
               </p>
@@ -254,7 +269,7 @@ export const PortfolioSharePanel: React.FC = () => {
             </div>
 
             {/* Live preview */}
-            <div>
+            <div className="min-w-0 lg:sticky lg:top-6 self-start">
               <p className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3">
                 Live preview — click a block to toggle
               </p>

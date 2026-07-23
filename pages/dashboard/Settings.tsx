@@ -168,7 +168,7 @@ const Settings = () => {
       </div>
 
       {/* === ZAWARTOŚĆ === */}
-      <div className="max-w-3xl">
+      <div className={activeTab === 'privacy' ? 'max-w-5xl' : 'max-w-3xl'}>
         
         {/* ================= ACCOUNT TAB ================= */}
         {activeTab === 'account' && (

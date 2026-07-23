@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabaseClient';
 import { 
   ChevronLeft, ChevronRight, ArrowUpDown, Loader2, 
-  TrendingUp, TrendingDown, Package, Plus, CheckCircle, Wallet, ArrowRight, Heart, Target
+  TrendingUp, TrendingDown, Package, Plus, CheckCircle, Wallet, ArrowRight, Heart, Target, Share2
 } from 'lucide-react';
 import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis, YAxis, Legend } from 'recharts';
 import { useWeeklyReset } from '@/utils/utils';
@@ -11,6 +11,7 @@ import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { LogDropModal } from '../../components/dashboard/LogDropModal';
 import { CreateCollectionModal } from '../../components/dashboard/CreateCollectionModal';
 import { QuickAddModal } from '@/components/dashboard/QuickAddModal';
+import { PortfolioShareModal } from '@/components/dashboard/PortfolioShareModal';
 import { ItemImage } from '@/components/ui/ItemImage';
 
 import { useNavigate } from 'react-router-dom';
@@ -72,6 +73,7 @@ const Panel = () => {
 
   const [isDropModalOpen, setIsDropModalOpen] = useState(false);
   const [isQuickAddModalOpen, setIsQuickAddModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   
   // --- STANY DLA KOLEKCJI ---
   const [collections, setCollections] = useState<any[]>([]);
@@ -275,12 +277,22 @@ const Panel = () => {
           </p>
         </div>
         
-        <button 
-          onClick={() => setIsQuickAddModalOpen(true)}
-          className="bg-steam-accent hover:opacity-90 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg theme-shadow-accent transition-all flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" /> Quick Add
-        </button>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            onClick={() => setIsShareModalOpen(true)}
+            className="bg-steam-card hover:bg-steam-hover text-steam-text px-5 py-2.5 rounded-xl font-bold text-sm border border-steam-border shadow-lg transition-all flex items-center gap-2"
+          >
+            <Share2 className="w-5 h-5 text-steam-accent" /> Share
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsQuickAddModalOpen(true)}
+            className="bg-steam-accent hover:opacity-90 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg theme-shadow-accent transition-all flex items-center gap-2"
+          >
+            <Plus className="w-5 h-5" /> Quick Add
+          </button>
+        </div>
       </div>
 
       {/* === GRID GŁÓWNY (WYKRES + PRAWA KOLUMNA) === */}
@@ -774,6 +786,10 @@ const Panel = () => {
           fetchCollections();
           fetchPortfolioStats();
         }}
+      />
+      <PortfolioShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
       />
     </div>
   );

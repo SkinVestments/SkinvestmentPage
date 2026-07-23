@@ -39,6 +39,12 @@ export const RoadmapPage: React.FC = () => {
       status: 'completed',
     },
     {
+      date: 'Jul 2026',
+      title: 'Share Portfolio',
+      desc: 'Private share links with per-section visibility controls, live preview, and a guest-ready portfolio view.',
+      status: 'completed',
+    },
+    {
       date: 'NEXT',
       title: 'Weekly Drop Scanner',
       desc: 'Scan and surface weekly CS2 drops across your inventory — faster logging, clearer drop history.',
