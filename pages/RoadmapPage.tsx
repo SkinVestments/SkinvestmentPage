@@ -39,10 +39,22 @@ export const RoadmapPage: React.FC = () => {
       status: 'completed',
     },
     {
+      date: 'Jul 2026',
+      title: 'Share Portfolio',
+      desc: 'Private share links with per-section visibility controls, live preview, and a guest-ready portfolio view.',
+      status: 'completed',
+    },
+    {
       date: 'NEXT',
       title: 'Weekly Drop Scanner',
       desc: 'Scan and surface weekly CS2 drops across your inventory — faster logging, clearer drop history.',
       status: 'active',
+    },
+    {
+      date: 'Q3 2026',
+      title: 'New Price Providers',
+      desc: 'Add more market data sources beyond Steam, Skinport, and Buff163 for broader and more reliable pricing coverage.',
+      status: 'upcoming',
     },
     {
       date: 'Q3 2026',

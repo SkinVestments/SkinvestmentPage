@@ -6,6 +6,11 @@
       "permanent": true
     },
     {
+      "source": "/p/:token/",
+      "destination": "/p/:token",
+      "permanent": true
+    },
+    {
       "source": "/blog/",
       "destination": "/blog",
       "permanent": true
