@@ -7,8 +7,14 @@
 - [Home](https://skinvestments.app/): Main overview and core product value.
 - [Features](https://skinvestments.app/features): Portfolio tracking, charts, and notifications.
 - [Pricing](https://skinvestments.app/pricing): Free and paid plans for tracking and alerts.
+- [Blog](https://skinvestments.app/blog): Guides on CS2 inventory tracking, multi-market pricing, and portfolio habits.
 - [App Store](https://apps.apple.com/us/app/skinvestments-cs2-investments/id6757268598): iOS app download page.
 - [Google Play](https://play.google.com/store/apps/details?id=com.steamvestments): Android app download page.
+
+## Company
+
+- [About](https://skinvestments.app/about): Who builds Skinvestments and how we approach valuation.
+- [KJ Labs Studio](https://kjlabs.studio/): The studio behind Skinvestments.
 
 ## Support
 
@@ -19,8 +25,3 @@
 
 - [Privacy Policy](https://skinvestments.app/privacy): How data is processed and protected.
 - [Terms of Service](https://skinvestments.app/terms): Terms for using Skinvestments.
-
-## Optional
-
-- [Blog](https://skinvestments.app/blog): Updates and guides for CS2 skin investing.
-- [KJ Labs Studio](https://kjlabs.studio/): The studio behind Skinvestments.

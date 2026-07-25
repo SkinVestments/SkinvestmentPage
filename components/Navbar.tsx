@@ -68,10 +68,10 @@ export const Navbar: React.FC = () => {
             Blog
           </Link>
           <Link
-            to="/privacy"
-            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/privacy' ? 'text-steam-accent' : 'text-steam-secondary hover:text-steam-text'}`}
+            to="/about"
+            className={`text-sm font-semibold uppercase tracking-wider transition-colors ${location.pathname === '/about' ? 'text-steam-accent' : 'text-steam-secondary hover:text-steam-text'}`}
           >
-            Privacy
+            About
           </Link>
           <Link
             to="/contact"
@@ -140,12 +140,12 @@ export const Navbar: React.FC = () => {
           >
             Blog
           </Link>
-          <Link 
-            to="/privacy" 
+          <Link
+            to="/about"
             onClick={closeMobileMenu}
             className="text-left text-lg font-bold uppercase text-steam-secondary hover:text-steam-accent"
           >
-            Privacy Policy
+            About
           </Link>
           <Link 
             to="/contact" 
