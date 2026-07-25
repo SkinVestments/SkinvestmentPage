@@ -8,6 +8,11 @@ import {
   SITE_ORIGIN,
   type PageSeo,
 } from './utils/seo';
+import {
+  buildBlogPostingJsonLd,
+  buildBlogPrerenderArticle,
+  markdownToPrerenderHtml,
+} from './utils/prerenderMarkdown';
 
 const CACHEABLE = /\.(woff2|woff|ttf|svg|png|webp|jpe?g|gif|ico|css|js)(\?.*)?$/i;
 
@@ -15,13 +20,17 @@ type BlogPostSeoRow = {
   slug: string;
   title: string;
   excerpt: string;
+  body_md: string;
   meta_title: string | null;
   meta_description: string | null;
   feature_image_path: string | null;
+  feature_image_alt: string | null;
   og_image_path: string | null;
   published_at: string | null;
   updated_at: string;
   canonical_path: string | null;
+  tags: string[] | null;
+  author_name: string | null;
 };
 
 /** Dev + preview: Cache-Control for static assets. Production VPS: use deploy/nginx-cache.conf */
@@ -79,7 +88,7 @@ async function fetchPublishedBlogPostsForBuild(mode: string): Promise<BlogPostSe
   }
 
   const query =
-    'slug,title,excerpt,meta_title,meta_description,feature_image_path,og_image_path,published_at,updated_at,canonical_path';
+    'slug,title,excerpt,body_md,meta_title,meta_description,feature_image_path,feature_image_alt,og_image_path,published_at,updated_at,canonical_path,tags,author_name';
   const url = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/blog_posts?status=eq.published&select=${query}&order=published_at.desc.nullslast`;
 
   try {
@@ -183,14 +192,36 @@ export function prerenderPublicPagesPlugin(): Plugin {
         const posts = await fetchPublishedBlogPostsForBuild(buildMode);
         for (const post of posts) {
           const pageSeo = blogPostToPageSeo(post, supabaseUrl);
-          const html = injectPageSeoHtml(template, pageSeo);
+          const featureUrl = blogStoragePublicUrl(supabaseUrl, post.feature_image_path);
+          const ogUrl =
+            blogStoragePublicUrl(supabaseUrl, post.og_image_path) ||
+            featureUrl ||
+            `${SITE_ORIGIN}/images/og-image.png`;
+          const canonicalPath = post.canonical_path || `/blog/${post.slug}`;
+          const payload = {
+            title: post.title,
+            excerpt: post.excerpt,
+            bodyHtml: markdownToPrerenderHtml(post.body_md || ''),
+            publishedAt: post.published_at,
+            authorName: post.author_name || 'Skinvestments',
+            featureImageUrl: featureUrl,
+            featureImageAlt: post.feature_image_alt || undefined,
+            tags: Array.isArray(post.tags) ? post.tags : [],
+            canonicalPath,
+          };
+
+          const html = injectPageSeoHtml(template, {
+            ...pageSeo,
+            rootHtml: buildBlogPrerenderArticle(payload),
+            jsonLd: buildBlogPostingJsonLd(payload, ogUrl),
+          });
           const routeDir = path.join(distDir, 'blog', post.slug);
           fs.mkdirSync(routeDir, { recursive: true });
           fs.writeFileSync(path.join(routeDir, 'index.html'), html);
         }
 
         if (posts.length) {
-          console.log(`[prerender] Wrote ${posts.length} blog post shell(s)`);
+          console.log(`[prerender] Wrote ${posts.length} blog post shell(s) with article bodies`);
         }
 
         const today = new Date().toISOString().slice(0, 10);
@@ -200,6 +231,7 @@ export function prerenderPublicPagesPlugin(): Plugin {
             { path: '/features', lastmod: today, changefreq: 'monthly', priority: '0.9' },
             { path: '/pricing', lastmod: today, changefreq: 'monthly', priority: '0.8' },
             { path: '/blog', lastmod: today, changefreq: 'weekly', priority: '0.85' },
+            { path: '/about', lastmod: today, changefreq: 'yearly', priority: '0.6' },
             { path: '/faq', lastmod: today, changefreq: 'monthly', priority: '0.7' },
             { path: '/roadmap', lastmod: today, changefreq: 'monthly', priority: '0.6' },
             { path: '/contact', lastmod: today, changefreq: 'yearly', priority: '0.5' },

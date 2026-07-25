@@ -47,6 +47,12 @@ export const PAGE_SEO = {
       'Contact Skinvestments support for help with the CS2 portfolio tracker, billing, privacy requests, and partnership inquiries.',
     path: '/contact',
   },
+  about: {
+    title: 'About — Skinvestments by KJ Labs',
+    description:
+      'Skinvestments is a CS2 portfolio tracker built by KJ Labs Studio. Learn who we are, why we built the product, and how we approach skin valuation.',
+    path: '/about',
+  },
   privacy: {
     title: 'Privacy Policy — Skinvestments CS2 Portfolio Tracker',
     description:
@@ -154,15 +160,22 @@ export function setPageSeo({
   if (twitterUrl) twitterUrl.setAttribute('content', url);
 }
 
+type InjectPageSeoOptions = PageSeo & {
+  /** HTML placed inside #root for crawlers that do not execute JS. */
+  rootHtml?: string;
+  /** Optional JSON-LD object injected as a script tag in <head>. */
+  jsonLd?: Record<string, unknown>;
+};
+
 /** Inject per-route SEO tags into the built index.html shell (build-time prerender). */
 export function injectPageSeoHtml(
   html: string,
-  { title, description, path, robots = 'index, follow', ogImage }: PageSeo,
+  { title, description, path, robots = 'index, follow', ogImage, rootHtml, jsonLd }: InjectPageSeoOptions,
 ) {
   const url = canonicalUrl(path);
   const image = resolveOgImage(ogImage);
 
-  return html
+  let next = html
     .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(title)}</title>`)
     .replace(
       /<meta name="title" content="[^"]*">/,
@@ -212,6 +225,17 @@ export function injectPageSeoHtml(
       /<link rel="canonical" href="[^"]*" \/>/,
       `<link rel="canonical" href="${escapeAttr(url)}" />`,
     );
+
+  if (jsonLd) {
+    const script = `<script type="application/ld+json">${JSON.stringify(jsonLd).replace(/</g, '\\u003c')}</script>`;
+    next = next.replace('</head>', `    ${script}\n  </head>`);
+  }
+
+  if (rootHtml) {
+    next = next.replace(/<div id="root"><\/div>/, `<div id="root">${rootHtml}</div>`);
+  }
+
+  return next;
 }
 
 function escapeAttr(value: string) {

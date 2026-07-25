@@ -21,6 +21,7 @@ const RoadmapPage = lazy(() =>
 const ContactPage = lazy(() =>
   import('@/pages/ContactPage').then((m) => ({ default: m.ContactPage })),
 );
+const AboutPage = lazy(() => import('@/pages/AboutPage'));
 const BlogIndex = lazy(() => import('@/pages/blog/BlogIndex'));
 const BlogPost = lazy(() => import('@/pages/blog/BlogPost'));
 const PublicPortfolio = lazy(() => import('@/pages/share/PublicPortfolio'));
@@ -50,6 +51,7 @@ export const AppRoutes = () => (
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/roadmap" element={<RoadmapPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/blog" element={<BlogIndex />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/p/:token" element={<PublicPortfolio />} />

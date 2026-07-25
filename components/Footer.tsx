@@ -55,7 +55,6 @@ export const Footer: React.FC = () => {
                   Web Dashboard
                 </Link>
               </li>
-              <li><span className="text-steam-tertiary cursor-not-allowed">API Access</span></li>
               <li><Link to="/pricing" className="text-steam-tertiary hover:text-steam-accent transition-colors">Pricing</Link></li>
               <li><Link to="/roadmap" className="text-steam-tertiary hover:text-steam-accent transition-colors">Roadmap</Link></li>
               <li><Link to="/blog" className="text-steam-tertiary hover:text-steam-accent transition-colors">Blog</Link></li>
@@ -65,6 +64,7 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="text-steam-text font-bold uppercase text-xs tracking-wider mb-6">Legal & Support</h4>
             <ul className="space-y-3 text-sm">
+              <li><Link to="/about" className="text-steam-tertiary hover:text-steam-accent transition-colors">About</Link></li>
               <li><Link to="/faq" className="text-steam-tertiary hover:text-steam-accent transition-colors">FAQ</Link></li>
               <li><Link to="/privacy" className="text-steam-tertiary hover:text-steam-accent transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="text-steam-tertiary hover:text-steam-accent transition-colors">Terms & Conditions</Link></li>

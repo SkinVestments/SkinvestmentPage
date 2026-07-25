@@ -3,7 +3,6 @@ import { RefreshCw, Wallet, Cloud, Crosshair, Box, Globe, BarChart3 } from 'luci
 import { Feature } from '../types';
 import { Link } from 'react-router-dom';
 
-// Rozszerzamy lokalnie typ Feature, aby TS nie narzekał na nową flagę
 type ExtendedFeature = Feature & {
   comingSoon?: boolean;
 };
@@ -13,7 +12,6 @@ const features: ExtendedFeature[] = [
     title: "Multi-Market Data",
     description: "Don't rely on just Steam. We aggregate prices from Skinport, Buff163, and GamerPay to show you the real cash value.",
     icon: Globe,
-    comingSoon: true // <--- Dodana flaga
   },
   {
     title: "Weekly Drop Tracker",
