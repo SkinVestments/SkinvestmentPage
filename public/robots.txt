@@ -4,10 +4,12 @@ Allow: /
 
 Sitemap: https://skinvestments.app/sitemap.xml
 
-# App / auth — not for indexing
+# App / auth - not for indexing
 Disallow: /panel
 Disallow: /history
 Disallow: /inventory
+Disallow: /catalog
+Disallow: /wishlist
 Disallow: /analytics
 Disallow: /settings
 Disallow: /collection/

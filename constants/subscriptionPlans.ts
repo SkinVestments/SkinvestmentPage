@@ -8,7 +8,7 @@ export interface PlanFeature {
   soon?: boolean;
 }
 
-/** Amounts in PLN — yearly is shown as per-month equivalent (billed annually). */
+/** Amounts in PLN - yearly is shown as per-month equivalent (billed annually). */
 export const PLAN_PRICING: Record<
   PlanId,
   { monthly: number; yearlyPerMonth: number; lifetime: number }

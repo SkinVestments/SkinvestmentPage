@@ -18,7 +18,7 @@ export const AllocationChart = () => {
     const fetchAllocation = async () => {
       if (!user) return;
       try {
-        // Funkcja w Supabase używa auth.uid() — bez parametru p_user_id
+        // Funkcja w Supabase używa auth.uid() - bez parametru p_user_id
         const { data: allocData, error } = await supabase.rpc('get_portfolio_allocation');
 
         if (error) throw error;

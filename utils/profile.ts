@@ -12,7 +12,7 @@ export async function fetchOwnProfile(userId: string): Promise<UserProfile | nul
   return data as UserProfile | null;
 }
 
-/** RPC update_own_profile — NULL params keep existing DB values (COALESCE). */
+/** RPC update_own_profile - NULL params keep existing DB values (COALESCE). */
 export async function updateOwnProfile(
   patch: UpdateOwnProfileParams,
 ): Promise<UserProfile> {

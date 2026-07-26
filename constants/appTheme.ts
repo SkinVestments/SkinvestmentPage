@@ -19,7 +19,7 @@ export interface AppThemeTokens {
   cardBorder: string;
 }
 
-/** SteamTheme — zgodny z mobilną aplikacją (dark) */
+/** SteamTheme - zgodny z mobilną aplikacją (dark) */
 export const darkTheme: AppThemeTokens = {
   background: '#14171D',
   surface: '#1B2838',
@@ -39,7 +39,7 @@ export const darkTheme: AppThemeTokens = {
   cardBorder: '#2A3546',
 };
 
-/** LightTheme — zgodny z mobilną aplikacją (light) */
+/** LightTheme - zgodny z mobilną aplikacją (light) */
 export const lightTheme: AppThemeTokens = {
   background: '#F7F7F7',
   surface: '#FFFFFF',

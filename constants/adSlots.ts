@@ -1,4 +1,4 @@
-/** AdSense slot IDs from env — one per placement, or shared VITE_ADSENSE_SLOT for all. */
+/** AdSense slot IDs from env - one per placement, or shared VITE_ADSENSE_SLOT for all. */
 export const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT ?? '';
 
 const SHARED_SLOT = import.meta.env.VITE_ADSENSE_SLOT ?? '';

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { CheckCircle2, Circle, GitCommit, Rocket } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
 import { PAGE_SEO } from '@/utils/seo';
+import { ROADMAP_SEO } from '@/content/seoCopy';
+import { SeoContentSection } from '@/components/SeoContentSection';
 
 export const RoadmapPage: React.FC = () => {
   usePageSeo(PAGE_SEO.roadmap);
@@ -47,7 +48,7 @@ export const RoadmapPage: React.FC = () => {
     {
       date: 'NEXT',
       title: 'Weekly Drop Scanner',
-      desc: 'Scan and surface weekly CS2 drops across your inventory — faster logging, clearer drop history.',
+      desc: 'Scan and surface weekly CS2 drops across your inventory - faster logging, clearer drop history.',
       status: 'active',
     },
     {
@@ -65,7 +66,7 @@ export const RoadmapPage: React.FC = () => {
     {
       date: 'Q4 2026',
       title: 'AI Insights',
-      desc: 'AI-assisted portfolio insights — spotlight stagnant positions, unusual moves, and market context.',
+      desc: 'AI-assisted portfolio insights - spotlight stagnant positions, unusual moves, and market context.',
       status: 'upcoming',
     },
   ];
@@ -74,9 +75,6 @@ export const RoadmapPage: React.FC = () => {
     <div className="min-h-screen bg-steam-bg pt-24 sm:pt-32 pb-20 px-4 sm:px-6 overflow-x-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-bold uppercase tracking-widest mb-4">
-            <GitCommit size={14} /> Changelog
-          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-steam-text mb-6">
             Building the <br/><span className="text-steam-accent">Future of Trading</span>
           </h1>
@@ -130,6 +128,8 @@ export const RoadmapPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <SeoContentSection page={ROADMAP_SEO} className="border-t border-steam-border/40" />
     </div>
   );
 };

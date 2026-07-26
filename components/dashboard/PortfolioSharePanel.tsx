@@ -271,7 +271,7 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
             {/* Live preview */}
             <div className="min-w-0 lg:sticky lg:top-6 self-start">
               <p className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3">
-                Live preview — click a block to toggle
+                Live preview - click a block to toggle
               </p>
               <div className="rounded-2xl border border-steam-border bg-steam-bg/80 p-4 space-y-3 min-h-[320px]">
                 <div className="flex items-center gap-3 mb-1">

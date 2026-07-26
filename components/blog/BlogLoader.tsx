@@ -5,7 +5,7 @@ type BlogLoaderProps = {
   className?: string;
 };
 
-/** Custom journal loader — accent orbit + portfolio spark (not generic Lucide spinner). */
+/** Custom journal loader - accent orbit + portfolio spark (not generic Lucide spinner). */
 export const BlogLoader: React.FC<BlogLoaderProps> = ({
   label = 'Loading journal…',
   className = '',

@@ -4,6 +4,8 @@ import { ShieldCheck, Lock, HelpCircle, ChevronDown } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
 import { PAGE_SEO } from '@/utils/seo';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { FAQ_SEO } from '@/content/seoCopy';
+import { SeoContentSection } from '@/components/SeoContentSection';
 
 interface FaqItem {
   question: string;
@@ -32,7 +34,7 @@ const FAQ_SECTIONS: FaqSection[] = [
       {
         question: 'Which markets do you use for pricing?',
         answer:
-          'We aggregate public market data from Steam Community Market, Skinport, and Buff163 to estimate item values. Prices are indicative — always verify before making trades.',
+          'We aggregate public market data from Steam Community Market, Skinport, and Buff163 to estimate item values. Prices are indicative - always verify before making trades.',
       },
     ],
   },
@@ -160,14 +162,11 @@ export const FAQPage: React.FC = () => {
     <div className="min-h-screen bg-steam-bg pt-24 sm:pt-32 pb-20 px-4 sm:px-6 overflow-x-hidden">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-steam-accent/10 border border-steam-accent/20 text-steam-accent text-xs font-bold uppercase tracking-widest mb-4">
-            <HelpCircle size={14} /> FAQ
-          </div>
           <h1 className="text-4xl md:text-5xl font-bold font-display text-steam-text mb-6">
-            Frequently Asked <span className="text-steam-accent">Questions</span>
+            Frequently asked questions
           </h1>
           <p className="text-steam-secondary text-lg">
-            Security, subscriptions, the web dashboard, and how Skinvestments works.
+            Is it free? Is it safe? How do CS2 skin prices update? Which platforms are supported?
           </p>
         </div>
 
@@ -249,8 +248,14 @@ export const FAQPage: React.FC = () => {
           <Link to="/contact" className="text-steam-accent hover:underline font-medium">
             Get in touch
           </Link>
+          {' · '}
+          <Link to="/cs2-skin-tracker" className="text-steam-accent hover:underline font-medium">
+            CS2 skin tracker
+          </Link>
         </p>
       </div>
+
+      <SeoContentSection page={FAQ_SEO} className="border-t border-steam-border/40 mt-8" />
     </div>
   );
 };
