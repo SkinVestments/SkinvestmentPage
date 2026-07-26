@@ -42,14 +42,14 @@ import {
 } from '@/utils/chartTheme';
 
 const formatDateTime = (iso: string | null) => {
-  if (!iso) return '—';
+  if (!iso) return '-';
   try {
     return new Intl.DateTimeFormat('en-US', {
       dateStyle: 'medium',
       timeStyle: 'short',
     }).format(new Date(iso));
   } catch {
-    return '—';
+    return '-';
   }
 };
 

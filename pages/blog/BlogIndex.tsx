@@ -100,9 +100,6 @@ const BlogIndex: React.FC = () => {
     <div className="min-h-screen bg-steam-bg pt-24 sm:pt-32 pb-24 overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <header className="mb-12 sm:mb-16 border-b border-steam-border/50 pb-10">
-          <p className="font-display text-steam-accent text-xs font-bold uppercase tracking-[0.28em] mb-4">
-            Skinvestments Journal
-          </p>
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
             <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-steam-text tracking-tight leading-[1.05] max-w-xl">
               CS2 portfolio insights

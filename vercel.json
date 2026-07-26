@@ -11,6 +11,41 @@
       "permanent": true
     },
     {
+      "source": "/cs2-skin-tracker/",
+      "destination": "/cs2-skin-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/skinprofit-alternative",
+      "destination": "/cs2-skin-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/skinprofit-alternative/",
+      "destination": "/cs2-skin-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/vs/skinprofit",
+      "destination": "/cs2-skin-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/vs/skinprofit/",
+      "destination": "/cs2-skin-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/skinshunter-alternative",
+      "destination": "/cs2-skin-tracker",
+      "permanent": true
+    },
+    {
+      "source": "/skinshunter-alternative/",
+      "destination": "/cs2-skin-tracker",
+      "permanent": true
+    },
+    {
       "source": "/p/:token/",
       "destination": "/p/:token",
       "permanent": true
@@ -50,6 +85,10 @@
     },
     {
       "source": "/index.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate" }]
+    },
+    {
+      "source": "/:path*/index.html",
       "headers": [{ "key": "Cache-Control", "value": "no-cache, must-revalidate" }]
     }
   ]

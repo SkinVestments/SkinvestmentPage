@@ -1,9 +1,9 @@
-# Nginx Proxy Manager — BEZPIECZNY snippet cache (Advanced tab)
+# Nginx Proxy Manager - BEZPIECZNY snippet cache (Advanced tab)
 # Tylko JEDEN blok. Bez osobnych location dla /assets, noise.svg, index.html.
 #
 # Hosts → Proxy Hosts → skinvestments.app → Advanced → Custom Nginx Configuration
 #
-# UWAGA: Jeśli strona padnie — usuń cały kod z Advanced i Save.
+# UWAGA: Jeśli strona padnie - usuń cały kod z Advanced i Save.
 
 location ~* \.(woff2|woff|svg|webp|png|jpe?g|gif|ico|css|js)$ {
     include conf.d/include/proxy.conf;

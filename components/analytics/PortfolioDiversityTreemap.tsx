@@ -50,14 +50,14 @@ function cellTooltip(cell: NestedTreemapCell): string {
   const parts = [
     node.category ? `${node.category} · ` : '',
     node.name,
-    ` — ${formatCurrency(node.size ?? 0)}`,
+    ` - ${formatCurrency(node.size ?? 0)}`,
     ` (${cell.portfolioPct.toFixed(1)}% portfolio`,
   ];
   if (cell.categoryPct != null) {
     parts.push(`, ${cell.categoryPct.toFixed(0)}% of type`);
   }
   parts.push(')');
-  if (node.isGrouped) parts.push(' — hover legend for full breakdown');
+  if (node.isGrouped) parts.push(' - hover legend for full breakdown');
   return parts.join('');
 }
 
@@ -341,7 +341,7 @@ export const PortfolioDiversityTreemap: React.FC = () => {
             <h3 className="font-bold text-steam-text text-lg">Portfolio Diversity</h3>
           </div>
           <p className="text-xs text-steam-tertiary pl-9">
-            Treemap by item type — larger boxes hold more portfolio value.
+            Treemap by item type - larger boxes hold more portfolio value.
             {groupingNote ? ` ${groupingNote}.` : ''}
           </p>
         </div>

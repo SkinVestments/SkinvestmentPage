@@ -57,11 +57,6 @@ export const Hero: React.FC = () => {
         
         {/* Left Column: Copy */}
         <div className="space-y-6 sm:space-y-8 text-center lg:text-left min-w-0">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full theme-subtle border border-steam-border backdrop-blur-sm max-w-full">
-            <span className="w-2 h-2 shrink-0 rounded-full bg-steam-profit animate-pulse" />
-            <span className="text-[10px] sm:text-xs font-bold text-steam-secondary uppercase tracking-wide sm:tracking-widest font-display">Multi-Market Aggregation</span>
-          </div>
-          
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight font-display text-steam-text break-words">
             CS2 Portfolio Tracker
             <span className="block text-gradient-accent mt-2">
@@ -114,7 +109,7 @@ export const Hero: React.FC = () => {
         {/* Right Column: app mockup */}
         <div className="relative flex justify-center w-full mt-8 lg:mt-0 perspective-1000 group">
           <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-none mx-auto md:pr-28">
-            {/* Floating Weekly Drop — desktop only */}
+            {/* Floating Weekly Drop - desktop only */}
             <div className="absolute top-[18%] right-0 translate-x-[calc(50%+50px)] z-40 animate-float-delayed hidden md:block w-max pointer-events-none">
               <div className="glass-panel p-4 rounded-xl border-l-4 border-l-steam-profit shadow-2xl backdrop-blur-xl bg-steam-card/90 whitespace-nowrap">
                 <div className="flex items-center gap-3">

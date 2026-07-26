@@ -115,7 +115,7 @@ const consolidatePyramidSegments = (
   return [bulkRow, ...premium];
 };
 
-/** Width % of container — wider at bottom tier, narrower at top */
+/** Width % of container - wider at bottom tier, narrower at top */
 const tierWidthPercent = (tierIndex: number) => {
   if (TIER_COUNT <= 1) return 100;
   const t = tierIndex / (TIER_COUNT - 1);

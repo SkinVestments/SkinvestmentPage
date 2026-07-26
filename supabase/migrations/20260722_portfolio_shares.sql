@@ -1,5 +1,5 @@
 -- Private portfolio share links (apply in Supabase SQL editor or via CLI)
--- Public guests read via get_public_portfolio(token) only — no direct table access for anon.
+-- Public guests read via get_public_portfolio(token) only - no direct table access for anon.
 
 -- Token without pgcrypto (gen_random_bytes may be unavailable / not on search_path).
 CREATE OR REPLACE FUNCTION public.generate_portfolio_share_token()
@@ -154,7 +154,7 @@ BEGIN
 END;
 $$;
 
--- Public read (anon + authenticated) — no PII beyond display name / avatar
+-- Public read (anon + authenticated) - no PII beyond display name / avatar
 CREATE OR REPLACE FUNCTION public.get_public_portfolio(p_token text)
 RETURNS jsonb
 LANGUAGE plpgsql

@@ -101,7 +101,7 @@ function worst(row: number[], length: number): number {
   return Math.max((rmax * sum * sum) / r2, r2 / (rmin * sum * sum));
 }
 
-/** Classic squarify — rectangles sized by value within a bounding box. */
+/** Classic squarify - rectangles sized by value within a bounding box. */
 export function squarifyLayout<T>(
   items: LayoutItem<T>[],
   x: number,

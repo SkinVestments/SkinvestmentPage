@@ -391,7 +391,7 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                         {selectedCase ? `Case · ${selectedCase.name}` : 'Case · not selected'}
                       </span>
                       <span className="font-mono text-steam-tertiary shrink-0">
-                        {selectedCase ? `+$${selectedCase.price.toFixed(2)}` : '—'}
+                        {selectedCase ? `+$${selectedCase.price.toFixed(2)}` : '-'}
                       </span>
                     </div>
                     <div className="flex justify-between gap-3">
@@ -401,7 +401,7 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                           : 'Weapon / graffiti · not selected'}
                       </span>
                       <span className="font-mono text-steam-tertiary shrink-0">
-                        {selectedWeapon ? `+$${selectedWeapon.price.toFixed(2)}` : '—'}
+                        {selectedWeapon ? `+$${selectedWeapon.price.toFixed(2)}` : '-'}
                       </span>
                     </div>
                   </div>

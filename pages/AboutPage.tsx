@@ -19,7 +19,7 @@ export default function AboutPage() {
 
         <p className="text-xl text-steam-secondary mb-10 leading-relaxed">
           Skinvestments is a CS2 portfolio tracker that helps players measure inventory value, cost
-          basis, and performance across markets — built by{' '}
+          basis, and performance across markets - built by{' '}
           <a
             href="https://kjlabs.studio/"
             target="_blank"
@@ -78,7 +78,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold text-steam-text mb-4">How we think about content</h2>
             <p className="leading-relaxed">
               Our journal covers CS2 inventory tracking, marketplace spreads, update context, and
-              record-keeping habits. We focus on methods you can verify — not price predictions or
+              record-keeping habits. We focus on methods you can verify - not price predictions or
               “guaranteed” returns. Skin markets move for many reasons; our job is to help you see
               your own numbers clearly.
             </p>

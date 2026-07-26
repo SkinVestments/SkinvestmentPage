@@ -87,7 +87,7 @@ const FeatureCard: React.FC<{ feature: ExtendedFeature }> = ({ feature }) => {
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const el = divRef.current;
         if (!el) return;
-        // offsetX/Y — no getBoundingClientRect, no forced reflow
+        // offsetX/Y - no getBoundingClientRect, no forced reflow
         el.style.setProperty('--mouse-x', `${e.nativeEvent.offsetX}px`);
         el.style.setProperty('--mouse-y', `${e.nativeEvent.offsetY}px`);
         el.dataset.spotlight = 'on';
@@ -107,7 +107,7 @@ const FeatureCard: React.FC<{ feature: ExtendedFeature }> = ({ feature }) => {
             onMouseLeave={handleMouseLeave}
             className="feature-card-spotlight relative p-8 rounded-2xl bg-steam-elevated border border-steam-border/50 overflow-hidden group hover:scale-[1.01] transition-transform duration-300 flex flex-col"
         >
-            {/* Spotlight Effect — driven by CSS vars, no React re-renders */}
+            {/* Spotlight Effect - driven by CSS vars, no React re-renders */}
             <div className="pointer-events-none absolute -inset-px feature-card-spotlight-glow z-0" />
             <div className="pointer-events-none absolute -inset-px feature-card-spotlight-border z-0" />
 

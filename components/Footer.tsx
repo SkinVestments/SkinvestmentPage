@@ -47,6 +47,7 @@ export const Footer: React.FC = () => {
             <h4 className="text-steam-text font-bold uppercase text-xs tracking-wider mb-6">Product</h4>
             <ul className="space-y-3 text-sm">
               <li><Link to="/features" className="text-steam-tertiary hover:text-steam-accent transition-colors">Features</Link></li>
+              <li><Link to="/cs2-skin-tracker" className="text-steam-tertiary hover:text-steam-accent transition-colors">CS2 Skin Tracker</Link></li>
               <li>
                 <Link
                   to={user ? '/panel' : '/login'}

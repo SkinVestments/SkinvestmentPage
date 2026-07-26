@@ -206,7 +206,7 @@ function normalizeTreemapRows(rows: TreemapRpcRow[]): TreemapChartNode[] {
     .sort((a, b) => (b.size ?? 0) - (a.size ?? 0));
 }
 
-/** RPC get_portfolio_treemap_data — flat rows or legacy series format */
+/** RPC get_portfolio_treemap_data - flat rows or legacy series format */
 export function normalizePortfolioTreemapData(data: unknown): TreemapChartNode[] {
   if (data == null) return [];
 

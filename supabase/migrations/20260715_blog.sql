@@ -56,7 +56,7 @@ CREATE POLICY "Public read published blog posts"
     AND (published_at IS NULL OR published_at <= now())
   );
 
--- No INSERT/UPDATE/DELETE for anon/authenticated — use service role or Dashboard.
+-- No INSERT/UPDATE/DELETE for anon/authenticated - use service role or Dashboard.
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
@@ -78,7 +78,7 @@ CREATE POLICY "Public read blog images"
   TO public
   USING (bucket_id = 'blog-images');
 
--- Seed: 2 English posts (no feature images — OG fallback used until you upload)
+-- Seed: 2 English posts (no feature images - OG fallback used until you upload)
 INSERT INTO public.blog_posts (
   slug,
   title,
@@ -98,7 +98,7 @@ INSERT INTO public.blog_posts (
   $md$
 ## Why inventory value matters
 
-CS2 skins are liquid digital assets. Without a clear view of **cost basis**, **current market value**, and **unrealized P&L**, you are guessing — not investing.
+CS2 skins are liquid digital assets. Without a clear view of **cost basis**, **current market value**, and **unrealized P&L**, you are guessing - not investing.
 
 A solid tracker answers three questions:
 
@@ -108,7 +108,7 @@ A solid tracker answers three questions:
 
 ## Multi-market pricing
 
-Steam Community Market prices often lag third-party sites. Cross-checking **Skinport** and **Buff163** gives a more realistic exit price — especially for mid-tier and high-float pieces.
+Steam Community Market prices often lag third-party sites. Cross-checking **Skinport** and **Buff163** gives a more realistic exit price - especially for mid-tier and high-float pieces.
 
 ## What to log
 
@@ -119,21 +119,21 @@ Steam Community Market prices often lag third-party sites. Cross-checking **Skin
 
 ## How Skinvestments helps
 
-[Skinvestments](https://skinvestments.app/) syncs public Steam inventory data (no password), charts portfolio value over time, and aggregates multi-market pricing so you can treat skins like an asset class — on web, iOS, and Android.
+[Skinvestments](https://skinvestments.app/) syncs public Steam inventory data (no password), charts portfolio value over time, and aggregates multi-market pricing so you can treat skins like an asset class - on web, iOS, and Android.
 
 Ready to see your numbers? [Open the dashboard](https://skinvestments.app/login) or explore [features](https://skinvestments.app/features).
 $md$,
   'published',
   now() - interval '2 days',
   'How to Track CS2 Inventory Value | Skinvestments',
-  'Learn how to track CS2 skin inventory value across Steam, Skinport, and Buff163 — cost basis, P&L, and multi-market pricing.',
+  'Learn how to track CS2 skin inventory value across Steam, Skinport, and Buff163 - cost basis, P&L, and multi-market pricing.',
   ARRAY['cs2', 'inventory', 'portfolio', 'investing'],
   'CS2 skin portfolio tracking concept'
 ),
 (
   'steam-vs-skinport-vs-buff163',
   'Steam vs Skinport vs Buff163: Pricing for CS2 Investors',
-  'A practical comparison of the three price sources Skinvestments uses — and when each one matters for your portfolio.',
+  'A practical comparison of the three price sources Skinvestments uses - and when each one matters for your portfolio.',
   $md$
 ## Three markets, three realities
 
@@ -160,14 +160,14 @@ CS2 investors rarely look at a single price feed. Liquidity, fees, and regional 
 
 For **holdings valuation**, averaging or preferring the most liquid venue per item often beats Steam-only quotes. For **exit planning**, match the market you will actually sell on.
 
-Skinvestments aggregates public signals from all three so your [portfolio dashboard](https://skinvestments.app/features) reflects how the market really trades — not just one listing page.
+Skinvestments aggregates public signals from all three so your [portfolio dashboard](https://skinvestments.app/features) reflects how the market really trades - not just one listing page.
 
 Compare plans on [Pricing](https://skinvestments.app/pricing), or [sign in](https://skinvestments.app/login) to sync your inventory.
 $md$,
   'published',
   now() - interval '1 day',
   'Steam vs Skinport vs Buff163 Pricing | Skinvestments',
-  'Compare Steam, Skinport, and Buff163 for CS2 skin pricing — liquidity, fees, and how to value a portfolio.',
+  'Compare Steam, Skinport, and Buff163 for CS2 skin pricing - liquidity, fees, and how to value a portfolio.',
   ARRAY['cs2', 'pricing', 'skinport', 'buff163', 'steam'],
   'Multi-market CS2 skin pricing'
 )

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, MessageSquare, Activity, HelpCircle } from 'lucide-react';
+import { Mail, Activity, HelpCircle } from 'lucide-react';
 import { SocialLinks } from '@/components/SocialLinks';
 import { usePageSeo } from '@/hooks/usePageSeo';
 import { PAGE_SEO } from '@/utils/seo';
@@ -46,9 +46,6 @@ export const ContactPage: React.FC = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 relative z-10 items-start">
         <div className="space-y-12 lg:sticky lg:top-32">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest mb-6">
-              <MessageSquare size={14} /> Support
-            </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-steam-text mb-6 leading-tight">
               Contact Skinvestments
             </h1>

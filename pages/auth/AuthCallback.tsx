@@ -5,7 +5,7 @@ import { usePageSeo } from '@/hooks/usePageSeo';
 
 const AuthCallback = () => {
   usePageSeo({
-    title: 'Signing in — Skinvestments',
+    title: 'Signing in | Skinvestments',
     description: 'Completing sign-in to Skinvestments.',
     path: '/auth/callback',
     robots: 'noindex, nofollow',

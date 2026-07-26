@@ -12,61 +12,67 @@ export type PageSeo = {
 
 export const PAGE_SEO = {
   home: {
-    title: 'Skinvestments — CS2 Portfolio Tracker',
+    title: 'Skinvestments | CS2 Portfolio Tracker',
     description:
-      'Free CS2 portfolio tracker for Steam skins. Track inventory value, profits, drops, and market trends on web, iOS, and Android.',
+      'Free CS2 portfolio tracker and CS2 skin tracker. Live inventory value, profit tracking, drops, and CS2 economy signals on web, iOS, and Android.',
     path: '/',
   },
   features: {
-    title: 'Features — CS2 Portfolio Tracker | Skinvestments',
+    title: 'Features - CS2 Inventory Tracker | Skinvestments',
     description:
-      'CS2 portfolio tracker features: inventory sync, profit analytics, drop tracking, stagnation alerts, and multi-market pricing.',
+      'CS2 inventory tracker and CS2 skin tracker features: inventory value, profit analytics, drops, Skinport and Buff163 pricing, stagnation alerts.',
     path: '/features',
   },
-  pricing: {
-    title: 'Pricing — CS2 Portfolio Tracker | Skinvestments',
+  cs2SkinTracker: {
+    title: 'CS2 Skin Tracker for Traders | Skinvestments',
     description:
-      'Plans for the Skinvestments CS2 portfolio tracker. Free Starter, Pro, and Pro Max — web dashboard and mobile apps.',
+      'The CS2 skin tracker (and CSGO skin tracker alternative) for inventory value, cost basis, profits, drops, and multi-market prices. Free to start.',
+    path: '/cs2-skin-tracker',
+  },
+  pricing: {
+    title: 'Free CS2 Portfolio Tracker Pricing | Skinvestments',
+    description:
+      'Simple pricing for a free CS2 portfolio tracker. Starter is free with no card required. Pro and Pro Max add analytics and exports.',
     path: '/pricing',
   },
   faq: {
-    title: 'FAQ — CS2 Portfolio Tracker | Skinvestments',
+    title: 'FAQ - CS2 Portfolio Tracker | Skinvestments',
     description:
-      'Answers about Skinvestments CS2 portfolio tracker: Steam safety, pricing, subscriptions, exports, and the web dashboard.',
+      'Frequently asked questions: is Skinvestments free, is it safe, how CS2 skin prices update, and which platforms are supported.',
     path: '/faq',
   },
   roadmap: {
-    title: 'Roadmap — CS2 Portfolio Tracker | Skinvestments',
+    title: 'Roadmap - CS2 Portfolio Tracker | Skinvestments',
     description:
       'Skinvestments product roadmap: Steam inventory sync, multi-market pricing, mobile apps, and upcoming CS2 portfolio tracker features.',
     path: '/roadmap',
   },
   contact: {
-    title: 'Contact — CS2 Portfolio Tracker | Skinvestments',
+    title: 'Contact - CS2 Portfolio Tracker | Skinvestments',
     description:
       'Contact Skinvestments support for help with the CS2 portfolio tracker, billing, privacy requests, and partnership inquiries.',
     path: '/contact',
   },
   about: {
-    title: 'About — Skinvestments by KJ Labs',
+    title: 'About | Skinvestments by KJ Labs',
     description:
       'Skinvestments is a CS2 portfolio tracker built by KJ Labs Studio. Learn who we are, why we built the product, and how we approach skin valuation.',
     path: '/about',
   },
   privacy: {
-    title: 'Privacy Policy — Skinvestments CS2 Portfolio Tracker',
+    title: 'Privacy Policy | Skinvestments CS2 Portfolio Tracker',
     description:
       'How Skinvestments collects, uses, and protects your data when you use our CS2 portfolio tracker on web and mobile.',
     path: '/privacy',
   },
   terms: {
-    title: 'Terms & Conditions — Skinvestments CS2 Portfolio Tracker',
+    title: 'Terms & Conditions | Skinvestments CS2 Portfolio Tracker',
     description:
       'Terms of use for Skinvestments, the CS2 portfolio tracker for Steam skins on web, iOS, and Android.',
     path: '/terms',
   },
   blog: {
-    title: 'Blog — CS2 Portfolio Insights | Skinvestments',
+    title: 'Blog - CS2 Portfolio Insights | Skinvestments',
     description:
       'Guides on CS2 inventory tracking, multi-market pricing (Steam, Skinport, Buff163), and treating skins like an asset class.',
     path: '/blog',

@@ -89,7 +89,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
               Choose your plan
             </h3>
             <p className="text-sm text-steam-secondary mt-1">
-              Same plans as the mobile app — one account, synced across devices.
+              Same plans as the mobile app - one account, synced across devices.
             </p>
           </div>
           <button

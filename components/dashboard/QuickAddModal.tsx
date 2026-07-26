@@ -648,7 +648,7 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                   )}
                   {!portfolioLoading && !portfolioError && portfolio.length === 0 && (
                     <p className="text-xs text-steam-tertiary px-2 py-4 text-center">
-                      Nothing to sell — your portfolio is empty.
+                      Nothing to sell - your portfolio is empty.
                     </p>
                   )}
                   <ul className="space-y-1">
