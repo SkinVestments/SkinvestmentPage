@@ -190,7 +190,7 @@ const BlogPostPage: React.FC = () => {
             Track your CS2 portfolio
           </h2>
           <p className="text-steam-secondary mb-6 leading-relaxed">
-            Skinvestments syncs Steam inventory, multi-market prices, and P&amp;L — free to start.
+            Skinvestments syncs Steam inventory, multi-market prices, and P&amp;L. Free to start.
           </p>
           <div className="flex flex-wrap gap-3 sm:gap-4">
             <Link
@@ -200,16 +200,16 @@ const BlogPostPage: React.FC = () => {
               Sign in
             </Link>
             <Link
+              to="/cs2-skin-tracker"
+              className="border border-steam-border text-steam-text hover:border-steam-accent hover:text-steam-accent px-6 py-3 rounded-xl font-bold uppercase tracking-wide text-sm transition-colors"
+            >
+              CS2 skin tracker
+            </Link>
+            <Link
               to="/features"
               className="border border-steam-border text-steam-text hover:border-steam-accent hover:text-steam-accent px-6 py-3 rounded-xl font-bold uppercase tracking-wide text-sm transition-colors"
             >
               Features
-            </Link>
-            <Link
-              to="/pricing"
-              className="border border-steam-border text-steam-text hover:border-steam-accent hover:text-steam-accent px-6 py-3 rounded-xl font-bold uppercase tracking-wide text-sm transition-colors"
-            >
-              Pricing
             </Link>
           </div>
         </aside>

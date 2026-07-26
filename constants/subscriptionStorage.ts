@@ -43,7 +43,7 @@ export function saveBillingCycle(cycle: BillingCycle): void {
   window.dispatchEvent(new CustomEvent(SUBSCRIPTION_CHANGED_EVENT));
 }
 
-/** @deprecated Plan id comes from profiles.plan_subscription — use loadBillingCycle for UI cycle only. */
+/** @deprecated Plan id comes from profiles.plan_subscription - use loadBillingCycle for UI cycle only. */
 export function loadSubscription(): SubscriptionState {
   return { planId: 'free', billingCycle: loadBillingCycle() };
 }

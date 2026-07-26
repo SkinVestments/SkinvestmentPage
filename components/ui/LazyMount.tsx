@@ -7,7 +7,7 @@ interface LazyMountProps {
   rootMargin?: string;
 }
 
-/** Mount children only when near viewport — avoids Recharts layout reads on initial paint. */
+/** Mount children only when near viewport - avoids Recharts layout reads on initial paint. */
 export const LazyMount: React.FC<LazyMountProps> = ({
   children,
   className,

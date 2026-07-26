@@ -49,8 +49,8 @@ const PublicPortfolioPage: React.FC = () => {
 
   usePageSeo({
     title: data
-      ? `${data.display_name}'s Portfolio — Skinvestments`
-      : 'Shared Portfolio — Skinvestments',
+      ? `${data.display_name}'s Portfolio | Skinvestments`
+      : 'Shared Portfolio | Skinvestments',
     description:
       'View a shared CS2 skin portfolio on Skinvestments. Track inventory value and holdings.',
     path: token ? sharePath(token) : '/p',
@@ -536,7 +536,7 @@ const PublicPortfolioPage: React.FC = () => {
             Track your own CS2 portfolio
           </h2>
           <p className="text-steam-secondary text-sm sm:text-base mb-6 max-w-md mx-auto leading-relaxed">
-            Skinvestments syncs Steam inventory, multi-market prices, and P&amp;L — free to start.
+            Skinvestments syncs Steam inventory, multi-market prices, and P&amp;L - free to start.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <Link

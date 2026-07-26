@@ -7,6 +7,9 @@ import {
   type BillingCycle,
   getPlanPriceDisplay,
 } from '@/constants/subscriptionPlans';
+import { PRICING_SEO } from '@/content/seoCopy';
+import { SeoContentSection } from '@/components/SeoContentSection';
+import { Link } from 'react-router-dom';
 
 export const PricingPage: React.FC = () => {
   usePageSeo(PAGE_SEO.pricing);
@@ -19,16 +22,12 @@ export const PricingPage: React.FC = () => {
     <div className="min-h-screen bg-steam-bg pt-24 sm:pt-32 pb-20 px-4 sm:px-6 font-sans overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-steam-accent/20 to-purple-500/20 border border-steam-accent/30 text-white text-xs sm:text-sm font-bold mb-8 max-w-full text-center">
-            <Sparkles size={16} className="text-yellow-400 shrink-0" />
-            <span>One subscription — mobile & web, same account.</span>
-          </div>
-
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-display text-steam-text mb-4">
-            Invest in your <span className="text-steam-accent">inventory</span>
+            Simple, <span className="text-steam-accent">free to start</span>
           </h1>
           <p className="text-steam-secondary text-lg max-w-2xl mx-auto">
-            Transparent pricing. Pick the plan that fits how you trade and collect.
+            Free CS2 portfolio tracker on Starter. No card needed to begin. Upgrade when you want
+            deeper analytics and exports.
           </p>
         </div>
 
@@ -166,8 +165,21 @@ export const PricingPage: React.FC = () => {
             <Lock size={14} className="opacity-70" />
             Payments are secure and encrypted. Cancel anytime from Settings.
           </p>
+          <p className="text-steam-tertiary text-sm mt-4">
+            Compare what you can track on{' '}
+            <Link to="/features" className="text-steam-accent hover:underline">
+              Features
+            </Link>{' '}
+            or the{' '}
+            <Link to="/cs2-skin-tracker" className="text-steam-accent hover:underline">
+              CS2 skin tracker
+            </Link>{' '}
+            page.
+          </p>
         </div>
       </div>
+
+      <SeoContentSection page={PRICING_SEO} />
     </div>
   );
 };

@@ -44,7 +44,7 @@ const formatLastActivity = (iso: string) => {
       new Date(iso),
     );
   } catch {
-    return '—';
+    return '-';
   }
 };
 

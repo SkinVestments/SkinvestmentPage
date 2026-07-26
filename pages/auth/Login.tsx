@@ -7,7 +7,7 @@ import { usePageSeo } from '@/hooks/usePageSeo';
 
 const Login = () => {
   usePageSeo({
-    title: 'Sign in — Skinvestments',
+    title: 'Sign in | Skinvestments',
     description: 'Sign in to your Skinvestments CS2 portfolio tracker account.',
     path: '/login',
     robots: 'noindex, nofollow',

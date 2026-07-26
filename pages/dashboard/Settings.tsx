@@ -287,7 +287,7 @@ const Settings = () => {
                   </div>
                 </button>
 
-                {/* Steam Account — status from profile; edit URL in Profile section above */}
+                {/* Steam Account - status from profile; edit URL in Profile section above */}
                 <div className="flex items-center justify-between p-5">
                   <div className="flex items-center gap-4">
                     <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
@@ -349,7 +349,7 @@ const Settings = () => {
               <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">Preferences</h2>
               <div className="bg-steam-card border border-steam-border rounded-2xl shadow-xl overflow-hidden divide-y divide-steam-border/50">
                 
-                {/* Notifications — not implemented yet */}
+                {/* Notifications - not implemented yet */}
                 <div
                   className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
                   title="Coming soon"
@@ -373,7 +373,7 @@ const Settings = () => {
                   </div>
                 </div>
 
-                {/* Currency — not implemented yet */}
+                {/* Currency - not implemented yet */}
                 <div
                   className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
                   title="Coming soon"
@@ -392,7 +392,7 @@ const Settings = () => {
                   <span className="text-sm font-bold text-steam-tertiary tabular-nums">USD</span>
                 </div>
 
-                {/* Price source — not implemented yet */}
+                {/* Price source - not implemented yet */}
                 <div
                   className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
                   title="Coming soon"

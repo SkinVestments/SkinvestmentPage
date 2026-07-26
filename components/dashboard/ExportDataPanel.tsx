@@ -86,7 +86,7 @@ export const ExportDataPanel: React.FC<ExportDataPanelProps> = ({
           <div className="w-14 h-14 rounded-full bg-steam-accent/15 flex items-center justify-center text-steam-accent mb-4">
             <Lock size={24} />
           </div>
-          <h4 className="font-bold text-steam-text text-xl mb-2">Data export — Pro feature</h4>
+          <h4 className="font-bold text-steam-text text-xl mb-2">Data export - Pro feature</h4>
           <p className="text-sm text-steam-secondary max-w-md mb-6 leading-relaxed">
             Export your portfolio and transactions as CSV, or download a full account archive on Pro
             Max. Upgrade to unlock exports.

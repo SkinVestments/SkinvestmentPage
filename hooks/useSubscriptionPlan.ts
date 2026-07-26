@@ -91,7 +91,7 @@ export function useSubscriptionPlan() {
     canExportFull: !loading && hasProMax,
     reloadPlan,
     setBillingCyclePreference,
-    /** @deprecated Plan is stored in Supabase — only billing cycle preference is saved locally. */
+    /** @deprecated Plan is stored in Supabase - only billing cycle preference is saved locally. */
     updateSubscription: (_planId: PlanId, cycle: BillingCycle) => {
       setBillingCyclePreference(cycle);
     },

@@ -22,6 +22,7 @@ const ContactPage = lazy(() =>
   import('@/pages/ContactPage').then((m) => ({ default: m.ContactPage })),
 );
 const AboutPage = lazy(() => import('@/pages/AboutPage'));
+const Cs2SkinTrackerPage = lazy(() => import('@/pages/Cs2SkinTrackerPage'));
 const BlogIndex = lazy(() => import('@/pages/blog/BlogIndex'));
 const BlogPost = lazy(() => import('@/pages/blog/BlogPost'));
 const PublicPortfolio = lazy(() => import('@/pages/share/PublicPortfolio'));
@@ -52,6 +53,7 @@ export const AppRoutes = () => (
         <Route path="/roadmap" element={<RoadmapPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/cs2-skin-tracker" element={<Cs2SkinTrackerPage />} />
         <Route path="/blog" element={<BlogIndex />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/p/:token" element={<PublicPortfolio />} />

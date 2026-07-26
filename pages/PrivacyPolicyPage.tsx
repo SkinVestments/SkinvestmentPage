@@ -137,7 +137,7 @@ export default function PrivacyPolicyPage() {
                   Steam Community Market, Skinport, and Buff163.
                 </li>
                 <li>
-                  <strong className="text-steam-text">Google LLC — Google Analytics 4 (website):</strong> Website usage
+                  <strong className="text-steam-text">Google LLC - Google Analytics 4 (website):</strong> Website usage
                   analytics. See{' '}
                   <a
                     href="https://policies.google.com/privacy"
@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
                   .
                 </li>
                 <li>
-                  <strong className="text-steam-text">Google LLC — Google AdSense (website):</strong> Display
+                  <strong className="text-steam-text">Google LLC - Google AdSense (website):</strong> Display
                   advertising on the web dashboard for free-plan users. See{' '}
                   <a
                     href="https://policies.google.com/technologies/ads"
@@ -163,11 +163,11 @@ export default function PrivacyPolicyPage() {
                   .
                 </li>
                 <li>
-                  <strong className="text-steam-text">Google LLC — Firebase Analytics &amp; Crashlytics (mobile):</strong>{' '}
+                  <strong className="text-steam-text">Google LLC - Firebase Analytics &amp; Crashlytics (mobile):</strong>{' '}
                   App usage and stability monitoring.
                 </li>
                 <li>
-                  <strong className="text-steam-text">Google LLC — AdMob (mobile):</strong> In-app advertising.
+                  <strong className="text-steam-text">Google LLC - AdMob (mobile):</strong> In-app advertising.
                 </li>
                 <li>
                   <strong className="text-steam-text">RevenueCat:</strong> Subscription checkout and plan management
@@ -227,7 +227,7 @@ export default function PrivacyPolicyPage() {
                   &quot;Limit Ad Tracking&quot; (iOS) or &quot;Opt out of Ads Personalization&quot; (Android).
                 </li>
                 <li>
-                  <strong className="text-steam-text">Remove ads:</strong> Upgrade to a paid plan — see{' '}
+                  <strong className="text-steam-text">Remove ads:</strong> Upgrade to a paid plan - see{' '}
                   <Link to="/pricing" className="text-steam-accent hover:underline">
                     Pricing
                   </Link>

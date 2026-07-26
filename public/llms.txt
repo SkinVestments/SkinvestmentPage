@@ -4,24 +4,25 @@
 
 ## Product
 
-- [Home](https://skinvestments.app/): Main overview and core product value.
-- [Features](https://skinvestments.app/features): Portfolio tracking, charts, and notifications.
-- [Pricing](https://skinvestments.app/pricing): Free and paid plans for tracking and alerts.
-- [Blog](https://skinvestments.app/blog): Guides on CS2 inventory tracking, multi-market pricing, and portfolio habits.
-- [App Store](https://apps.apple.com/us/app/skinvestments-cs2-investments/id6757268598): iOS app download page.
-- [Google Play](https://play.google.com/store/apps/details?id=com.steamvestments): Android app download page.
+- [Home](https://skinvestments.app/): CS2 portfolio tracker overview.
+- [Features](https://skinvestments.app/features): Inventory value, charts, drops, multi-market pricing.
+- [CS2 Skin Tracker](https://skinvestments.app/cs2-skin-tracker): Dedicated landing for CS2 / CSGO skin tracker intent.
+- [Pricing](https://skinvestments.app/pricing): Free Starter and paid plans.
+- [Blog](https://skinvestments.app/blog): Guides on CS2 inventory tracking and pricing.
+- [App Store](https://apps.apple.com/us/app/skinvestments-cs2-investments/id6757268598): iOS app.
+- [Google Play](https://play.google.com/store/apps/details?id=com.steamvestments): Android app.
 
 ## Company
 
-- [About](https://skinvestments.app/about): Who builds Skinvestments and how we approach valuation.
-- [KJ Labs Studio](https://kjlabs.studio/): The studio behind Skinvestments.
+- [About](https://skinvestments.app/about)
+- [KJ Labs Studio](https://kjlabs.studio/)
 
 ## Support
 
-- [FAQ](https://skinvestments.app/faq): Answers about Steam linking, billing, and exports.
-- [Contact](https://skinvestments.app/contact): Support and issue reporting.
+- [FAQ](https://skinvestments.app/faq)
+- [Contact](https://skinvestments.app/contact)
 
 ## Legal
 
-- [Privacy Policy](https://skinvestments.app/privacy): How data is processed and protected.
-- [Terms of Service](https://skinvestments.app/terms): Terms for using Skinvestments.
+- [Privacy Policy](https://skinvestments.app/privacy)
+- [Terms of Service](https://skinvestments.app/terms)

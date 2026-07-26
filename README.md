@@ -20,7 +20,7 @@ Vite + React SPA. Production origin: https://skinvestments.app
 
 At `npm run build`, Vite fetches published posts and writes:
 
-- `dist/blog/{slug}/index.html` — meta / canonical / og:image shells for crawlers
-- `dist/sitemap.xml` — marketing URLs + every published slug
+- `dist/blog/{slug}/index.html` - meta / canonical / og:image shells for crawlers
+- `dist/sitemap.xml` - marketing URLs + every published slug
 
 After you set a post to **published**, trigger a **Vercel Deploy Hook** (or redeploy) so those shells and the sitemap refresh. Without a rebuild, browsers still get live content from Supabase; crawlers may keep stale meta until the next deploy.

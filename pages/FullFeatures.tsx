@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react';
 import { 
   Globe, Box, Crosshair, Cloud, Wallet, BarChart3, 
-  TrendingUp, Clock, Pyramid, Zap, ShieldCheck, Search,
-  Activity, Target, Rocket, Moon
+  TrendingUp, Clock, Zap, ShieldCheck, Search,
+  Target, Rocket, Moon
 } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
 import { PAGE_SEO } from '@/utils/seo';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { FEATURES_SEO } from '@/content/seoCopy';
+import { SeoContentSection } from '@/components/SeoContentSection';
+import { Link } from 'react-router-dom';
 
 export const FullFeaturesPage: React.FC = () => {
   usePageSeo(PAGE_SEO.features);
@@ -23,12 +26,24 @@ export const FullFeaturesPage: React.FC = () => {
         {/* Header */}
         <div className="mb-20">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold font-display mb-6">
-            Everything you need to <br />
-            <span className="text-gradient-accent text-steam-accent">Trade Like a Pro.</span>
+            Everything you can{' '}
+            <span className="text-gradient-accent text-steam-accent">track</span>
           </h1>
           <p className="text-xl text-steam-secondary max-w-3xl leading-relaxed">
-            From algorithmic stagnation detection to real-time market pulse widgets. 
-            We built the tools that give you a definitive edge over the Steam market.
+            CS2 inventory tracker tools for portfolio value, price history context, drops,
+            Skinport and Buff163 pricing signals, and stagnation-aware analytics. Built as a
+            CS2 economy tracker for traders who want more than a Steam Market total.
+          </p>
+          <p className="mt-4 text-sm text-steam-tertiary">
+            Also see the dedicated{' '}
+            <Link to="/cs2-skin-tracker" className="text-steam-accent hover:underline">
+              CS2 skin tracker
+            </Link>{' '}
+            landing and{' '}
+            <Link to="/pricing" className="text-steam-accent hover:underline">
+              free-to-start pricing
+            </Link>
+            .
           </p>
         </div>
 
@@ -38,13 +53,10 @@ export const FullFeaturesPage: React.FC = () => {
 {/* Section 1: Portfolio Pulse (Fixed Proportions) */}
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
   <div className="space-y-6 order-2 lg:order-1">
-    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest">
-      <Activity size={14} /> Real-Time Monitor
-    </div>
     <h2 className="text-4xl font-bold font-display">The Portfolio Pulse</h2>
     <p className="text-steam-secondary text-lg">
       Stop guessing. Our Pulse monitor tracks 24h volatility with a live tracking indicator.
-      It acts like a speedometer for your wealth – providing instant clarity on your market momentum.
+      It acts like a speedometer for your wealth - providing instant clarity on your market momentum.
     </p>
     
     {/* Stats Grid */}
@@ -160,9 +172,6 @@ export const FullFeaturesPage: React.FC = () => {
             </div>
 
             <div className="space-y-6 order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-steam-accent/10 border border-steam-accent/20 text-steam-accent text-xs font-bold uppercase tracking-widest">
-                <Pyramid size={14} /> Analytics
-              </div>
               <h2 className="text-4xl font-bold font-display">Inventory Quality Structure</h2>
               <p className="text-steam-secondary text-lg">
                 Automatic categorization of your inventory by rarity grades. 
@@ -185,9 +194,6 @@ export const FullFeaturesPage: React.FC = () => {
           {/* Section 3: Grail Watcher & Stagnation Detector */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-widest">
-                <Moon size={14} /> Asset Efficiency
-              </div>
               <h2 className="text-4xl font-bold font-display">Identify Dead Money</h2>
               <p className="text-steam-secondary text-lg">
                 Most investors lose money through **stagnation**. Our detector identifies items that haven't moved in 180+ days, 
@@ -278,9 +284,6 @@ export const FullFeaturesPage: React.FC = () => {
             </div>
 
             <div className="space-y-6 order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-steam-profit/10 border border-steam-profit/20 text-steam-profit text-xs font-bold uppercase tracking-widest">
-                <TrendingUp size={14} /> Profitability
-              </div>
               <h2 className="text-4xl font-bold font-display">"Paper Hands" vs "Diamond Hands"</h2>
               <p className="text-steam-secondary text-lg">
                 We analyze every buy and sell transaction to calculate your Average Holding Time. 
@@ -300,7 +303,7 @@ export const FullFeaturesPage: React.FC = () => {
           </div>
 
           {/* Section 5: Small features grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-20 border-t border-steam-border/50">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-20 pb-16 sm:pb-24 border-t border-steam-border/50">
             <FeatureSmall 
               icon={<Zap className="text-yellow-500" />} 
               title="Instant Market Sync" 
@@ -328,6 +331,8 @@ export const FullFeaturesPage: React.FC = () => {
 
         </div>
       </div>
+
+      <SeoContentSection page={FEATURES_SEO} className="border-t border-steam-border/40" />
     </div>
   );
 };

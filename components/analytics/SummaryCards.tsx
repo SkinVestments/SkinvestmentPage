@@ -98,7 +98,7 @@ export const SummaryCards = () => {
 
   const streakWeeks = dropsAnalytics?.current_streak ?? 0;
   const luckScore = luck?.luck_score ?? 0;
-  const luckLabel = luck?.label ?? '—';
+  const luckLabel = luck?.label ?? '-';
   const luckDropsCount = luck?.drops_count ?? 0;
 
   return (

@@ -1,5 +1,5 @@
 /**
- * AdSense — public marketing/content pages only (not dashboard).
+ * AdSense - public marketing/content pages only (not dashboard).
  * Everyone sees ads here; Pro only removes ads inside the authenticated app.
  */
 export const ADSENSE_ELIGIBLE_PATHS = [

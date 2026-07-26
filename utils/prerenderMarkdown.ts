@@ -69,8 +69,8 @@ ${figure}
 ${payload.bodyHtml}
 <aside>
 <h2>Track your CS2 portfolio</h2>
-<p>Skinvestments syncs Steam inventory, multi-market prices, and P&amp;L — free to start.</p>
-<p><a href="/login">Sign in</a> · <a href="/features">Features</a> · <a href="/pricing">Pricing</a></p>
+<p>Skinvestments syncs Steam inventory, multi-market prices, and P&amp;L. Free to start.</p>
+<p><a href="/login">Sign in</a> · <a href="/features">Features</a> · <a href="/cs2-skin-tracker">CS2 skin tracker</a> · <a href="/pricing">Pricing</a></p>
 </aside>
 </article>`;
 }

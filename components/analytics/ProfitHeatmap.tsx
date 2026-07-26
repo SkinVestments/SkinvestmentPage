@@ -203,7 +203,7 @@ const HeatmapGrid = ({ title, labels, cells, metric, columnsClass }: HeatmapGrid
                 {label}
               </span>
               <span className={`text-sm font-bold tabular-nums ${textColors.value}`}>
-                {hasData ? formatMetric(value, metric) : '—'}
+                {hasData ? formatMetric(value, metric) : '-'}
               </span>
             </div>
           );
@@ -265,7 +265,7 @@ export const ProfitHeatmap = () => {
           <div>
             <h3 className="font-bold text-steam-text">Profit Heatmap</h3>
             <p className="text-xs text-steam-secondary mt-0.5">
-              When you sell best — by day of week and month (all-time SELLs).
+              When you sell best - by day of week and month (all-time SELLs).
             </p>
           </div>
         </div>

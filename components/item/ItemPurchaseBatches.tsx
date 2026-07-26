@@ -23,7 +23,7 @@ const formatBatchDate = (iso: string) => {
       year: 'numeric',
     }).format(new Date(iso));
   } catch {
-    return '—';
+    return '-';
   }
 };
 
@@ -81,7 +81,7 @@ export const ItemPurchaseBatches: React.FC<ItemPurchaseBatchesProps> = ({
                     )}
                   </span>
                   <span className="font-mono font-bold text-steam-text text-right tabular-nums">
-                    {batch.type === 'DROP' ? '—' : formatCurrency(total)}
+                    {batch.type === 'DROP' ? '-' : formatCurrency(total)}
                   </span>
                 </li>
               );

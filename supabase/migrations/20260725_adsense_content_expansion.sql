@@ -14,11 +14,11 @@ UPDATE public.blog_posts SET
 
 CS2 skins are liquid digital items, but most players still judge their inventory by a Steam Community Market total or by “what it felt like” when they bought something. That number is incomplete. Steam listings lag, fees change net proceeds, storage units hide value, and weekly drops quietly change the portfolio every Tuesday.
 
-If you treat skins as a portfolio — even a small one — you need three numbers for every meaningful position:
+If you treat skins as a portfolio - even a small one - you need three numbers for every meaningful position:
 
-1. **Cost basis** — what you paid (or the fair cost of a trade-up / craft).
-2. **Mark-to-market value** — what the item is worth on the venues you would actually use.
-3. **Unrealized P&L** — mark-to-market minus cost basis, before and after fees when you plan an exit.
+1. **Cost basis** - what you paid (or the fair cost of a trade-up / craft).
+2. **Mark-to-market value** - what the item is worth on the venues you would actually use.
+3. **Unrealized P&L** - mark-to-market minus cost basis, before and after fees when you plan an exit.
 
 Without those three, you are collecting skins. With them, you can answer whether the inventory is working for you.
 
@@ -37,11 +37,11 @@ Export or sync everything into one list. Skinvestments is built for this: public
 
 Different markets answer different questions:
 
-- **Steam Community Market** — convenient reference for casual players; often slower after news; fees reduce net proceeds.
-- **Skinport** — useful Western cash-out reference for many liquid skins.
-- **Buff163** — deep liquidity for a large set of items; frequently the tightest global signal.
+- **Steam Community Market** - convenient reference for casual players; often slower after news; fees reduce net proceeds.
+- **Skinport** - useful Western cash-out reference for many liquid skins.
+- **Buff163** - deep liquidity for a large set of items; frequently the tightest global signal.
 
-A workable rule for **portfolio valuation** is: pick one primary “mark” per item (usually the most liquid venue for that skin) and keep a secondary check so you notice when spreads widen. For **exit planning**, value the item on the market you will actually sell on — not the market with the prettiest screenshot.
+A workable rule for **portfolio valuation** is: pick one primary “mark” per item (usually the most liquid venue for that skin) and keep a secondary check so you notice when spreads widen. For **exit planning**, value the item on the market you will actually sell on - not the market with the prettiest screenshot.
 
 Consistency matters more than perfection. Changing the mark every day because Buff moved 2% creates noise, not insight.
 
@@ -52,7 +52,7 @@ Cost basis is where most “I’m up” stories fall apart. Record:
 - Cash purchase price and marketplace fees paid on the way in
 - Trade value if you swapped (use a contemporaneous mid-market estimate and note it)
 - Trade-up / craft inputs (sum of inputs, not the dreamed output)
-- Giveaways and drops (cost basis can be zero — still track acquisition date)
+- Giveaways and drops (cost basis can be zero - still track acquisition date)
 
 When you sell, compare **net proceeds after fees** to cost basis. Gross Steam listing price is not profit.
 
@@ -64,7 +64,7 @@ A light cadence beats occasional panic:
 2. Scan largest absolute movers (up and down).
 3. Flag stagnant mid-tier items that have not moved in weeks while tying capital.
 4. Log weekly drops and decide: keep, list, or bundle into a later decision.
-5. Note any game update or case change that might explain volume — without assuming causality.
+5. Note any game update or case change that might explain volume - without assuming causality.
 
 The goal is a decision log, not a prediction contest. “Held through Season 5 launch” is useful context later; “this must moon because Cache is in Active Duty” is not a valuation method.
 
@@ -72,7 +72,7 @@ The goal is a decision log, not a prediction contest. “Held through Season 5 l
 
 Imagine two players with the same $800 Steam total. Player A bought most pieces near the top of a hype spike and ignores fees. Player B logged cost basis, sells on Skinport when Steam is thin, and knows which storage unit holds $120 of forgotten skins. Same headline number; completely different portfolio reality.
 
-That gap is why Skinvestments focuses on cost, multi-market context, drops, and history — not a single vanity total.
+That gap is why Skinvestments focuses on cost, multi-market context, drops, and history - not a single vanity total.
 
 ## Next steps
 
@@ -146,7 +146,7 @@ Buff is often the **global liquidity signal**. Portfolio software that ignores i
 
 ### For holdings valuation
 
-Prefer the most liquid venue for that specific item, then sanity-check the others. If Steam says $40, Skinport clears near $36 net, and Buff sits near $38 equivalent, your “true” mark depends on where you can sell — but your **dashboard should not pretend Steam alone is truth**.
+Prefer the most liquid venue for that specific item, then sanity-check the others. If Steam says $40, Skinport clears near $36 net, and Buff sits near $38 equivalent, your “true” mark depends on where you can sell - but your **dashboard should not pretend Steam alone is truth**.
 
 ### For exit planning
 
@@ -159,7 +159,7 @@ Work backward from the market you will use:
 
 ### For spreads as information
 
-Wide Steam–Buff or Steam–Skinport gaps can mean:
+Wide Steam-Buff or Steam-Skinport gaps can mean:
 
 - Steam is stale
 - Cash markets are soft
@@ -172,12 +172,12 @@ Spreads are data. They are not automatically a free arb for retail sellers.
 Suppose a rifle skin shows:
 
 - Steam: $50 ask, slow sales history
-- Skinport: recent sales around $44–46 before fees
+- Skinport: recent sales around $44-46 before fees
 - Buff: tight interest near a $47 equivalent
 
-A Steam-only portfolio might show “$50.” A cash-aware portfolio might mark closer to $44–47 depending on your exit path. That 10–15% gap compounds across an inventory.
+A Steam-only portfolio might show “$50.” A cash-aware portfolio might mark closer to $44-47 depending on your exit path. That 10-15% gap compounds across an inventory.
 
-Skinvestments aggregates public signals from Steam, Skinport, and Buff163 so your [portfolio view](/features) reflects how skins actually trade — not one listing page.
+Skinvestments aggregates public signals from Steam, Skinport, and Buff163 so your [portfolio view](/features) reflects how skins actually trade - not one listing page.
 
 ## Practical checklist
 
@@ -209,7 +209,7 @@ INSERT INTO public.blog_posts (
 (
   'cs2-skin-marketplace-fees-roi',
   'CS2 Skin Marketplace Fees and Real ROI',
-  'Gross listing price is not profit. Here is how Steam and third-party fees change ROI — with a simple worksheet you can reuse on every exit.',
+  'Gross listing price is not profit. Here is how Steam and third-party fees change ROI - with a simple worksheet you can reuse on every exit.',
   $md$
 ## Gross price vs net proceeds
 
@@ -292,28 +292,28 @@ $md$,
   'When to Sell CS2 Skins After Game Updates',
   'Patch days create noise. Separate attention from demand, use a decision checklist, and avoid selling (or buying) only because the timeline feels exciting.',
   $md$
-## Updates create attention — not automatic edge
+## Updates create attention - not automatic edge
 
-Major CS2 updates — new seasons, Active Duty rotations, Armory refreshes, economy tweaks — spike discussion. Prices can move. They can also chop sideways while social feeds scream.
+Major CS2 updates - new seasons, Active Duty rotations, Armory refreshes, economy tweaks - spike discussion. Prices can move. They can also chop sideways while social feeds scream.
 
 If you manage a skin portfolio, your job on update week is not to predict the patch. It is to **decide with a rule**.
 
 ## Separate three clocks
 
-1. **Announcement clock** — headlines and patch notes drop.  
-2. **Liquidity clock** — when volume actually trades on Steam / Skinport / Buff.  
-3. **Your portfolio clock** — cost basis, size, and whether you needed liquidity anyway.
+1. **Announcement clock** - headlines and patch notes drop.  
+2. **Liquidity clock** - when volume actually trades on Steam / Skinport / Buff.  
+3. **Your portfolio clock** - cost basis, size, and whether you needed liquidity anyway.
 
 Mixing them causes classic errors: selling winners too early because chat is loud, or holding losers because “the update will fix it.”
 
 ## A calm post-update checklist
 
-Use this within 24–72 hours of a major patch:
+Use this within 24-72 hours of a major patch:
 
 1. Read the **official** notes (not only recap videos).  
 2. List which of your holdings are directly touched (new collections, related stickers, map-tied cosmetics if relevant).  
 3. Mark positions that are only loosely related (most of the inventory).  
-4. Check spreads across markets — did Steam lag while Buff moved, or is everything thin?  
+4. Check spreads across markets - did Steam lag while Buff moved, or is everything thin?  
 5. Revisit your exit plan **only** for positions that fail your pre-written rules (size, thesis broken, liquidity need).
 
 For Season 5-style changes, we walked through the factual patch context in [CS2 Season 5: Cache, Armory, and C4](/blog/cs2-season-5-armory-cache-c4-update). Treat that as timeline documentation, not a trade signal.
@@ -350,7 +350,7 @@ Track the book in [Skinvestments](/features), and keep valuation honest with [mu
 $md$,
   'published', now() - interval '10 days',
   'When to Sell CS2 Skins After Updates | Skinvestments',
-  'A practical checklist for selling or holding CS2 skins after Valve updates — without treating patch hype as a trading signal.',
+  'A practical checklist for selling or holding CS2 skins after Valve updates - without treating patch hype as a trading signal.',
   ARRAY['cs2', 'updates', 'selling', 'portfolio'],
   'CS2 update week portfolio decision checklist',
   'Skinvestments'
@@ -364,7 +364,7 @@ $md$,
 
 Steam storage units solve inventory limits. They also create blind spots. Players open the main backpack, glance at a Steam Market total, and miss hundreds of dollars sitting in units they last sorted months ago.
 
-If you care about portfolio value, **storage is not optional bookkeeping** — it is part of the book.
+If you care about portfolio value, **storage is not optional bookkeeping** - it is part of the book.
 
 ## Audit workflow
 
@@ -374,7 +374,7 @@ If you care about portfolio value, **storage is not optional bookkeeping** — i
 4. Sum unit value separately once, then roll into the portfolio total.  
 5. Schedule a monthly storage review (15 minutes).
 
-Skinvestments is designed to help you see inventory holistically when public data is available — use that as the source of truth instead of memory.
+Skinvestments is designed to help you see inventory holistically when public data is available - use that as the source of truth instead of memory.
 
 ## Avoid double-counting
 
@@ -410,7 +410,7 @@ If you would not buy it today and you have no collectible reason to keep it, sto
 
 - Keep a naming scheme: `Liquid`, `Tradeups`, `Long hold`, `Junk to clear`  
 - After big acquisition weeks, force a storage pass before the next buy  
-- When preparing a cash-out, clear storage first — buyers and you both forget what is buried
+- When preparing a cash-out, clear storage first - buyers and you both forget what is buried
 
 ## Bottom line
 
@@ -418,7 +418,7 @@ A portfolio total that ignores storage units is fiction. Fold them into your [in
 $md$,
   'published', now() - interval '8 days',
   'CS2 Storage Units and Hidden Inventory Value | Skinvestments',
-  'Audit CS2 Steam storage units so hidden skins count in your portfolio total — with a simple monthly checklist.',
+  'Audit CS2 Steam storage units so hidden skins count in your portfolio total - with a simple monthly checklist.',
   ARRAY['cs2', 'storage', 'inventory', 'portfolio'],
   'CS2 storage unit inventory audit',
   'Skinvestments'
@@ -426,7 +426,7 @@ $md$,
 (
   'cs2-skin-cost-basis-record-keeping',
   'Cost Basis and Record-Keeping for CS2 Skins',
-  'Build a clean acquisition ledger for CS2 skins: dates, costs, trades, trade-ups, and drops — so P&L stops being a guess.',
+  'Build a clean acquisition ledger for CS2 skins: dates, costs, trades, trade-ups, and drops - so P&L stops being a guess.',
   $md$
 ## Why records beat vibes
 
@@ -457,7 +457,7 @@ Trade-ups: cost basis of the output is the sum of inputs (and any fees). Do not 
 
 ## Drops and gifts
 
-Drops can be basis zero. Still log them. Zero-basis sales are still taxable events in some jurisdictions — this guide is **not tax advice**; check local rules and a professional if needed. From a portfolio view, drops are free inventory that still deserves tracking.
+Drops can be basis zero. Still log them. Zero-basis sales are still taxable events in some jurisdictions - this guide is **not tax advice**; check local rules and a professional if needed. From a portfolio view, drops are free inventory that still deserves tracking.
 
 ## Cadence
 
@@ -477,7 +477,7 @@ Start simple. A complete modest ledger beats an abandoned complex one.
 $md$,
   'published', now() - interval '7 days',
   'Cost Basis and Record-Keeping for CS2 Skins | Skinvestments',
-  'How to log CS2 skin cost basis for buys, trades, trade-ups, and drops so portfolio P&L is based on records — not memory.',
+  'How to log CS2 skin cost basis for buys, trades, trade-ups, and drops so portfolio P&L is based on records - not memory.',
   ARRAY['cs2', 'cost-basis', 'records', 'portfolio'],
   'CS2 skin cost basis ledger',
   'Skinvestments'
@@ -485,7 +485,7 @@ $md$,
 (
   'detect-stagnant-cs2-skins',
   'How to Spot Stagnant CS2 Skins in Your Portfolio',
-  'Dead money hides in mid-tier inventory. Use liquidity, time held, and opportunity cost to find stagnant CS2 skins — and decide whether to keep, list, or recycle.',
+  'Dead money hides in mid-tier inventory. Use liquidity, time held, and opportunity cost to find stagnant CS2 skins - and decide whether to keep, list, or recycle.',
   $md$
 ## Stagnation is a portfolio problem
 
@@ -496,21 +496,21 @@ Not every flat price chart is a failure. Some holds are intentional. Stagnation 
 - You would not buy again at today’s mark  
 - Block better uses of cash or Steam balance
 
-Skinvestments includes analytics aimed at surfacing quiet positions — the method below works even if you start manually.
+Skinvestments includes analytics aimed at surfacing quiet positions - the method below works even if you start manually.
 
 ## Signals of stagnation
 
-1. **Time** — held beyond your original thesis window with no review  
-2. **Volume** — thin sales on your exit markets  
-3. **Spread** — large gaps between Steam and cash markets  
-4. **Attention** — you avoid opening the listing because you already know it will sit  
-5. **Replacement test** — you would rather have the cash in a more liquid skin or out of skins entirely
+1. **Time** - held beyond your original thesis window with no review  
+2. **Volume** - thin sales on your exit markets  
+3. **Spread** - large gaps between Steam and cash markets  
+4. **Attention** - you avoid opening the listing because you already know it will sit  
+5. **Replacement test** - you would rather have the cash in a more liquid skin or out of skins entirely
 
 One signal is a nudge. Three together are a decision.
 
 ## A simple scoring pass
 
-Once a month, sort holdings by value and score 1–5 on liquidity and thesis clarity. Anything valuable + low liquidity + unclear thesis goes on a “review this week” list.
+Once a month, sort holdings by value and score 1-5 on liquidity and thesis clarity. Anything valuable + low liquidity + unclear thesis goes on a “review this week” list.
 
 Do not try to clear the entire inventory in one night. Work top-down by capital stuck.
 
@@ -543,7 +543,7 @@ $md$,
 (
   'cs2-float-value-portfolio-basics',
   'Float Value Basics for CS2 Portfolio Holders',
-  'Float can matter a lot — or barely at all. Learn when CS2 float premiums show up, when to ignore them, and how to record float without overcomplicating your portfolio.',
+  'Float can matter a lot - or barely at all. Learn when CS2 float premiums show up, when to ignore them, and how to record float without overcomplicating your portfolio.',
   $md$
 ## Float is a detail until it is the trade
 
@@ -556,7 +556,7 @@ Portfolio holders need a rule for **when float deserves attention**.
 - Category already trades on aesthetics (Dopplers, fades, certain low-float ICs, etc.)  
 - Buyers screenshot float and pattern indexes  
 - The spread between “nice” and “average” float is wide on liquid markets  
-- You are sizing a position large enough that a 5–10% aesthetic premium moves P&L
+- You are sizing a position large enough that a 5-10% aesthetic premium moves P&L
 
 ## When float usually matters less
 
@@ -593,7 +593,7 @@ Float is a tool, not a personality. Use it where the market pays for it, ignore 
 $md$,
   'published', now() - interval '4 days',
   'CS2 Float Value Basics for Portfolios | Skinvestments',
-  'When CS2 skin float premiums matter for portfolio valuation — and when exterior plus market choice matter more.',
+  'When CS2 skin float premiums matter for portfolio valuation - and when exterior plus market choice matter more.',
   ARRAY['cs2', 'float', 'pricing', 'portfolio'],
   'CS2 float value for portfolio holders',
   'Skinvestments'
@@ -635,7 +635,7 @@ Whatever comes out inherits the **sum of inputs** as cost basis (plus any direct
 - You explicitly want a play skin and accept EV loss for utility  
 - Inputs are illiquid junk with poor exit paths  
 - You have modeled the distribution and sized small  
-- You are documenting results to learn — not chasing losses
+- You are documenting results to learn - not chasing losses
 
 ## When to stop
 
@@ -657,7 +657,7 @@ $md$,
   'Reading Buff163 vs Skinport Spreads',
   'Spreads between Buff163 and Skinport are information. Learn how to read them for CS2 portfolio marks without assuming easy arbitrage.',
   $md$
-## A spread is a story — not a free lunch
+## A spread is a story - not a free lunch
 
 When Buff163 and Skinport disagree, retail traders often jump to “arb.” Sometimes the gap is real inefficiency. Often it is fees, access, withdrawal friction, thin books, or stale listings wearing a costume.
 
@@ -695,13 +695,13 @@ Patch weeks exaggerate disagreements between markets. Steam may lag; cash market
 
 ## How Skinvestments fits
 
-Aggregating public multi-market signals exists to surface these gaps early — so you see that your Steam-only total might be lonely. Pair the dashboard with fee-aware exits from [marketplace ROI](/blog/cs2-skin-marketplace-fees-roi).
+Aggregating public multi-market signals exists to surface these gaps early - so you see that your Steam-only total might be lonely. Pair the dashboard with fee-aware exits from [marketplace ROI](/blog/cs2-skin-marketplace-fees-roi).
 
 Spreads educate. They do not print money by themselves.
 $md$,
   'published', now() - interval '2 days',
   'Reading Buff163 vs Skinport Spreads | Skinvestments',
-  'How to interpret Buff163 vs Skinport price spreads for CS2 portfolios — marks, liquidity, and why gaps are not automatic arbitrage.',
+  'How to interpret Buff163 vs Skinport price spreads for CS2 portfolios - marks, liquidity, and why gaps are not automatic arbitrage.',
   ARRAY['cs2', 'buff163', 'skinport', 'spreads', 'pricing'],
   'Buff163 versus Skinport spread analysis',
   'Skinvestments'
@@ -729,15 +729,15 @@ Skinvestments includes drop-oriented tracking so the habit lives next to the res
 
 ## Decision rules for drops
 
-- **Keep** — you will use it, or it fits a written collect thesis  
-- **List** — liquid enough that fees still leave meaningful net  
-- **Hold short** — waiting for a known liquidity window (not infinite cope)
+- **Keep** - you will use it, or it fits a written collect thesis  
+- **List** - liquid enough that fees still leave meaningful net  
+- **Hold short** - waiting for a known liquidity window (not infinite cope)
 
 Avoid letting drop leftovers become [stagnant clutter](/blog/detect-stagnant-cs2-skins) in storage units.
 
 ## Accounting notes
 
-Drops are still inventory. If you sell them, use [fee-aware ROI](/blog/cs2-skin-marketplace-fees-roi) even when basis is zero — net proceeds are still performance.
+Drops are still inventory. If you sell them, use [fee-aware ROI](/blog/cs2-skin-marketplace-fees-roi) even when basis is zero - net proceeds are still performance.
 
 ## Why this helps mentally
 
