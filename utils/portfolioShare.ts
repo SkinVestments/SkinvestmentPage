@@ -1,12 +1,17 @@
 import { SITE_ORIGIN } from '@/utils/seo';
 import { supabase } from '@/utils/supabaseClient';
 import type {
+  PortfolioEmbedLayout,
   PortfolioShareRow,
   PortfolioShareVisibility,
   PublicPortfolioHistoryPage,
   PublicPortfolioPayload,
 } from '@/types/portfolioShare';
-import { DEFAULT_SHARE_VISIBILITY } from '@/types/portfolioShare';
+import {
+  DEFAULT_EMBED_LAYOUT,
+  DEFAULT_SHARE_VISIBILITY,
+  parseEmbedLayout,
+} from '@/types/portfolioShare';
 
 export function sharePath(token: string) {
   return `/p/${token}`;
@@ -16,8 +21,37 @@ export function shareUrl(token: string) {
   return `${SITE_ORIGIN}${sharePath(token)}`;
 }
 
+export function embedPath(token: string, layout: PortfolioEmbedLayout = DEFAULT_EMBED_LAYOUT) {
+  return `/embed/${token}?layout=${layout}`;
+}
+
+export function embedUrl(token: string, layout: PortfolioEmbedLayout = DEFAULT_EMBED_LAYOUT) {
+  return `${SITE_ORIGIN}${embedPath(token, layout)}`;
+}
+
+export function embedIframeHeight(layout: PortfolioEmbedLayout): number {
+  if (layout === 'top') return 320;
+  if (layout === 'sections') return 420;
+  return 180;
+}
+
+export function embedIframeSnippet(
+  token: string,
+  layout: PortfolioEmbedLayout = DEFAULT_EMBED_LAYOUT,
+): string {
+  const src = embedUrl(token, layout);
+  const height = embedIframeHeight(layout);
+  return `<iframe src="${src}" width="380" height="${height}" style="border:0;border-radius:16px;overflow:hidden;max-width:100%;" loading="lazy" title="Skinvestments portfolio"></iframe>`;
+}
+
+export function bioShareSnippet(token: string, displayName?: string): string {
+  const url = shareUrl(token);
+  const who = displayName?.trim() || 'my';
+  return `Track ${who} CS2 portfolio live: ${url}`;
+}
+
 const SHARE_SELECT =
-  'id, user_id, token, enabled, created_at, updated_at, revoked_at, show_summary, show_chart, show_categories, show_items, show_history, show_collections';
+  'id, user_id, token, enabled, created_at, updated_at, revoked_at, show_summary, show_chart, show_categories, show_items, show_history, show_collections, embed_layout';
 
 export async function fetchOwnShare(): Promise<PortfolioShareRow | null> {
   const {
@@ -66,6 +100,22 @@ export async function updateShareVisibility(
   });
   if (error) throw error;
   return data as PortfolioShareRow;
+}
+
+export async function updateShareEmbedLayout(
+  layout: PortfolioEmbedLayout,
+): Promise<PortfolioShareRow> {
+  const { data, error } = await supabase.rpc('update_portfolio_share_embed_layout', {
+    p_layout: layout,
+  });
+  if (error) throw error;
+  return data as PortfolioShareRow;
+}
+
+export function embedLayoutFromShare(
+  row: PortfolioShareRow | null | undefined,
+): PortfolioEmbedLayout {
+  return parseEmbedLayout(row?.embed_layout ?? undefined);
 }
 
 export async function fetchPublicPortfolio(

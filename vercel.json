@@ -51,6 +51,11 @@
       "permanent": true
     },
     {
+      "source": "/embed/:token/",
+      "destination": "/embed/:token",
+      "permanent": true
+    },
+    {
       "source": "/blog/",
       "destination": "/blog",
       "permanent": true
@@ -61,6 +66,19 @@
       "permanent": true
     }
   ],
+  "rewrites": [
+    {
+      "source": "/p/:token",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(bot|crawler|spider|slurp|facebookexternalhit|facebot|discordbot|twitterbot|linkedinbot|slackbot|embedly|quora link preview|pinterest|redditbot|whatsapp|telegrambot|vkshare|w3c_validator).*"
+        }
+      ],
+      "destination": "/api/share-og?token=:token"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -68,6 +86,15 @@
         {
           "key": "Content-Security-Policy",
           "value": "upgrade-insecure-requests"
+        }
+      ]
+    },
+    {
+      "source": "/embed/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors *; upgrade-insecure-requests"
         }
       ]
     },

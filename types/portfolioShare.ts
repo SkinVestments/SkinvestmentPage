@@ -7,6 +7,17 @@ export type PortfolioShareVisibility = {
   show_collections: boolean;
 };
 
+export type PortfolioEmbedLayout = 'summary' | 'top' | 'sections';
+
+export const DEFAULT_EMBED_LAYOUT: PortfolioEmbedLayout = 'summary';
+
+export const EMBED_LAYOUTS: PortfolioEmbedLayout[] = ['summary', 'top', 'sections'];
+
+export function parseEmbedLayout(value: string | null | undefined): PortfolioEmbedLayout {
+  if (value === 'top' || value === 'sections' || value === 'summary') return value;
+  return DEFAULT_EMBED_LAYOUT;
+}
+
 export type PortfolioShareRow = {
   id: string;
   user_id: string;
@@ -21,6 +32,7 @@ export type PortfolioShareRow = {
   show_items?: boolean;
   show_history?: boolean;
   show_collections?: boolean;
+  embed_layout?: PortfolioEmbedLayout | string | null;
 };
 
 export type PublicPortfolioItem = {
