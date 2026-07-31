@@ -2,29 +2,68 @@ import React, { useCallback, useEffect, useState } from 'react';
 import {
   BarChart3,
   Check,
+  Code2,
   Copy,
   FolderKanban,
   History,
   LayoutGrid,
   Link2,
   Loader2,
+  MonitorPlay,
   Package,
   PieChart,
   RefreshCw,
   Share2,
 } from 'lucide-react';
-import type { PortfolioShareRow, PortfolioShareVisibility } from '@/types/portfolioShare';
-import { visibilityFromShareRow } from '@/types/portfolioShare';
+import type {
+  PortfolioEmbedLayout,
+  PortfolioShareRow,
+  PortfolioShareVisibility,
+} from '@/types/portfolioShare';
+import { DEFAULT_EMBED_LAYOUT, visibilityFromShareRow } from '@/types/portfolioShare';
 import {
+  bioShareSnippet,
   disableShare,
+  embedIframeSnippet,
+  embedLayoutFromShare,
+  embedUrl,
   enableShare,
   fetchOwnShare,
   regenerateShareToken,
   shareUrl,
+  updateShareEmbedLayout,
   updateShareVisibility,
 } from '@/utils/portfolioShare';
 
 type VisibilityKey = keyof PortfolioShareVisibility;
+type BusyAction = 'enable' | 'disable' | 'regenerate' | 'embed_layout' | VisibilityKey;
+type CopiedKind = 'link' | 'iframe' | 'obs' | 'bio' | null;
+
+const EMBED_LAYOUT_OPTIONS: Array<{
+  key: PortfolioEmbedLayout;
+  label: string;
+  hint: string;
+  heightHint: string;
+}> = [
+  {
+    key: 'summary',
+    label: 'Summary',
+    hint: 'Name, value, item count',
+    heightHint: '180px',
+  },
+  {
+    key: 'top',
+    label: 'Top holdings',
+    hint: 'Summary + top skins',
+    heightHint: '320px',
+  },
+  {
+    key: 'sections',
+    label: 'Match sections',
+    hint: 'Respects your visibility toggles',
+    heightHint: '420px',
+  },
+];
 
 const SECTION_OPTIONS: Array<{
   key: VisibilityKey;
@@ -82,12 +121,11 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
   const [visibility, setVisibility] = useState<PortfolioShareVisibility>(
     visibilityFromShareRow(null),
   );
+  const [embedLayout, setEmbedLayout] = useState<PortfolioEmbedLayout>(DEFAULT_EMBED_LAYOUT);
   const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState<'enable' | 'disable' | 'regenerate' | VisibilityKey | null>(
-    null,
-  );
+  const [busy, setBusy] = useState<BusyAction | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<CopiedKind>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -96,6 +134,7 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
       const row = await fetchOwnShare();
       setShare(row);
       setVisibility(visibilityFromShareRow(row));
+      setEmbedLayout(embedLayoutFromShare(row));
     } catch (err) {
       const message =
         err && typeof err === 'object' && 'message' in err
@@ -114,7 +153,7 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
   const run = async (action: 'enable' | 'disable' | 'regenerate') => {
     setBusy(action);
     setError(null);
-    setCopied(false);
+    setCopied(null);
     try {
       const row =
         action === 'enable'
@@ -124,6 +163,7 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
             : await regenerateShareToken();
       setShare(row);
       setVisibility(visibilityFromShareRow(row));
+      setEmbedLayout(embedLayoutFromShare(row));
     } catch (err) {
       const message =
         err && typeof err === 'object' && 'message' in err
@@ -158,18 +198,47 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
     }
   };
 
+  const setLayout = async (layout: PortfolioEmbedLayout) => {
+    if (!share?.enabled || layout === embedLayout) return;
+    const prev = embedLayout;
+    setBusy('embed_layout');
+    setError(null);
+    setEmbedLayout(layout);
+    try {
+      const row = await updateShareEmbedLayout(layout);
+      setShare(row);
+      setEmbedLayout(embedLayoutFromShare(row));
+    } catch (err) {
+      setEmbedLayout(prev);
+      const message =
+        err && typeof err === 'object' && 'message' in err
+          ? String((err as { message?: string }).message)
+          : 'Could not update embed layout.';
+      setError(message);
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const enabled = Boolean(share?.enabled && share.token);
   const url = enabled && share ? shareUrl(share.token) : '';
+  const obsUrl = enabled && share ? embedUrl(share.token, embedLayout) : '';
+  const iframeCode = enabled && share ? embedIframeSnippet(share.token, embedLayout) : '';
+  const bioText = enabled && share ? bioShareSnippet(share.token) : '';
+
+  const copyText = async (kind: Exclude<CopiedKind, null>, text: string) => {
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(kind);
+      window.setTimeout(() => setCopied(null), 2000);
+    } catch {
+      setError('Could not copy. Copy it manually from the field.');
+    }
+  };
 
   const copyLink = async () => {
-    if (!url) return;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      setError('Could not copy link. Copy it manually from the field.');
-    }
+    await copyText('link', url);
   };
 
   return (
@@ -381,8 +450,8 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
                 onClick={() => void copyLink()}
                 className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-steam-accent text-white text-sm font-bold hover:opacity-90 transition-opacity shrink-0"
               >
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                {copied ? 'Copied' : 'Copy'}
+                {copied === 'link' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied === 'link' ? 'Copied' : 'Copy'}
               </button>
             </div>
             <button
@@ -400,10 +469,136 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
             </button>
           </div>
         )}
+
+        {enabled && share?.token && (
+          <div className="space-y-4 pt-2 border-t border-steam-border/50">
+            <div>
+              <p className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-1">
+                Embed &amp; stream
+              </p>
+              <p className="text-xs text-steam-secondary leading-relaxed">
+                Use the iframe on sites that allow embeds, the OBS URL as a Browser Source, or the
+                bio text for Twitch / Kick descriptions (link only — no iframe there).
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {EMBED_LAYOUT_OPTIONS.map((opt) => {
+                const active = embedLayout === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    disabled={busy !== null}
+                    onClick={() => void setLayout(opt.key)}
+                    className={`text-left rounded-xl border px-3 py-3 transition-colors disabled:opacity-60 ${
+                      active
+                        ? 'border-steam-accent/50 bg-steam-accent/10'
+                        : 'border-steam-border bg-steam-elevated/40 hover:bg-steam-hover'
+                    }`}
+                  >
+                    <span className="block text-sm font-bold text-steam-text">{opt.label}</span>
+                    <span className="block text-[11px] text-steam-tertiary mt-0.5">{opt.hint}</span>
+                    <span className="block text-[10px] text-steam-tertiary mt-1.5 uppercase tracking-wider">
+                      ~{opt.heightHint}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="rounded-xl border border-steam-border bg-steam-bg/60 p-3">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary mb-2">
+                Widget preview
+              </p>
+              <EmbedLayoutSketch layout={embedLayout} />
+            </div>
+
+            <div className="flex flex-col sm:flex-row flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => void copyText('iframe', iframeCode)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-steam-accent text-white text-sm font-bold hover:opacity-90 transition-opacity"
+              >
+                {copied === 'iframe' ? <Check className="w-4 h-4" /> : <Code2 className="w-4 h-4" />}
+                {copied === 'iframe' ? 'Copied iframe' : 'Copy iframe'}
+              </button>
+              <button
+                type="button"
+                onClick={() => void copyText('obs', obsUrl)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-steam-border bg-steam-card text-steam-text text-sm font-bold hover:bg-steam-hover transition-colors"
+              >
+                {copied === 'obs' ? (
+                  <Check className="w-4 h-4 text-steam-accent" />
+                ) : (
+                  <MonitorPlay className="w-4 h-4 text-steam-accent" />
+                )}
+                {copied === 'obs' ? 'Copied OBS URL' : 'Copy OBS URL'}
+              </button>
+              <button
+                type="button"
+                onClick={() => void copyText('bio', bioText)}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-steam-border bg-steam-card text-steam-text text-sm font-bold hover:bg-steam-hover transition-colors"
+              >
+                {copied === 'bio' ? (
+                  <Check className="w-4 h-4 text-steam-accent" />
+                ) : (
+                  <Link2 className="w-4 h-4 text-steam-accent" />
+                )}
+                {copied === 'bio' ? 'Copied bio text' : 'Copy bio text'}
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-steam-tertiary uppercase tracking-widest">
+                OBS / embed URL
+              </label>
+              <input
+                type="text"
+                readOnly
+                value={obsUrl}
+                className="w-full min-w-0 bg-steam-elevated border border-steam-border rounded-xl px-4 py-2.5 text-xs text-steam-text font-mono"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
+
+const EmbedLayoutSketch: React.FC<{ layout: PortfolioEmbedLayout }> = ({ layout }) => (
+  <div className="rounded-lg border border-steam-border/60 bg-steam-card p-2.5 space-y-2 max-w-[220px]">
+    <div className="flex items-center gap-2">
+      <div className="w-7 h-7 rounded-md bg-steam-elevated border border-steam-border" />
+      <div className="space-y-1 flex-1">
+        <div className="h-1.5 w-12 rounded bg-steam-accent/40" />
+        <div className="h-2 w-20 rounded bg-steam-elevated" />
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-1.5">
+      <div className="h-8 rounded-md bg-steam-elevated/80" />
+      <div className="h-8 rounded-md bg-steam-elevated/80" />
+    </div>
+    {layout === 'top' && (
+      <div className="space-y-1">
+        <div className="h-5 rounded bg-steam-elevated/70" />
+        <div className="h-5 rounded bg-steam-elevated/70" />
+        <div className="h-5 rounded bg-steam-elevated/70" />
+      </div>
+    )}
+    {layout === 'sections' && (
+      <>
+        <div className="h-10 rounded-md bg-gradient-to-t from-steam-accent/20 to-transparent border border-steam-border/40" />
+        <div className="grid grid-cols-4 gap-1">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="aspect-square rounded bg-steam-elevated/80" />
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+);
 
 const PreviewBlock: React.FC<{
   active: boolean;

@@ -51,10 +51,12 @@ const PublicPortfolioPage: React.FC = () => {
     title: data
       ? `${data.display_name}'s Portfolio | Skinvestments`
       : 'Shared Portfolio | Skinvestments',
-    description:
-      'View a shared CS2 skin portfolio on Skinvestments. Track inventory value and holdings.',
+    description: data
+      ? `${data.display_name}'s CS2 portfolio: $${Number(data.summary.total_portfolio_value).toFixed(2)} across ${data.summary.item_count} items. View on Skinvestments.`
+      : 'View a shared CS2 skin portfolio on Skinvestments. Track inventory value and holdings.',
     path: token ? sharePath(token) : '/p',
     robots: 'noindex, nofollow',
+    ogImage: data?.avatar && data.avatar.startsWith('http') ? data.avatar : undefined,
   });
 
   useEffect(() => {
@@ -161,7 +163,7 @@ const PublicPortfolioPage: React.FC = () => {
           {error || 'This share link is invalid or has been disabled.'}
         </p>
         <p className="text-steam-tertiary text-sm max-w-md mb-8">
-          Ask the owner to re-enable sharing in Settings → Privacy, or regenerate the link.
+          Ask the owner to re-enable sharing in Settings → App, or regenerate the link.
         </p>
         <Link
           to="/"
