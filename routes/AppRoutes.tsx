@@ -26,6 +26,7 @@ const Cs2SkinTrackerPage = lazy(() => import('@/pages/Cs2SkinTrackerPage'));
 const BlogIndex = lazy(() => import('@/pages/blog/BlogIndex'));
 const BlogPost = lazy(() => import('@/pages/blog/BlogPost'));
 const PublicPortfolio = lazy(() => import('@/pages/share/PublicPortfolio'));
+const EmbedPortfolio = lazy(() => import('@/pages/share/EmbedPortfolio'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 const TermsAndConditionsPage = lazy(() => import('@/pages/TermsAndConditionsPage'));
 const Login = lazy(() => import('@/pages/auth/Login'));
@@ -44,6 +45,9 @@ const Settings = lazy(() => import('@/pages/dashboard/Settings'));
 export const AppRoutes = () => (
   <Suspense fallback={<RouteFallback />}>
     <Routes>
+      {/* Embed widget: no PublicShell chrome (iframe / OBS) */}
+      <Route path="/embed/:token" element={<EmbedPortfolio />} />
+
       <Route element={<PublicShell />}>
         <Route path="/" element={<Home />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />

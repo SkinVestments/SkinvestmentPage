@@ -168,7 +168,7 @@ const Settings = () => {
       </div>
 
       {/* === ZAWARTOŚĆ === */}
-      <div className={activeTab === 'privacy' ? 'max-w-5xl' : 'max-w-3xl'}>
+      <div className={activeTab === 'app' ? 'max-w-5xl' : 'max-w-3xl'}>
         
         {/* ================= ACCOUNT TAB ================= */}
         {activeTab === 'account' && (
@@ -424,6 +424,13 @@ const Settings = () => {
 
               </div>
             </section>
+
+            <section>
+              <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">
+                Portfolio sharing
+              </h2>
+              <PortfolioSharePanel />
+            </section>
           </div>
         )}
 
@@ -479,13 +486,6 @@ const Settings = () => {
                 Cookies &amp; ads
               </h2>
               <CookiePreferencesPanel />
-            </section>
-
-            <section>
-              <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">
-                Portfolio sharing
-              </h2>
-              <PortfolioSharePanel />
             </section>
 
             <section>

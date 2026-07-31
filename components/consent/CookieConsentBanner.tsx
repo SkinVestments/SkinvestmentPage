@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   applyConsent,
   CONSENT_PREFERENCES_REQUEST_EVENT,
@@ -48,10 +48,13 @@ const COPY: Record<Exclude<PrivacyRegion, 'other'>, { body: React.ReactNode; acc
  * - US state regulations
  */
 export const CookieConsentBanner: React.FC = () => {
+  const location = useLocation();
   const [visible, setVisible] = useState(false);
   const [region, setRegion] = useState<Exclude<PrivacyRegion, 'other'>>('eea');
+  const isEmbedRoute = location.pathname.startsWith('/embed/');
 
   useEffect(() => {
+    if (isEmbedRoute) return;
     if (getStoredConsent()) return;
     if (!needsConsentPrompt()) return;
 
@@ -66,9 +69,10 @@ export const CookieConsentBanner: React.FC = () => {
     }, 3500);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [isEmbedRoute]);
 
   useEffect(() => {
+    if (isEmbedRoute) return;
     const showFallbackBanner = () => {
       const r = getPrivacyRegion();
       setRegion(r === 'other' ? 'eea' : r);
@@ -78,9 +82,9 @@ export const CookieConsentBanner: React.FC = () => {
 
     window.addEventListener(CONSENT_PREFERENCES_REQUEST_EVENT, showFallbackBanner);
     return () => window.removeEventListener(CONSENT_PREFERENCES_REQUEST_EVENT, showFallbackBanner);
-  }, []);
+  }, [isEmbedRoute]);
 
-  if (!visible) return null;
+  if (isEmbedRoute || !visible) return null;
 
   const copy = COPY[region];
 
