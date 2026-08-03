@@ -327,6 +327,9 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                       }
                     }}
                     placeholder="Search e.g. 'Fade', 'Graffiti'..."
+                    spellCheck={false}
+                    autoCorrect="off"
+                    autoCapitalize="off"
                     className={`
                       w-full bg-steam-card border rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:border-steam-accent transition-colors
                       ${selectedWeapon ? 'border-blue-500 text-blue-400 font-bold' : 'border-steam-border text-steam-text'}

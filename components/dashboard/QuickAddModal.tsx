@@ -307,14 +307,20 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
       setIsSearching(true);
       setSearchError(null);
       try {
-        const { data, error } = await supabase
-          .from('cs2_items')
-          .select('id, market_hash_name, icon_url, price')
-          .ilike('market_hash_name', `%${searchQuery}%`)
-          .limit(12);
+        const { data, error } = await supabase.rpc('search_cs2_items_flexible', {
+          p_query: searchQuery.trim(),
+          p_limit: 20,
+        });
 
         if (error) throw error;
-        setSearchResults((data as Cs2SearchItem[]) ?? []);
+        setSearchResults(
+          ((data as Cs2SearchItem[] | null) ?? []).map((item) => ({
+            id: String(item.id),
+            market_hash_name: item.market_hash_name,
+            icon_url: item.icon_url,
+            price: Number(item.price ?? 0),
+          })),
+        );
       } catch (err) {
         setSearchResults([]);
         setSearchError(getErrorMessage(err, 'Search failed. Try again.'));
@@ -328,9 +334,16 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   }, [searchQuery, isOpen, isBuy]);
 
   const filteredPortfolio = useMemo(() => {
-    const q = portfolioFilter.trim().toLowerCase();
-    if (!q) return portfolio;
-    return portfolio.filter((p) => p.market_hash_name.toLowerCase().includes(q));
+    const tokens = portfolioFilter
+      .trim()
+      .toLowerCase()
+      .split(/[^a-z0-9]+/i)
+      .filter((t) => t.length >= 2);
+    if (!tokens.length) return portfolio;
+    return portfolio.filter((p) => {
+      const hay = p.market_hash_name.toLowerCase().replace(/[^a-z0-9]+/g, '');
+      return tokens.every((t) => hay.includes(t.replace(/[^a-z0-9]+/g, '')));
+    });
   }, [portfolio, portfolioFilter]);
 
   const visiblePortfolio = showAllPortfolio
@@ -576,6 +589,9 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                     else setPortfolioFilter(e.target.value);
                   }}
                   placeholder={isBuy ? 'Search skins…' : 'Search your portfolio…'}
+                  spellCheck={false}
+                  autoCorrect="off"
+                  autoCapitalize="off"
                   className="w-full bg-steam-bg border border-steam-border text-steam-text rounded-xl py-2.5 pl-10 pr-3 text-sm focus:outline-none focus:border-steam-accent"
                 />
               </div>

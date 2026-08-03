@@ -252,6 +252,9 @@ const Catalog = () => {
               placeholder="Search skin name..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
+              spellCheck={false}
+              autoCorrect="off"
+              autoCapitalize="off"
               className="w-full bg-steam-bg border border-steam-border rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-steam-accent transition-colors"
             />
           </div>
