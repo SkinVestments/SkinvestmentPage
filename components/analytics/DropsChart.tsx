@@ -6,7 +6,16 @@ import { Link } from 'react-router-dom';
 import { Lock, TrendingUp } from 'lucide-react';
 import { MANAGE_SUBSCRIPTION_SETTINGS_PATH } from '@/constants/settingsLinks';
 import { AreaChartSkeleton } from './AnalyticsSkeletons';
-import { chartProfitStroke, chartTooltipItemStyle, chartTooltipStyle } from '@/utils/chartTheme';
+import {
+  chartAxisLineStyle,
+  chartAxisTickStyle,
+  chartProfitStroke,
+  chartTooltipItemStyle,
+  chartTooltipStyle,
+  formatChartXAxis,
+  formatChartYAxis,
+} from '@/utils/chartTheme';
+import { formatCurrency } from '@/utils/display';
 
 interface DropsChartProps {
   hasPremiumAccess: boolean;
@@ -68,19 +77,36 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
         ) : (
           <div className={`w-full min-h-[300px] transition-all duration-500 ${!hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''}`}>
             <ResponsiveContainer width="100%" height={300} minWidth={0}>
-              <AreaChart data={chartData}>
+              <AreaChart data={chartData} margin={{ top: 8, right: 12, left: 8, bottom: 8 }}>
                 <defs>
                   <linearGradient id="colorPortfolio" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-profit)" stopOpacity={0.3}/>
                     <stop offset="95%" stopColor="var(--color-profit)" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="chart_date" hide />
-                <YAxis hide domain={['auto', 'auto']} />
-                <Tooltip 
+                <XAxis
+                  dataKey="chart_date"
+                  tick={chartAxisTickStyle}
+                  axisLine={chartAxisLineStyle}
+                  tickLine={false}
+                  tickFormatter={formatChartXAxis}
+                  minTickGap={28}
+                />
+                <YAxis
+                  tick={chartAxisTickStyle}
+                  axisLine={chartAxisLineStyle}
+                  tickLine={false}
+                  width={52}
+                  tickFormatter={formatChartYAxis}
+                  domain={['auto', 'auto']}
+                />
+                <Tooltip
+                  formatter={(value: number) => [formatCurrency(value), 'Value']}
+                  labelFormatter={(label) => `Date: ${formatChartXAxis(String(label))}`}
                   contentStyle={chartTooltipStyle}
                   itemStyle={chartTooltipItemStyle}
                   labelStyle={{ color: 'var(--color-text-secondary)', marginBottom: '4px' }}
+                  cursor={{ stroke: 'var(--color-card-border)', strokeWidth: 1 }}
                 />
                 <Area type="monotone" dataKey="portfolio_value" name="Value" stroke={chartProfitStroke} strokeWidth={3} fillOpacity={1} fill="url(#colorPortfolio)" />
               </AreaChart>

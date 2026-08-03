@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -11,6 +11,8 @@ import {
   Package,
   Loader2,
   Lock,
+  CheckCircle2,
+  X,
 } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { ItemImage } from '@/components/ui/ItemImage';
@@ -27,6 +29,7 @@ import {
   normalizeRarityTier,
 } from '@/utils/inventoryFilters';
 import { AdSlot } from '@/components/ads/AdSlot';
+import { QuickAddModal } from '@/components/dashboard/QuickAddModal';
 import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 
 // --- TYPY ---
@@ -50,6 +53,7 @@ interface InventoryItem {
 const Inventory = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const adsContentReady = usePublisherContentReady();
   
   const [items, setItems] = useState<InventoryItem[]>([]);
@@ -60,6 +64,22 @@ const Inventory = () => {
   const [sortBy, setSortBy] = useState<'value_desc' | 'value_asc' | 'name' | 'recent'>('value_desc');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<InventoryFilterState>(DEFAULT_INVENTORY_FILTERS);
+  const [isQuickAddModalOpen, setIsQuickAddModalOpen] = useState(false);
+  const [flashMessage, setFlashMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const state = location.state as { flash?: { type?: string; message?: string } } | null;
+    const message = state?.flash?.message?.trim();
+    if (!message) return;
+    setFlashMessage(message);
+    navigate(location.pathname, { replace: true, state: {} });
+  }, [location.state, location.pathname, navigate]);
+
+  useEffect(() => {
+    if (!flashMessage) return;
+    const timer = window.setTimeout(() => setFlashMessage(null), 4500);
+    return () => window.clearTimeout(timer);
+  }, [flashMessage]);
 
   const fetchInventory = async () => {
     try {
@@ -151,6 +171,25 @@ const Inventory = () => {
 
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
+      {flashMessage && (
+        <div
+          role="status"
+          className="mb-6 flex items-start gap-3 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400"
+        >
+          <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+          <p className="flex-1 font-medium text-steam-text">
+            <span className="text-green-400 font-bold">{flashMessage}</span>
+          </p>
+          <button
+            type="button"
+            onClick={() => setFlashMessage(null)}
+            className="p-1 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover"
+            aria-label="Dismiss"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
       
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
@@ -168,8 +207,15 @@ const Inventory = () => {
               <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total Value</p>
               <p className="text-xl font-bold text-green-400">{formatCurrency(totalValue)}</p>
            </div>
-           <button className="bg-steam-accent hover:opacity-90 text-white p-3 rounded-lg shadow-lg theme-shadow-accent transition-all ml-2">
+           <button
+              type="button"
+              onClick={() => setIsQuickAddModalOpen(true)}
+              title="Quick Add"
+              aria-label="Quick Add"
+              className="bg-steam-accent hover:opacity-90 text-white p-3 rounded-lg shadow-lg theme-shadow-accent transition-all ml-2 flex items-center gap-2"
+            >
               <Plus className="w-5 h-5" />
+              <span className="hidden sm:inline text-sm font-bold pr-1">Quick Add</span>
            </button>
         </div>
       </div>
@@ -183,6 +229,9 @@ const Inventory = () => {
             placeholder="Search your inventory..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            spellCheck={false}
+            autoCorrect="off"
+            autoCapitalize="off"
             className="w-full bg-steam-card border border-steam-border rounded-xl py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:border-steam-accent transition-colors"
           />
         </div>
@@ -429,6 +478,14 @@ const Inventory = () => {
           )}
         </>
       )}
+
+      <QuickAddModal
+        isOpen={isQuickAddModalOpen}
+        onClose={() => setIsQuickAddModalOpen(false)}
+        onSuccess={() => {
+          void fetchInventory();
+        }}
+      />
     </div>
   );
 };
