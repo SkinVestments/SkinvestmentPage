@@ -78,7 +78,7 @@ const ItemDetail = () => {
     try {
       let txQuery = supabase
         .from('transactions')
-        .select('id, type, quantity, price, transaction_date')
+        .select('id, type, quantity, price, transaction_date, is_investment, collection_id')
         .eq('user_id', user.id)
         .eq('item_id', itemId)
         .in('type', ['BUY', 'DROP'])
@@ -100,6 +100,9 @@ const ItemDetail = () => {
             quantity: Number(row.quantity ?? 0),
             unitPrice: Number(row.price ?? 0),
             date: String(row.transaction_date ?? ''),
+            isInvestment: Boolean(row.is_investment ?? false),
+            collectionId: row.collection_id ? String(row.collection_id) : '',
+            editable: true,
           })),
         );
         return;
@@ -107,7 +110,7 @@ const ItemDetail = () => {
 
       let holdQuery = supabase
         .from('portfolio_items')
-        .select('id, quantity, buy_price, acquired_at')
+        .select('id, quantity, buy_price, acquired_at, folder_id')
         .eq('user_id', user.id)
         .eq('item_id', itemId)
         .gt('quantity', 0)
@@ -128,6 +131,9 @@ const ItemDetail = () => {
           quantity: Number(row.quantity ?? 0),
           unitPrice: Number(row.buy_price ?? 0),
           date: String(row.acquired_at ?? ''),
+          isInvestment: false,
+          collectionId: row.folder_id ? String(row.folder_id) : filterCollectionId ?? '',
+          editable: false,
         })),
       );
     } catch (err) {
@@ -453,6 +459,25 @@ const ItemDetail = () => {
           batches={batches}
           loading={batchesLoading}
           scopeLabel={filterCollectionId ? 'this collection' : 'all collections'}
+          itemId={detail.item_id}
+          userId={user?.id ?? ''}
+          marketPrice={unitMarket}
+          ownedQuantity={detail.owned_quantity}
+          onChanged={() => {
+            void fetchBatches();
+            void fetchDetail();
+          }}
+          onSold={() => {
+            navigate('/inventory', {
+              replace: true,
+              state: {
+                flash: {
+                  type: 'success',
+                  message: 'Sell successful.',
+                },
+              },
+            });
+          }}
         />
       </div>
 
