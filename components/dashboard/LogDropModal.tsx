@@ -4,6 +4,9 @@ import { useAuth } from '../../context/AuthContext';
 import { X, Search, CheckCircle, Folder, TrendingUp, Loader2, Box, AlertCircle } from 'lucide-react';
 import { ItemImage } from '@/components/ui/ItemImage';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { getCollectionItemLimit } from '@/constants/subscriptionPlans';
+import { countCollectionItems } from '@/utils/steamInventory';
 
 const getErrorMessage = (err: unknown, fallback: string): string => {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -37,6 +40,7 @@ interface LogDropModalProps {
 
 export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) => {
   const { user } = useAuth();
+  const { planId } = useSubscriptionPlan();
 
   const [casePool, setCasePool] = useState<DropItem[]>([]);
   const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
@@ -184,6 +188,17 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
     };
 
     try {
+      const limit = getCollectionItemLimit(planId);
+      if (limit != null) {
+        const existing = await countCollectionItems(user.id, selectedCollectionId || null);
+        // Case + weapon = 2 units
+        if (existing + 2 > limit) {
+          throw new Error(
+            `Collection item limit reached for your plan (${limit}). Upgrade or choose another collection.`,
+          );
+        }
+      }
+
       const { data, error } = await supabase.rpc('add_transactions_bulk', {
         p_user_id: user.id,
         p_transactions: [

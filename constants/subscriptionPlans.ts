@@ -18,6 +18,34 @@ export const PLAN_PRICING: Record<
   pro_max: { monthly: 38.99, yearlyPerMonth: 32.92, lifetime: 1749.99 },
 };
 
+/** Max user collections by plan. null = unlimited (Pro Max). */
+export const COLLECTION_COUNT_LIMITS: Record<PlanId, number | null> = {
+  free: 5,
+  pro: 15,
+  pro_max: null,
+};
+
+/** Max total item quantity per collection (matches plan copy). null = unlimited. */
+export const COLLECTION_ITEM_LIMITS: Record<PlanId, number | null> = {
+  free: 1000,
+  pro: 10000,
+  pro_max: null,
+};
+
+export function getCollectionCountLimit(planId: PlanId): number | null {
+  return COLLECTION_COUNT_LIMITS[planId] ?? 5;
+}
+
+export function canCreateMoreCollections(planId: PlanId, currentCount: number): boolean {
+  const limit = getCollectionCountLimit(planId);
+  if (limit == null) return true;
+  return currentCount < limit;
+}
+
+export function getCollectionItemLimit(planId: PlanId): number | null {
+  return COLLECTION_ITEM_LIMITS[planId] ?? 1000;
+}
+
 export interface SubscriptionPlan {
   id: PlanId;
   name: string;

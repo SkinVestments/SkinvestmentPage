@@ -339,7 +339,7 @@ const Inventory = () => {
                   >
                     
                     {/* Badges */}
-                    <div className="absolute top-2 right-2 z-20 flex flex-col items-end gap-1">
+                    <div className="absolute top-2 right-2 z-20 flex flex-row items-center gap-1">
                       {item.quantity > 1 && (
                         <div className="bg-steam-bg/90 border border-steam-border text-steam-text text-[10px] font-bold px-2 py-1 rounded-md">
                           x{item.quantity}
