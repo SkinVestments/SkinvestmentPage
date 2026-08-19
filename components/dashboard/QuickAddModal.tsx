@@ -20,6 +20,9 @@ import {
 import { ItemImage } from '@/components/ui/ItemImage';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { formatCurrency } from '@/utils/display';
+import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { getCollectionItemLimit } from '@/constants/subscriptionPlans';
+import { countCollectionItems } from '@/utils/steamInventory';
 
 interface QuickAddModalProps {
   isOpen: boolean;
@@ -80,6 +83,7 @@ const newLineKey = () =>
 
 export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { user } = useAuth();
+  const { planId } = useSubscriptionPlan();
   const datePickerRef = useRef<HTMLDivElement | null>(null);
   const datePopoverRef = useRef<HTMLDivElement | null>(null);
 
@@ -483,6 +487,19 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
     setSubmitError(null);
 
     try {
+      if (type === 'BUY' || type === 'DROP') {
+        const limit = getCollectionItemLimit(planId);
+        if (limit != null) {
+          const existing = await countCollectionItems(user.id, collectionId || null);
+          const incoming = cart.reduce((sum, line) => sum + line.quantity, 0);
+          if (existing + incoming > limit) {
+            throw new Error(
+              `Collection item limit reached for your plan (${limit}). Upgrade or pick another collection.`,
+            );
+          }
+        }
+      }
+
       const { data, error } = await supabase.rpc('add_transactions_bulk', {
         p_user_id: user.id,
         p_transactions: transactions,

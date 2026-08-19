@@ -15,6 +15,11 @@ import { PortfolioShareModal } from '@/components/dashboard/PortfolioShareModal'
 import { ItemImage } from '@/components/ui/ItemImage';
 
 import { useNavigate } from 'react-router-dom';
+import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import {
+  canCreateMoreCollections,
+  getCollectionCountLimit,
+} from '@/constants/subscriptionPlans';
 import {
   chartAxisLineStyle,
   chartAxisTickStyle,
@@ -61,6 +66,7 @@ const ITEMS_PER_PAGE = 5;
 
 const Panel = () => {
   const { user } = useAuth();
+  const { planId } = useSubscriptionPlan();
   const navigate = useNavigate();
   const adsContentReady = usePublisherContentReady();
 
@@ -78,6 +84,8 @@ const Panel = () => {
   // --- STANY DLA KOLEKCJI ---
   const [collections, setCollections] = useState<any[]>([]);
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
+  const collectionLimit = getCollectionCountLimit(planId);
+  const canCreateCollection = canCreateMoreCollections(planId, collections.length);
   const [wishlistItems, setWishlistItems] = useState<WishlistWidgetItem[]>([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
 
@@ -550,19 +558,16 @@ const Panel = () => {
             )}
           </div>
 
-          {/* WEEKLY DROP */}
+          {/* WEEKLY DROP + CHALLENGE */}
           <div className="bg-steam-card rounded-2xl border border-steam-border/50 shadow-xl relative overflow-hidden group p-6 flex flex-col justify-between min-h-[220px]">
-            {/* Delikatny gradient w tle */}
             <div className="absolute inset-0 bg-gradient-to-br from-steam-accent/10 via-transparent to-transparent opacity-50 z-0"></div>
             
-            {/* Skrzynka w tle (przesunięta do góry i w prawo) */}
             <img 
               src="/images/case.webp" 
               className="absolute -right-2 top-3 w-40 sm:w-44 opacity-90 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:scale-105 z-0"               
               alt="Case Reward" 
             />
 
-            {/* Górna część: Teksty */}
             <div className="relative z-10 flex-1">
               <div className="flex items-center gap-2 text-steam-accent mb-4">
                 <div className="p-1.5 bg-blue-500/20 rounded-lg">
@@ -573,18 +578,24 @@ const Panel = () => {
               
               <h3 className="text-2xl font-bold text-steam-text mb-2 tracking-tight">Resets in {resetTime}</h3>
               <p className="text-steam-secondary text-xs leading-relaxed max-w-[65%]">
-                Earn enough XP to claim your weekly rewards.
+                Log this week&apos;s drop and keep your 52-week challenge alive.
               </p>
             </div>
             
-            {/* Dolna część: Przycisk (zawsze na wierzchu) */}
-            <div className="relative z-10 mt-6">
+            <div className="relative z-10 mt-6 flex flex-col gap-2">
               <button 
                 className="w-full bg-steam-accent hover:opacity-90 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg theme-shadow-accent" 
                 onClick={() => setIsDropModalOpen(true)}
               >
                 <CheckCircle className="w-4 h-4" /> 
                 <span>Log Drop</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/challenge')}
+                className="w-full text-steam-accent hover:text-steam-text text-xs font-bold uppercase tracking-wider py-1.5 transition-colors"
+              >
+                Drop Challenge →
               </button>
             </div>
           </div>
@@ -607,10 +618,19 @@ const Panel = () => {
         <div className="flex justify-between items-center mb-4 px-1">
           <div className="flex items-center gap-2">
             <h3 className="font-bold text-lg text-steam-text">Collections</h3>
-            <span className="bg-steam-elevated text-steam-secondary text-xs font-bold px-2 py-0.5 rounded-full">{collections.length}</span>
+            <span className="bg-steam-elevated text-steam-secondary text-xs font-bold px-2 py-0.5 rounded-full">
+              {collectionLimit == null
+                ? collections.length
+                : `${collections.length} / ${collectionLimit}`}
+            </span>
           </div>
           <button 
             onClick={() => setIsCollectionModalOpen(true)}
+            title={
+              canCreateCollection
+                ? 'Create collection'
+                : `Limit reached (${collectionLimit}). Upgrade to create more.`
+            }
             className="text-steam-accent text-xs font-bold flex items-center gap-1 hover:text-steam-text transition-colors uppercase tracking-wider bg-steam-accent/10 px-3 py-1.5 rounded-lg border border-steam-accent/20"
           >
             <Plus className="w-3 h-3" /> New
@@ -773,6 +793,7 @@ const Panel = () => {
       <CreateCollectionModal 
         isOpen={isCollectionModalOpen}
         onClose={() => setIsCollectionModalOpen(false)}
+        currentCount={collections.length}
         onSuccess={() => {
           fetchCollections();
         }}

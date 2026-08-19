@@ -15,6 +15,15 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: '0.0.0.0',
+      proxy: {
+        // Local Steam inventory proxy — Steam blocks Supabase Edge IPs (401).
+        '/steam-community': {
+          target: 'https://steamcommunity.com',
+          changeOrigin: true,
+          secure: true,
+          rewrite: (p) => p.replace(/^\/steam-community/, ''),
+        },
+      },
     },
     plugins: [
       react(),
