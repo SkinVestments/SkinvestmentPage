@@ -4,20 +4,22 @@ import { useAuth } from '../../context/AuthContext';
 import { 
   User, Settings as SettingsIcon, Shield, LogOut, 
   Moon, Sun, DollarSign, BarChart2, ChevronRight, ArrowLeft,
-  CreditCard, Link as LinkIcon, Bell, ShoppingCart, Loader2, CheckCircle2, AlertCircle
+  CreditCard, Bell, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
 import { ChangePasswordModal } from '@/components/dashboard/ChangePasswordModal';
+import { SteamAccountsPanel } from '@/components/dashboard/SteamAccountsPanel';
 import { userHasEmailPassword } from '@/utils/authProviders';
 import { BillingCycle, PlanId } from '@/constants/subscriptionPlans';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
 import { useOwnProfile } from '@/hooks/useOwnProfile';
-import { getProfileDisplayName, getSteamProfileLabel } from '@/utils/profile';
+import { getProfileDisplayName } from '@/utils/profile';
 import { ExportDataPanel } from '@/components/dashboard/ExportDataPanel';
 import { PortfolioSharePanel } from '@/components/dashboard/PortfolioSharePanel';
 import { CookiePreferencesPanel } from '@/components/consent/CookiePreferencesPanel';
+import { trackSteamEvent } from '@/utils/steamAccounts';
 
 const Settings = () => {
   const { user, signOut } = useAuth();
@@ -26,6 +28,10 @@ const Settings = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState<'account' | 'app' | 'privacy'>('account');
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const [steamFlash, setSteamFlash] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     if (searchParams.get('manageSubscription') !== '1') return;
@@ -35,6 +41,41 @@ const Settings = () => {
     next.delete('manageSubscription');
     setSearchParams(next, { replace: true });
   }, [searchParams, setSearchParams]);
+
+  // Steam OpenID web callback: ?steam_link=success|error&steam_id=...&message=...
+  useEffect(() => {
+    const steamLink = searchParams.get('steam_link');
+    if (!steamLink) return;
+
+    setActiveTab('account');
+    if (steamLink === 'success') {
+      const steamId = searchParams.get('steam_id');
+      setSteamFlash({
+        type: 'success',
+        message: steamId
+          ? `Steam account linked (${steamId}).`
+          : 'Steam account linked successfully.',
+      });
+      trackSteamEvent('steam_account_linked', { steam_id: steamId ?? undefined });
+    } else {
+      const message = searchParams.get('message') || 'Steam linking failed.';
+      setSteamFlash({ type: 'error', message });
+    }
+
+    const next = new URLSearchParams(searchParams);
+    next.delete('steam_link');
+    next.delete('steam_id');
+    next.delete('message');
+    next.delete('tab');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (searchParams.get('tab') === 'account') {
+      setActiveTab('account');
+    }
+  }, [searchParams]);
+
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const {
     planId: currentPlanId,
@@ -97,7 +138,6 @@ const Settings = () => {
   const displayInitial = (nickname.trim() || getProfileDisplayName(profile, user?.email))
     .charAt(0)
     .toUpperCase();
-  const steamStatus = getSteamProfileLabel(profile?.steam_profile_url);
 
   const handleSignOut = async () => {
     await signOut();
@@ -287,23 +327,6 @@ const Settings = () => {
                   </div>
                 </button>
 
-                {/* Steam Account - status from profile; edit URL in Profile section above */}
-                <div className="flex items-center justify-between p-5">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
-                      <LinkIcon className="w-5 h-5" />
-                    </div>
-                    <span className="font-bold text-steam-text text-base">Steam Account</span>
-                  </div>
-                  <span
-                    className={`text-sm font-bold ${
-                      profile?.steam_profile_url ? 'text-steam-accent' : 'text-steam-tertiary'
-                    }`}
-                  >
-                    {profileLoading ? '…' : steamStatus}
-                  </span>
-                </div>
-
                 {/* Change Password */}
                 <button
                   type="button"
@@ -326,6 +349,16 @@ const Settings = () => {
                   <ChevronRight className="w-5 h-5 text-steam-tertiary group-hover:text-steam-secondary" />
                 </button>
 
+              </div>
+            </section>
+
+            {/* Steam Accounts — real steam_connections link + inventory import */}
+            <section className="mt-8">
+              <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">
+                Steam Sync
+              </h2>
+              <div className="bg-steam-card border border-steam-border rounded-2xl shadow-xl p-5">
+                <SteamAccountsPanel flash={steamFlash} />
               </div>
             </section>
 

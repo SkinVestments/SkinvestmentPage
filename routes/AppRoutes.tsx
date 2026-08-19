@@ -41,6 +41,7 @@ const Analytics = lazy(() => import('@/pages/dashboard/Analytics'));
 const CollectionDetails = lazy(() => import('@/pages/dashboard/CollectionDetails'));
 const ItemDetail = lazy(() => import('@/pages/dashboard/ItemDetail'));
 const Settings = lazy(() => import('@/pages/dashboard/Settings'));
+const WeeklyDropChallenge = lazy(() => import('@/pages/dashboard/WeeklyDropChallenge'));
 
 export const AppRoutes = () => (
   <Suspense fallback={<RouteFallback />}>
@@ -83,6 +84,7 @@ export const AppRoutes = () => (
         <Route path="/collection/:id" element={<CollectionDetails />} />
         <Route path="/item/:itemId" element={<ItemDetail />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/challenge" element={<WeeklyDropChallenge />} />
       </Route>
     </Routes>
   </Suspense>

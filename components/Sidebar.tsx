@@ -9,6 +9,7 @@ import {
   BarChart2,
   Library,
   Heart,
+  Flame,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -20,6 +21,7 @@ const navItems: { icon: LucideIcon; label: string; path: string }[] = [
   { icon: Package, label: 'Inventory', path: '/inventory' },
   { icon: Library, label: 'Catalog', path: '/catalog' },
   { icon: Heart, label: 'Wishlist', path: '/wishlist' },
+  { icon: Flame, label: 'Drop Challenge', path: '/challenge' },
   { icon: BarChart2, label: 'Analytics', path: '/analytics' },
   { icon: History, label: 'History', path: '/history' },
   { icon: Settings, label: 'Settings', path: '/settings' },
