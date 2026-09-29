@@ -40,6 +40,9 @@ import {
   formatChartXAxis,
   formatChartYAxis,
 } from '@/utils/chartTheme';
+import { MarketComparePanel } from '@/components/inventory/MarketComparePanel';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { useMarketPrices } from '@/hooks/useMarketPrices';
 
 const formatDateTime = (iso: string | null) => {
   if (!iso) return '-';
@@ -70,7 +73,15 @@ const ItemDetail = () => {
   const [chartLoading, setChartLoading] = useState(false);
   const [chartPeriod, setChartPeriod] = useState<(typeof PERIOD_OPTIONS)[number]>('1M');
   const [chartData, setChartData] = useState<Array<{ chart_date: string; price: number }>>([]);
+  const [chartError, setChartError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const marketItemIds = itemId ? [itemId] : [];
+  const {
+    prices: marketPrices,
+    loading: marketLoading,
+    error: marketError,
+  } = useMarketPrices(marketItemIds);
 
   const fetchBatches = useCallback(async () => {
     if (!user || !itemId) return;
@@ -177,6 +188,7 @@ const ItemDetail = () => {
   const fetchItemChart = useCallback(async () => {
     if (!itemId) return;
     setChartLoading(true);
+    setChartError(null);
     try {
       const attempts: Array<Record<string, string>> = [
         { input_item_id: itemId, period_text: chartPeriod },
@@ -228,6 +240,7 @@ const ItemDetail = () => {
     } catch (err) {
       console.error('Error fetching item chart:', err);
       setChartData([]);
+      setChartError('Could not load price chart.');
     } finally {
       setChartLoading(false);
     }
@@ -262,7 +275,7 @@ const ItemDetail = () => {
         <button
           type="button"
           onClick={() => navigate(backTo)}
-          className="px-4 py-2 rounded-xl bg-steam-accent text-on-accent text-sm font-bold"
+          className="btn-dashboard-primary"
         >
           Go back
         </button>
@@ -287,7 +300,7 @@ const ItemDetail = () => {
             <ArrowLeft className="w-5 h-5 text-steam-secondary" />
           </button>
           <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-steam-text mb-1 line-clamp-2">
+            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1 line-clamp-2">
               {detail.market_hash_name}
             </h1>
             <p className="text-steam-secondary text-sm">Portfolio item overview</p>
@@ -296,165 +309,185 @@ const ItemDetail = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-1 bg-steam-card rounded-2xl border border-steam-border shadow-lg p-6 flex flex-col items-center">
-          <div className="w-full max-w-[220px] aspect-[4/3] theme-item-preview rounded-xl border border-steam-border flex items-center justify-center p-4 mb-4">
-            <ItemImage
-              src={detail.icon_url}
-              alt={detail.market_hash_name}
-              className="max-w-full max-h-full object-contain drop-shadow-lg"
-              wrapperClassName="w-full h-full min-h-[100px]"
-            />
-          </div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-steam-tertiary mb-1">
-            Market price
-          </p>
-          <p className="text-2xl font-bold font-mono text-steam-text">{formatCurrency(unitMarket)}</p>
-          {detail.last_price_update && (
-            <p className="text-xs text-steam-tertiary mt-2">
-              Updated {formatDateTime(detail.last_price_update)}
+        <div className="lg:col-span-1 flex flex-col gap-4">
+          <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg p-6 flex flex-col items-center">
+            <div className="w-full max-w-[220px] aspect-[4/3] theme-item-preview rounded-xl border border-steam-border flex items-center justify-center p-4 mb-4">
+              <ItemImage
+                src={detail.icon_url}
+                alt={detail.market_hash_name}
+                className="max-w-full max-h-full object-contain drop-shadow-lg"
+                wrapperClassName="w-full h-full min-h-[100px]"
+              />
+            </div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-steam-tertiary mb-1">
+              Market price
             </p>
-          )}
+            <p className="text-2xl font-bold font-mono text-steam-text">
+              {formatCurrency(unitMarket)}
+            </p>
+            {detail.last_price_update && (
+              <p className="text-xs text-steam-tertiary mt-2">
+                Updated {formatDateTime(detail.last_price_update)}
+              </p>
+            )}
+          </div>
+
+          <MarketComparePanel
+            marketHashName={detail.market_hash_name}
+            steamFallbackPrice={unitMarket}
+            market={itemId ? marketPrices.get(itemId) : undefined}
+            loading={marketLoading}
+            error={marketError}
+          />
         </div>
 
-        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
-            <div className="flex items-center gap-2 text-steam-tertiary mb-2">
-              <Package className="w-4 h-4" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Owned</span>
+        <div className="lg:col-span-2 flex flex-col gap-4 min-h-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
+              <div className="flex items-center gap-2 text-steam-tertiary mb-2">
+                <Package className="w-4 h-4" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Owned</span>
+              </div>
+              <p className="text-2xl font-bold tabular-nums">{detail.owned_quantity}</p>
+              <p className="text-xs text-steam-secondary mt-1">
+                Avg buy {formatCurrency(detail.avg_buy_price)}
+              </p>
             </div>
-            <p className="text-2xl font-bold tabular-nums">{detail.owned_quantity}</p>
-            <p className="text-xs text-steam-secondary mt-1">
-              Avg buy {formatCurrency(detail.avg_buy_price)}
-            </p>
+
+            <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
+              <div className="flex items-center gap-2 text-steam-tertiary mb-2">
+                <Wallet className="w-4 h-4" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Current value</span>
+              </div>
+              <p className="text-2xl font-bold font-mono tabular-nums">{formatCurrency(detail.current_value)}</p>
+              <p className="text-xs text-steam-secondary mt-1">
+                Invested {formatCurrency(detail.total_invested)}
+              </p>
+            </div>
+
+            <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
+              <div className="flex items-center gap-2 text-steam-tertiary mb-2">
+                <DollarSign className="w-4 h-4" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Unrealized P/L</span>
+              </div>
+              <p
+                className={`text-2xl font-bold font-mono tabular-nums ${
+                  isPositiveUnrealized ? 'text-steam-profit' : 'text-steam-loss'
+                }`}
+              >
+                {isPositiveUnrealized ? '+' : ''}
+                {formatCurrency(detail.unrealized_profit)}
+              </p>
+              <div
+                className={`flex items-center gap-1 text-sm font-bold mt-1 ${
+                  isPositiveRoi ? 'text-steam-profit' : 'text-steam-loss'
+                }`}
+              >
+                {isPositiveRoi ? (
+                  <TrendingUp className="w-4 h-4" />
+                ) : (
+                  <TrendingDown className="w-4 h-4" />
+                )}
+                {isPositiveRoi ? '+' : ''}
+                {detail.roi_percentage.toFixed(2)}% ROI
+              </div>
+            </div>
+
+            <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
+              <div className="flex items-center gap-2 text-steam-tertiary mb-2">
+                <History className="w-4 h-4" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Sell history</span>
+              </div>
+              <p className="text-2xl font-bold tabular-nums">{detail.history_sold_quantity} sold</p>
+              <p
+                className={`text-sm font-bold font-mono mt-1 tabular-nums ${
+                  detail.history_realized_profit >= 0 ? 'text-steam-profit' : 'text-steam-loss'
+                }`}
+              >
+                {detail.history_realized_profit >= 0 ? '+' : ''}
+                {formatCurrency(detail.history_realized_profit)} realized
+              </p>
+            </div>
           </div>
 
-          <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
-            <div className="flex items-center gap-2 text-steam-tertiary mb-2">
-              <Wallet className="w-4 h-4" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Current value</span>
+          <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg overflow-hidden flex flex-col flex-1 min-h-[280px]">
+            <div className="p-4 border-b border-steam-border bg-steam-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">
+                Price chart
+              </h2>
+              <SegmentedControl
+                aria-label="Chart period"
+                value={chartPeriod}
+                onChange={setChartPeriod}
+                options={PERIOD_OPTIONS.map((period) => ({
+                  value: period,
+                  label: period,
+                }))}
+              />
             </div>
-            <p className="text-2xl font-bold font-mono tabular-nums">{formatCurrency(detail.current_value)}</p>
-            <p className="text-xs text-steam-secondary mt-1">
-              Invested {formatCurrency(detail.total_invested)}
-            </p>
-          </div>
 
-          <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
-            <div className="flex items-center gap-2 text-steam-tertiary mb-2">
-              <DollarSign className="w-4 h-4" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Unrealized P/L</span>
-            </div>
-            <p
-              className={`text-2xl font-bold font-mono tabular-nums ${
-                isPositiveUnrealized ? 'text-steam-profit' : 'text-steam-loss'
-              }`}
-            >
-              {isPositiveUnrealized ? '+' : ''}
-              {formatCurrency(detail.unrealized_profit)}
-            </p>
-            <div
-              className={`flex items-center gap-1 text-sm font-bold mt-1 ${
-                isPositiveRoi ? 'text-steam-profit' : 'text-steam-loss'
-              }`}
-            >
-              {isPositiveRoi ? (
-                <TrendingUp className="w-4 h-4" />
+            <div className="p-3 sm:p-4 relative flex-1 min-h-[220px]">
+              {chartLoading ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Loader2 className="w-7 h-7 text-steam-accent animate-spin" />
+                </div>
+              ) : chartError ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center px-4">
+                  <p className="text-sm text-steam-secondary">{chartError}</p>
+                  <button
+                    type="button"
+                    onClick={() => void fetchItemChart()}
+                    className="text-xs font-bold text-steam-accent hover:underline"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : chartData.length === 0 ? (
+                <div className="absolute inset-0 flex items-center justify-center text-steam-tertiary text-sm">
+                  No chart data for selected period.
+                </div>
               ) : (
-                <TrendingDown className="w-4 h-4" />
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={chartData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
+                    <CartesianGrid stroke="var(--color-card-border)" strokeOpacity={0.25} vertical={false} />
+                    <XAxis
+                      dataKey="chart_date"
+                      tick={chartAxisTickStyle}
+                      axisLine={chartAxisLineStyle}
+                      tickLine={false}
+                      tickFormatter={formatChartXAxis}
+                      minTickGap={24}
+                    />
+                    <YAxis
+                      tick={chartAxisTickStyle}
+                      axisLine={chartAxisLineStyle}
+                      tickLine={false}
+                      tickFormatter={formatChartYAxis}
+                      width={52}
+                    />
+                    <Tooltip
+                      formatter={(value: number) => [formatCurrency(Number(value ?? 0)), 'Price']}
+                      labelFormatter={(label) => `Date: ${formatChartXAxis(String(label))}`}
+                      contentStyle={chartTooltipStyle}
+                      itemStyle={chartTooltipItemStyle}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="price"
+                      stroke="var(--color-accent)"
+                      strokeWidth={2.5}
+                      dot={false}
+                      activeDot={{ r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
               )}
-              {isPositiveRoi ? '+' : ''}
-              {detail.roi_percentage.toFixed(2)}% ROI
             </div>
-          </div>
-
-          <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
-            <div className="flex items-center gap-2 text-steam-tertiary mb-2">
-              <History className="w-4 h-4" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Sell history</span>
-            </div>
-            <p className="text-2xl font-bold tabular-nums">{detail.history_sold_quantity} sold</p>
-            <p
-              className={`text-sm font-bold font-mono mt-1 tabular-nums ${
-                detail.history_realized_profit >= 0 ? 'text-steam-profit' : 'text-steam-loss'
-              }`}
-            >
-              {detail.history_realized_profit >= 0 ? '+' : ''}
-              {formatCurrency(detail.history_realized_profit)} realized
-            </p>
           </div>
         </div>
       </div>
 
       <div className="mb-8">
-        <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg overflow-hidden mb-6">
-          <div className="p-5 border-b border-steam-border bg-steam-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">Price chart</h2>
-            <div className="flex bg-steam-bg rounded-lg p-1 border border-steam-border/50">
-              {PERIOD_OPTIONS.map((period) => (
-                <button
-                  key={period}
-                  type="button"
-                  onClick={() => setChartPeriod(period)}
-                  className={`px-2.5 py-1.5 text-xs font-bold rounded transition-colors ${
-                    chartPeriod === period
-                      ? 'bg-steam-accent text-white shadow-md'
-                      : 'text-steam-tertiary hover:text-steam-text'
-                  }`}
-                >
-                  {period}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-4 sm:p-5 h-[300px] relative">
-            {chartLoading ? (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Loader2 className="w-7 h-7 text-steam-accent animate-spin" />
-              </div>
-            ) : chartData.length === 0 ? (
-              <div className="absolute inset-0 flex items-center justify-center text-steam-tertiary text-sm">
-                No chart data for selected period.
-              </div>
-            ) : null}
-
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 8, right: 10, left: 8, bottom: 8 }}>
-                <CartesianGrid stroke="var(--color-card-border)" strokeOpacity={0.25} vertical={false} />
-                <XAxis
-                  dataKey="chart_date"
-                  tick={chartAxisTickStyle}
-                  axisLine={chartAxisLineStyle}
-                  tickLine={false}
-                  tickFormatter={formatChartXAxis}
-                  minTickGap={24}
-                />
-                <YAxis
-                  tick={chartAxisTickStyle}
-                  axisLine={chartAxisLineStyle}
-                  tickLine={false}
-                  tickFormatter={formatChartYAxis}
-                  width={52}
-                />
-                <Tooltip
-                  formatter={(value: number) => [formatCurrency(Number(value ?? 0)), 'Price']}
-                  labelFormatter={(label) => `Date: ${formatChartXAxis(String(label))}`}
-                  contentStyle={chartTooltipStyle}
-                  itemStyle={chartTooltipItemStyle}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="price"
-                  stroke="var(--color-accent)"
-                  strokeWidth={2.5}
-                  dot={false}
-                  activeDot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
         <ItemPurchaseBatches
           batches={batches}
           loading={batchesLoading}
@@ -481,10 +514,14 @@ const ItemDetail = () => {
         />
       </div>
 
-      <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg overflow-hidden">
-        <div className="p-5 border-b border-steam-border bg-steam-elevated">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">Summary</h2>
-        </div>
+      <details className="bg-steam-card rounded-2xl border border-steam-border shadow-lg overflow-hidden group">
+        <summary className="p-5 border-b border-steam-border bg-steam-elevated cursor-pointer list-none flex items-center justify-between gap-3">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">
+            Advanced details
+          </h2>
+          <span className="text-xs font-bold text-steam-tertiary group-open:hidden">Show</span>
+          <span className="text-xs font-bold text-steam-tertiary hidden group-open:inline">Hide</span>
+        </summary>
         <dl className="divide-y divide-steam-border/50">
           {[
             ['Market hash name', detail.market_hash_name],
@@ -512,7 +549,7 @@ const ItemDetail = () => {
             </div>
           ))}
         </dl>
-      </div>
+      </details>
     </div>
   );
 };

@@ -13,6 +13,7 @@ import { CreateCollectionModal } from '../../components/dashboard/CreateCollecti
 import { QuickAddModal } from '@/components/dashboard/QuickAddModal';
 import { PortfolioShareModal } from '@/components/dashboard/PortfolioShareModal';
 import { ItemImage } from '@/components/ui/ItemImage';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 
 import { useNavigate } from 'react-router-dom';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
@@ -280,8 +281,14 @@ const Panel = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1">Dashboard</h1>
-          <p className="text-steam-secondary text-sm sm:text-base break-all sm:break-normal">
-            Welcome back, <span className="text-steam-text font-medium">{user?.email}</span>
+          <p className="text-steam-secondary text-sm sm:text-base flex items-baseline gap-1 min-w-0 max-w-full">
+            <span className="shrink-0">Welcome back,</span>
+            <span
+              className="text-steam-text font-medium truncate min-w-0"
+              title={user?.email ?? undefined}
+            >
+              {user?.email}
+            </span>
           </p>
         </div>
         
@@ -296,7 +303,7 @@ const Panel = () => {
           <button
             type="button"
             onClick={() => setIsQuickAddModalOpen(true)}
-            className="bg-steam-accent hover:opacity-90 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg theme-shadow-accent transition-all flex items-center gap-2"
+            className="btn-dashboard-primary"
           >
             <Plus className="w-5 h-5" /> Quick Add
           </button>
@@ -321,7 +328,7 @@ const Panel = () => {
                   <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-steam-text tracking-tight break-all sm:break-normal">{formatCurrency(currentTotalValue)}</span>
                   
                   <span className={`px-2 py-1 rounded-md text-xs sm:text-sm font-bold border flex items-center gap-1.5 w-fit flex-wrap ${
-                    isPositive ? 'text-green-400 bg-green-500/10 border-green-500/20' : 'text-red-400 bg-red-500/10 border-red-500/20'
+                    isPositive ? 'text-steam-profit bg-green-500/10 border-green-500/20' : 'text-steam-loss bg-red-500/10 border-red-500/20'
                   }`}>
                     {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
                     <span>{Math.abs(currentGainPercent).toFixed(2)}%</span>
@@ -332,19 +339,13 @@ const Panel = () => {
                 </div>
               </div>
               
-              <div className="flex bg-steam-bg rounded-lg p-1 border border-steam-border/50 relative z-20">
-                {availablePeriods.map((t) => (
-                  <button 
-                    key={t} 
-                    onClick={() => setTimeRange(t)}
-                    className={`px-3 py-1.5 text-xs font-bold rounded transition-colors ${
-                      timeRange === t ? 'bg-steam-accent text-white shadow-md' : 'text-steam-tertiary hover:text-steam-text'
-                    }`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
+              <SegmentedControl
+                aria-label="Portfolio period"
+                className="relative z-20"
+                value={timeRange}
+                onChange={setTimeRange}
+                options={availablePeriods.map((t) => ({ value: t, label: t }))}
+              />
             </div>
             <p className="relative z-10 mt-3 text-[11px] text-steam-tertiary">
               Deposited and Withdrawn cards below follow selected period: <span className="font-bold text-steam-secondary">{periodLabel}</span>.
@@ -540,12 +541,12 @@ const Panel = () => {
                       <span
                         className={`text-[10px] font-bold px-2 py-1 rounded border ${
                           isReady
-                            ? 'text-green-400 border-green-500/30 bg-green-500/10'
+                            ? 'text-steam-profit border-green-500/30 bg-green-500/10'
                             : item.distance_pct <= 5
-                              ? 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10'
+                              ? 'text-steam-profit border-green-500/25 bg-green-500/10'
                               : item.distance_pct <= 15
-                                ? 'text-amber-300 border-amber-500/30 bg-amber-500/10'
-                                : 'text-red-300 border-red-500/30 bg-red-500/10'
+                                ? 'text-steam-warning border-amber-500/30 bg-amber-500/10'
+                                : 'text-steam-loss border-red-500/30 bg-red-500/10'
                         }`}
                       >
                         <Target className="inline w-3 h-3 mr-1" />
@@ -584,7 +585,7 @@ const Panel = () => {
             
             <div className="relative z-10 mt-6 flex flex-col gap-2">
               <button 
-                className="w-full bg-steam-accent hover:opacity-90 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg theme-shadow-accent" 
+                className="btn-dashboard-primary w-full" 
                 onClick={() => setIsDropModalOpen(true)}
               >
                 <CheckCircle className="w-4 h-4" /> 

@@ -30,7 +30,7 @@ const Analytics = () => {
         {!userHasPremium && (
            <Link
              to={MANAGE_SUBSCRIPTION_SETTINGS_PATH}
-             className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-orange-500/20 transition-all flex items-center gap-2"
+             className="inline-flex items-center gap-2 rounded-xl border border-steam-accent/40 bg-steam-accent/10 px-5 py-2.5 text-sm font-bold text-steam-accent hover:bg-steam-accent/15 transition-colors"
            >
              <Sparkles className="w-4 h-4" /> Upgrade to PRO
            </Link>

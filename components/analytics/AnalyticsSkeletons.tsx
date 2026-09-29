@@ -19,7 +19,7 @@ export const SummaryCardsSkeleton = () => (
     {[0, 1].map((i) => (
       <div
         key={`wide-${i}`}
-        className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg md:col-span-2 lg:col-span-4"
+        className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg md:col-span-1 lg:col-span-2"
       >
         <div className="flex items-center gap-3 mb-4">
           <Shimmer className="w-12 h-12 rounded-xl shrink-0" />

@@ -74,6 +74,7 @@ const Catalog = () => {
   const [wishlistLoadingItemId, setWishlistLoadingItemId] = useState<string | null>(null);
   const [showOnlyWishlist, setShowOnlyWishlist] = useState(false);
   const [inlineAdIndex, setInlineAdIndex] = useState<number | null>(null);
+  const [catalogReload, setCatalogReload] = useState(0);
 
   useEffect(() => {
     const timeout = setTimeout(() => setSearchQuery(searchInput.trim()), 350);
@@ -151,7 +152,7 @@ const Catalog = () => {
     };
 
     fetchCatalog();
-  }, [page, searchQuery, selectedCollection, sortBy]);
+  }, [page, searchQuery, selectedCollection, sortBy, catalogReload]);
 
   useEffect(() => {
     const fetchWishlistIds = async () => {
@@ -317,9 +318,16 @@ const Catalog = () => {
           <p className="text-sm text-steam-secondary">Loading catalog...</p>
         </div>
       ) : error ? (
-        <div className="bg-steam-card rounded-2xl border border-red-500/30 p-8 text-center">
-          <h3 className="text-xl font-bold text-red-400 mb-2">Catalog error</h3>
-          <p className="text-sm text-steam-secondary">{error}</p>
+        <div className="rounded-2xl theme-alert-error p-8 text-center">
+          <h3 className="text-xl font-bold text-steam-text mb-2">Catalog error</h3>
+          <p className="text-sm text-steam-secondary mb-4">{error}</p>
+          <button
+            type="button"
+            onClick={() => setCatalogReload((n) => n + 1)}
+            className="text-xs font-bold text-steam-accent hover:underline"
+          >
+            Retry
+          </button>
         </div>
       ) : displayedItems.length === 0 ? (
         <div className="bg-steam-card rounded-2xl border border-steam-border p-14 text-center">
@@ -352,7 +360,7 @@ const Catalog = () => {
                   />
                 )}
               <article
-                className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-accent/40 transition-colors group overflow-hidden shadow-lg h-full flex flex-col"
+                className="dashboard-card group overflow-hidden h-full flex flex-col hover:border-steam-accent/40 transition-colors"
               >
                 <div
                   className={`relative h-36 w-full flex items-center justify-center p-4 border-b-[3px] ${rarityStyle.border} bg-steam-bg`}
@@ -396,7 +404,7 @@ const Catalog = () => {
                       <p className="text-[10px] uppercase tracking-wider text-steam-tertiary font-bold mb-1">
                         Reference price
                       </p>
-                      <p className="font-mono text-base font-bold text-green-400">
+                      <p className="font-mono text-base font-bold text-steam-text">
                         {formatCurrency(item.reference_price ?? 0)}
                       </p>
                     </div>

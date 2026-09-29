@@ -229,9 +229,16 @@ const Wishlist = () => {
           <p className="text-sm text-steam-secondary">Loading wishlist...</p>
         </div>
       ) : error ? (
-        <div className="bg-steam-card rounded-2xl border border-red-500/30 p-8 text-center">
-          <h3 className="text-xl font-bold text-red-400 mb-2">Wishlist error</h3>
-          <p className="text-sm text-steam-secondary">{error}</p>
+        <div className="rounded-2xl theme-alert-error p-8 text-center">
+          <h3 className="text-xl font-bold text-steam-text mb-2">Wishlist error</h3>
+          <p className="text-sm text-steam-secondary mb-4">{error}</p>
+          <button
+            type="button"
+            onClick={() => void fetchWishlist()}
+            className="text-xs font-bold text-steam-accent hover:underline"
+          >
+            Retry
+          </button>
         </div>
       ) : items.length === 0 ? (
         <div className="bg-steam-card rounded-2xl border border-steam-border p-14 text-center">
@@ -246,7 +253,7 @@ const Wishlist = () => {
           </Link>
         </div>
       ) : (
-        <div className="bg-steam-card rounded-2xl border border-steam-border shadow-xl overflow-hidden">
+        <div className="dashboard-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -259,7 +266,7 @@ const Wishlist = () => {
                   <th className="p-4 text-right pr-6">Action</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-steam-border/50">
                 {items.map((row) => {
                   const rarityStyle = getRarityStyle(row.rarity);
                   const draft = drafts[row.item_id];
@@ -281,15 +288,15 @@ const Wishlist = () => {
                     delta == null
                       ? 'text-steam-tertiary'
                       : delta <= 0
-                        ? 'text-green-400'
+                        ? 'text-steam-profit'
                         : ratio != null && ratio <= 1.15
                           ? 'text-amber-400'
-                          : 'text-red-400';
+                          : 'text-steam-loss';
 
                   return (
                     <tr
                       key={row.wishlist_item_id}
-                      className="border-b border-steam-border/70 hover:bg-steam-surface/60 transition-colors"
+                      className="hover:bg-steam-hover transition-colors"
                     >
                       <td className="p-4 pl-6">
                         <div className="flex items-center gap-3">
