@@ -3,11 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   User, Settings as SettingsIcon, Shield, LogOut, 
-  Moon, Sun, DollarSign, BarChart2, ChevronRight, ArrowLeft,
+  Moon, Sun, DollarSign, BarChart2, ChevronRight,
   CreditCard, Bell, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
 import { ChangePasswordModal } from '@/components/dashboard/ChangePasswordModal';
 import { SteamAccountsPanel } from '@/components/dashboard/SteamAccountsPanel';
@@ -157,20 +156,16 @@ const Settings = () => {
   };
 
   return (
-    <div className="text-steam-text animate-fade-in pb-12 max-w-5xl mx-auto px-4 md:px-0 mt-8">
+    <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
       
       {/* === HEADER STRONY === */}
-      <div className="flex items-center gap-5 mb-10">
-        <button 
-          onClick={() => navigate('/panel')} 
-          className="p-3 bg-steam-card hover:bg-steam-hover text-steam-secondary hover:text-steam-text rounded-2xl border border-steam-border transition-all shadow-lg group"
-        >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-        </button>
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight text-steam-text mb-1">Settings</h1>
-          <p className="text-steam-secondary">Manage your account, connections, and preferences.</p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1">
+          Settings
+        </h1>
+        <p className="text-steam-secondary">
+          Manage your account, connections, and preferences.
+        </p>
       </div>
 
       {/* === ZAKŁADKI (TABS) === */}
@@ -208,7 +203,7 @@ const Settings = () => {
       </div>
 
       {/* === ZAWARTOŚĆ === */}
-      <div className={activeTab === 'app' ? 'max-w-5xl' : 'max-w-3xl'}>
+      <div className="max-w-3xl">
         
         {/* ================= ACCOUNT TAB ================= */}
         {activeTab === 'account' && (
@@ -289,7 +284,7 @@ const Settings = () => {
                       type="button"
                       onClick={handleSaveProfile}
                       disabled={profileLoading || profileSaving}
-                      className="px-6 py-3 bg-steam-accent text-white font-bold rounded-xl shadow-lg theme-shadow-accent transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 hover:brightness-110 hover:shadow-xl hover:shadow-blue-500/25 hover:-translate-y-0.5 active:translate-y-0 active:brightness-95"
+                      className="btn-dashboard-primary disabled:opacity-50"
                     >
                       {profileSaving ? (
                         <>
@@ -379,87 +374,52 @@ const Settings = () => {
         {activeTab === 'app' && (
           <div className="space-y-8 animate-fade-in">
             <section>
-              <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">Preferences</h2>
-              <div className="bg-steam-card border border-steam-border rounded-2xl shadow-xl overflow-hidden divide-y divide-steam-border/50">
-                
-                {/* Notifications - not implemented yet */}
-                <div
-                  className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
-                  title="Coming soon"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-orange-500/10 text-orange-400 rounded-xl">
-                      <Bell className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-bold text-steam-text text-base block">Notifications</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
-                        Coming soon
-                      </span>
-                    </div>
-                  </div>
-                  <div
-                    className="inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-steam-border bg-steam-elevated p-0.5 self-center"
-                    aria-hidden
-                  >
-                    <span className="h-5 w-5 shrink-0 rounded-full border border-steam-border bg-steam-card" />
-                  </div>
-                </div>
-
-                {/* Currency - not implemented yet */}
-                <div
-                  className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
-                  title="Coming soon"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-500/10 text-green-400 rounded-xl">
-                      <DollarSign className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-bold text-steam-text text-base block">Currency</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
-                        Coming soon
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-sm font-bold text-steam-tertiary tabular-nums">USD</span>
-                </div>
-
-                {/* Price source - not implemented yet */}
-                <div
-                  className="flex items-center justify-between p-5 opacity-60 cursor-not-allowed"
-                  title="Coming soon"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-pink-500/10 text-pink-400 rounded-xl">
-                      <ShoppingCart className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <span className="font-bold text-steam-text text-base block">Price Source</span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
-                        Coming soon
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-sm font-bold text-steam-tertiary">Steam</span>
-                </div>
-                
-                {/* Appearance */}
-                <div className="flex items-center justify-between p-5">
-                  <div className="flex items-center gap-4 text-steam-secondary">
-                    <div className="p-3 bg-yellow-500/10 text-yellow-400 rounded-xl">
+              <h2 className="dashboard-label mb-3 pl-1">Preferences</h2>
+              <div className="dashboard-card overflow-hidden divide-y divide-steam-border/50">
+                {/* Appearance — toggle lives in the sidebar */}
+                <div className="flex items-center justify-between gap-4 p-5">
+                  <div className="flex items-center gap-4 text-steam-secondary min-w-0">
+                    <div className="p-3 bg-steam-accent/10 text-steam-accent rounded-xl shrink-0">
                       {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
                     </div>
-                    <span className="font-bold text-steam-text text-base">Appearance</span>
+                    <div className="min-w-0">
+                      <span className="font-bold text-steam-text text-base block">Appearance</span>
+                      <span className="text-xs text-steam-tertiary">
+                        Change light/dark from Appearance at the bottom of the sidebar.
+                      </span>
+                    </div>
                   </div>
-                  <ThemeToggle variant="segmented" />
+                  <span className="text-sm font-bold text-steam-secondary capitalize shrink-0">
+                    {theme}
+                  </span>
                 </div>
 
+                <details className="group">
+                  <summary className="flex items-center justify-between gap-3 p-5 cursor-pointer list-none text-steam-secondary hover:bg-steam-hover/50 transition-colors">
+                    <span className="text-sm font-bold text-steam-text">Coming soon</span>
+                    <span className="dashboard-label group-open:hidden">Show</span>
+                    <span className="dashboard-label hidden group-open:inline">Hide</span>
+                  </summary>
+                  <ul className="px-5 pb-5 space-y-3 text-sm text-steam-secondary">
+                    <li className="flex items-center gap-3">
+                      <Bell className="w-4 h-4 text-steam-tertiary shrink-0" />
+                      Notifications
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <DollarSign className="w-4 h-4 text-steam-tertiary shrink-0" />
+                      Currency (USD)
+                    </li>
+                    <li className="flex items-center gap-3">
+                      <ShoppingCart className="w-4 h-4 text-steam-tertiary shrink-0" />
+                      Price source (Steam)
+                    </li>
+                  </ul>
+                </details>
               </div>
             </section>
 
             <section>
-              <h2 className="text-[11px] font-bold text-steam-tertiary uppercase tracking-widest mb-3 pl-1">
+              <h2 className="dashboard-label mb-3 pl-1">
                 Portfolio sharing
               </h2>
               <PortfolioSharePanel />

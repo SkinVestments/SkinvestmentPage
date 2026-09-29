@@ -9,9 +9,9 @@ import {
   List as ListIcon,
   Plus,
   Package,
-  Loader2,
   Lock,
   CheckCircle2,
+  AlertCircle,
   X,
 } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
@@ -30,7 +30,33 @@ import {
 } from '@/utils/inventoryFilters';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { QuickAddModal } from '@/components/dashboard/QuickAddModal';
+import { MarketCompareSummary } from '@/components/inventory/MarketCompareSummary';
+import { MarketSpreadBadge } from '@/components/inventory/MarketPriceChips';
+import { CustomSelect } from '@/components/ui/CustomSelect';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
+import { Shimmer } from '@/components/ui/Shimmer';
+import { useMarketPrices } from '@/hooks/useMarketPrices';
 import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
+
+const INVENTORY_SORT_OPTIONS = [
+  { value: 'value_desc', label: 'Highest Value' },
+  { value: 'value_asc', label: 'Lowest Value' },
+  { value: 'name', label: 'Name (A-Z)' },
+  { value: 'recent', label: 'Recently Added' },
+  { value: 'spread', label: 'Biggest spread' },
+] as const;
+
+const MARKET_COMPARE_LS_KEY = 'inventory_show_market_comparison';
+
+function loadShowMarketCompare(): boolean {
+  try {
+    const raw = localStorage.getItem(MARKET_COMPARE_LS_KEY);
+    if (raw == null) return true;
+    return raw === '1' || raw === 'true';
+  } catch {
+    return true;
+  }
+}
 
 // --- TYPY ---
 interface InventoryItem {
@@ -58,14 +84,36 @@ const Inventory = () => {
   
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'value_desc' | 'value_asc' | 'name' | 'recent'>('value_desc');
+  const [sortBy, setSortBy] = useState<
+    'value_desc' | 'value_asc' | 'name' | 'recent' | 'spread'
+  >('value_desc');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<InventoryFilterState>(DEFAULT_INVENTORY_FILTERS);
   const [isQuickAddModalOpen, setIsQuickAddModalOpen] = useState(false);
   const [flashMessage, setFlashMessage] = useState<string | null>(null);
+  const [showMarketCompare, setShowMarketCompare] = useState(loadShowMarketCompare);
+
+  const marketItemIds = useMemo(() => items.map((i) => i.item_id), [items]);
+  const {
+    prices: marketPrices,
+    loading: marketLoading,
+    error: marketError,
+  } = useMarketPrices(marketItemIds);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        MARKET_COMPARE_LS_KEY,
+        showMarketCompare ? '1' : '0',
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [showMarketCompare]);
 
   useEffect(() => {
     const state = location.state as { flash?: { type?: string; message?: string } } | null;
@@ -84,6 +132,7 @@ const Inventory = () => {
   const fetchInventory = async () => {
     try {
       setLoading(true);
+      setFetchError(null);
       if (!user) return;
 
       const { data, error } = await supabase
@@ -97,9 +146,11 @@ const Inventory = () => {
 
       if (error) throw error;
 
-      if (data) setItems(data as InventoryItem[]);
+      setItems((data as InventoryItem[]) ?? []);
     } catch (error) {
       console.error('Error fetching inventory:', error);
+      setItems([]);
+      setFetchError('Could not load inventory.');
     } finally {
       setLoading(false);
     }
@@ -151,11 +202,32 @@ const Inventory = () => {
             );
           case 'recent':
             return new Date(b.acquired_at).getTime() - new Date(a.acquired_at).getTime();
+          case 'spread': {
+            const sa = marketPrices.get(a.item_id)?.spread_pct;
+            const sb = marketPrices.get(b.item_id)?.spread_pct;
+            const aMissing = sa == null || !Number.isFinite(sa);
+            const bMissing = sb == null || !Number.isFinite(sb);
+            if (aMissing && bMissing) return 0;
+            if (aMissing) return 1;
+            if (bMissing) return -1;
+            // Biggest absolute discount first (most negative spread)
+            return (sa as number) - (sb as number);
+          }
           default:
             return 0;
         }
       });
-  }, [items, searchQuery, filters, sortBy, showPriceSourceFilter]);
+  }, [items, searchQuery, filters, sortBy, showPriceSourceFilter, marketPrices]);
+
+  const marketSummaryLines = useMemo(
+    () =>
+      filteredAndSortedItems.map((i) => ({
+        item_id: i.item_id,
+        quantity: i.quantity,
+        steamUnitPrice: i.cs2_items?.price || 0,
+      })),
+    [filteredAndSortedItems],
+  );
 
   const activeFilterCount = countActiveFilters(filters);
 
@@ -174,11 +246,11 @@ const Inventory = () => {
       {flashMessage && (
         <div
           role="status"
-          className="mb-6 flex items-start gap-3 rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-sm text-green-400"
+          className="mb-6 flex items-start gap-3 rounded-xl theme-alert-success px-4 py-3 text-sm"
         >
           <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
-          <p className="flex-1 font-medium text-steam-text">
-            <span className="text-green-400 font-bold">{flashMessage}</span>
+          <p className="flex-1 font-medium">
+            <span className="font-bold">{flashMessage}</span>
           </p>
           <button
             type="button"
@@ -205,14 +277,14 @@ const Inventory = () => {
            </div>
            <div className="px-4">
               <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total Value</p>
-              <p className="text-xl font-bold text-green-400">{formatCurrency(totalValue)}</p>
+              <p className="text-xl font-bold text-steam-text font-mono">{formatCurrency(totalValue)}</p>
            </div>
            <button
               type="button"
               onClick={() => setIsQuickAddModalOpen(true)}
               title="Quick Add"
               aria-label="Quick Add"
-              className="bg-steam-accent hover:opacity-90 text-white p-3 rounded-lg shadow-lg theme-shadow-accent transition-all ml-2 flex items-center gap-2"
+              className="btn-dashboard-primary p-3 ml-2"
             >
               <Plus className="w-5 h-5" />
               <span className="hidden sm:inline text-sm font-bold pr-1">Quick Add</span>
@@ -237,16 +309,30 @@ const Inventory = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-          <select 
+          <div className="flex items-center gap-2">
+            <span className="dashboard-label hidden sm:inline shrink-0">Market</span>
+            <SegmentedControl
+              aria-label="CS.MONEY market comparison"
+              value={showMarketCompare ? 'on' : 'off'}
+              onChange={(v) => setShowMarketCompare(v === 'on')}
+              options={[
+                { value: 'off', label: 'Off' },
+                { value: 'on', label: 'Compare' },
+              ]}
+            />
+          </div>
+
+          <CustomSelect
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="flex-1 min-w-[140px] sm:flex-none bg-steam-card border border-steam-border text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-steam-accent cursor-pointer"
-          >
-            <option value="value_desc">Highest Value</option>
-            <option value="value_asc">Lowest Value</option>
-            <option value="name">Name (A-Z)</option>
-            <option value="recent">Recently Added</option>
-          </select>
+            onChange={(v) =>
+              setSortBy(
+                v as 'value_desc' | 'value_asc' | 'name' | 'recent' | 'spread',
+              )
+            }
+            options={[...INVENTORY_SORT_OPTIONS]}
+            aria-label="Sort inventory"
+            className="flex-1 min-w-[160px] sm:flex-none sm:w-48"
+          />
 
           <button
             type="button"
@@ -267,20 +353,23 @@ const Inventory = () => {
             )}
           </button>
 
-          <div className="flex bg-steam-card p-1 rounded-xl border border-steam-border">
-            <button 
-              onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-steam-elevated text-steam-text' : 'text-steam-tertiary hover:text-steam-text'}`}
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-            <button 
-              onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-steam-elevated text-steam-text' : 'text-steam-tertiary hover:text-steam-text'}`}
-            >
-              <ListIcon className="w-4 h-4" />
-            </button>
-          </div>
+          <SegmentedControl
+            aria-label="View mode"
+            value={viewMode}
+            onChange={setViewMode}
+            options={[
+              {
+                value: 'grid',
+                label: <LayoutGrid className="w-4 h-4" />,
+                ariaLabel: 'Grid view',
+              },
+              {
+                value: 'list',
+                label: <ListIcon className="w-4 h-4" />,
+                ariaLabel: 'List view',
+              },
+            ]}
+          />
         </div>
       </div>
 
@@ -300,22 +389,90 @@ const Inventory = () => {
         contentReady={!loading && items.length > 0 && adsContentReady}
       />
 
+      {fetchError && (
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl theme-alert-error px-4 py-3">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <p className="text-sm text-steam-text">{fetchError}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => void fetchInventory()}
+            className="shrink-0 text-xs font-bold text-steam-accent hover:underline self-start sm:self-auto"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* KONTENT EKWIPUNKU */}
       {loading ? (
-        <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-steam-accent" /></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="dashboard-card overflow-hidden flex flex-col">
+              <Shimmer className="h-36 w-full rounded-none" />
+              <div className="p-3 space-y-2 flex-1">
+                <Shimmer className="h-3 w-[80%]" />
+                <Shimmer className="h-3 w-12 mt-2" />
+                <Shimmer className="h-4 w-1/3" />
+                <Shimmer className="h-3 w-10" />
+                {showMarketCompare && <Shimmer className="h-[18px] w-20 mt-1" />}
+              </div>
+            </div>
+          ))}
+        </div>
       ) : filteredAndSortedItems.length === 0 ? (
-        <div className="bg-steam-card rounded-2xl border border-steam-border p-20 text-center">
+        <div className="bg-steam-card rounded-2xl border border-steam-border p-12 sm:p-16 text-center">
             <Package className="w-16 h-16 mx-auto text-steam-tertiary mb-4" />
-            <h3 className="text-xl font-bold text-steam-text mb-2">No items found</h3>
-            <p className="text-steam-tertiary text-sm">
-              Your inventory is empty or no items match your search and filters.
-            </p>
+            {items.length === 0 ? (
+              <>
+                <h3 className="text-xl font-bold text-steam-text mb-2">Inventory is empty</h3>
+                <p className="text-steam-tertiary text-sm mb-6">
+                  Add your first skins to start tracking value and market prices.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setIsQuickAddModalOpen(true)}
+                  className="btn-dashboard-primary"
+                >
+                  <Plus className="w-4 h-4" />
+                  Quick Add
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-steam-text mb-2">No matching items</h3>
+                <p className="text-steam-tertiary text-sm mb-6">
+                  Nothing matches your search or filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilters(DEFAULT_INVENTORY_FILTERS);
+                    setFiltersOpen(false);
+                  }}
+                  className="inline-flex items-center gap-2 border border-steam-border bg-steam-elevated/40 hover:bg-steam-hover text-steam-text px-5 py-2.5 rounded-xl text-sm font-bold transition-colors"
+                >
+                  Clear filters
+                </button>
+              </>
+            )}
         </div>
       ) : (
         <>
+          {showMarketCompare && (
+            <MarketCompareSummary
+              lines={marketSummaryLines}
+              prices={marketPrices}
+              loading={marketLoading}
+              error={marketError}
+            />
+          )}
+
           {/* WIDOK SIATKI (GRID) */}
           {viewMode === 'grid' && (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {filteredAndSortedItems.map((item) => {
                 const rarityStyle = getRarityStyle(item.cs2_items?.rarity);
                 const itemPrice = item.cs2_items?.price || 0;
@@ -335,7 +492,7 @@ const Inventory = () => {
                         openItemDetail(item.item_id);
                       }
                     }}
-                    className="bg-steam-card rounded-xl border border-steam-border hover:border-steam-accent/40 transition-colors group relative overflow-hidden flex flex-col shadow-lg cursor-pointer"
+                    className="dashboard-card group relative overflow-hidden flex flex-col cursor-pointer hover:border-steam-accent/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-steam-accent/40"
                   >
                     
                     {/* Badges */}
@@ -361,37 +518,45 @@ const Inventory = () => {
                       />
                     </div>
 
-                    {/* Info */}
+                    {/* Info — spacer at bottom so equal-height rows don't gap under the title */}
                     <div className="p-3 flex flex-col flex-1 bg-steam-card relative z-20">
-                      <p className="text-xs font-bold text-steam-text line-clamp-2 leading-snug mb-3 flex-1">
+                      <p className="text-xs font-bold text-steam-text line-clamp-2 leading-snug min-h-[2.5rem]">
                         {item.cs2_items?.market_hash_name}
                       </p>
-                      
-                      <div className="flex justify-between items-end mt-auto gap-2">
-                        <div>
-                          <p className="text-[10px] text-steam-tertiary uppercase tracking-widest mb-0.5">
+
+                      <div className="flex justify-between items-end gap-2 mt-2">
+                        <div className="min-w-0 flex-1">
+                          <p className="dashboard-label mb-0.5">
                             Total Value
                           </p>
                           <p className="text-sm font-bold text-steam-text font-mono">
                             {formatCurrency(totalVal)}
                           </p>
                           {pnlStatus === 'profit' && gainPct != null && (
-                            <p className="text-[10px] font-bold text-green-400 mt-0.5">
+                            <p className="text-[10px] font-bold text-steam-profit mt-0.5">
                               +{gainPct.toFixed(1)}%
                             </p>
                           )}
                           {pnlStatus === 'loss' && gainPct != null && (
-                            <p className="text-[10px] font-bold text-red-400 mt-0.5">
+                            <p className="text-[10px] font-bold text-steam-loss mt-0.5">
                               {gainPct.toFixed(1)}%
                             </p>
                           )}
+                          {showMarketCompare && (
+                            <MarketSpreadBadge
+                              className="mt-1.5"
+                              spread={marketPrices.get(item.item_id)?.spread_pct}
+                              loading={marketLoading && !marketPrices.has(item.item_id)}
+                            />
+                          )}
                         </div>
-                        {item.quantity > 1 && (
+                        {item.quantity > 1 && !showMarketCompare && (
                           <p className="text-[10px] text-steam-secondary font-mono shrink-0">
                             ({formatCurrency(itemPrice)} ea)
                           </p>
                         )}
                       </div>
+                      <div className="flex-1 min-h-0" aria-hidden />
                     </div>
                   </div>
                 );
@@ -399,7 +564,7 @@ const Inventory = () => {
             </div>
           )}
 
-          {/* WIDOK TABELI (LIST) - BEZ ZMIAN */}
+          {/* WIDOK TABELI (LIST) */}
           {viewMode === 'list' && (
             <div className="bg-steam-card rounded-xl border border-steam-border overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
@@ -409,6 +574,9 @@ const Inventory = () => {
                       <th className="p-4 pl-6">Item Details</th>
                       <th className="p-4">Quantity</th>
                       <th className="p-4 text-right">Unit Price</th>
+                      {showMarketCompare && (
+                        <th className="p-4 text-right">Spread</th>
+                      )}
                       <th className="p-4 text-right pr-6">Total Value</th>
                     </tr>
                   </thead>
@@ -421,8 +589,16 @@ const Inventory = () => {
                       return (
                         <tr
                           key={item.id}
+                          role="button"
+                          tabIndex={0}
                           onClick={() => openItemDetail(item.item_id)}
-                          className="hover:bg-steam-hover transition-colors group cursor-pointer"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              openItemDetail(item.item_id);
+                            }
+                          }}
+                          className="hover:bg-steam-hover transition-colors group cursor-pointer focus-visible:outline-none focus-visible:bg-steam-hover focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-steam-accent/40"
                         >
                           <td className="p-3 pl-6">
                             <div className="flex items-center gap-4">
@@ -434,7 +610,7 @@ const Inventory = () => {
                                   wrapperClassName="w-full h-full"
                                 />
                               </div>
-                              <div>
+                              <div className="min-w-0">
                                 <div className="font-bold text-steam-text flex items-center gap-2 flex-wrap">
                                   {item.cs2_items?.market_hash_name}
                                   {locked && (
@@ -457,15 +633,23 @@ const Inventory = () => {
                           <td className="p-4 text-right text-steam-secondary font-mono">
                             {formatCurrency(item.cs2_items?.price || 0)}
                           </td>
+                          {showMarketCompare && (
+                            <td className="p-4 text-right">
+                              <MarketSpreadBadge
+                                spread={marketPrices.get(item.item_id)?.spread_pct}
+                                loading={marketLoading && !marketPrices.has(item.item_id)}
+                              />
+                            </td>
+                          )}
                           <td className="p-4 text-right pr-6 font-mono">
                             <div className="font-bold text-steam-text">
                               {formatCurrency(unitPrice * item.quantity)}
                             </div>
                             {pnlStatus === 'profit' && gainPct != null && (
-                              <div className="text-[10px] text-green-400 font-bold">+{gainPct.toFixed(1)}%</div>
+                              <div className="text-[10px] text-steam-profit font-bold">+{gainPct.toFixed(1)}%</div>
                             )}
                             {pnlStatus === 'loss' && gainPct != null && (
-                              <div className="text-[10px] text-red-400 font-bold">{gainPct.toFixed(1)}%</div>
+                              <div className="text-[10px] text-steam-loss font-bold">{gainPct.toFixed(1)}%</div>
                             )}
                           </td>
                         </tr>

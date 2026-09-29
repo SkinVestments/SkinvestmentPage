@@ -78,14 +78,38 @@
     <script async src="https://fundingchoicesmessages.google.com/i/pub-8332580005201318?ers=1"></script>
     <!-- AdSense script loads only on eligible dashboard routes (see AdSenseScript.tsx) -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
-    <link
-      rel="preload"
-      as="image"
-      type="image/webp"
-      href="/images/screen-b-md.webp"
-      imagesrcset="/images/screen-b-sm.webp 335w, /images/screen-b-md.webp 670w"
-      imagesizes="(max-width: 1023px) 90vw, 520px"
-    />
+    <!-- Hero LCP: only on home, theme + sizes must match Hero.tsx img -->
+    <script>
+      (function () {
+        var path = location.pathname.replace(/\/+$/, '') || '/';
+        if (path !== '/') return;
+        var light = false;
+        try {
+          light = localStorage.getItem('skinvestments_theme') === 'light';
+        } catch (e) {}
+        var link = document.createElement('link');
+        link.id = 'hero-lcp-preload';
+        link.rel = 'preload';
+        link.as = 'image';
+        link.type = 'image/webp';
+        var sizes = '(max-width: 640px) 240px, (max-width: 768px) 280px, 340px';
+        if (light) {
+          link.href = '/images/screen-w-md.webp';
+          link.setAttribute(
+            'imagesrcset',
+            '/images/screen-w-sm.webp 335w, /images/screen-w-md.webp 670w',
+          );
+        } else {
+          link.href = '/images/screen-b-md.webp';
+          link.setAttribute(
+            'imagesrcset',
+            '/images/screen-b-sm.webp 335w, /images/screen-b-md.webp 670w',
+          );
+        }
+        link.setAttribute('imagesizes', sizes);
+        document.head.appendChild(link);
+      })();
+    </script>
     <title>Skinvestments | CS2 Portfolio Tracker</title>
   </head>
   <body>

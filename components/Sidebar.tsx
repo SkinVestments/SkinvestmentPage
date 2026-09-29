@@ -29,47 +29,13 @@ const navItems: { icon: LucideIcon; label: string; path: string }[] = [
 
 interface SidebarPanelProps {
   onNavigate?: () => void;
-  showClose?: boolean;
-  onClose?: () => void;
-  hideHeader?: boolean;
 }
 
-const SidebarBrandHeader: React.FC<{ showClose?: boolean; onClose?: () => void }> = ({
-  showClose,
-  onClose,
-}) => (
-  <div className="p-4 sm:p-6 flex items-center justify-between gap-3 border-b border-steam-border/50 min-h-[4.5rem] shrink-0">
-    <div className="flex items-center gap-3 min-w-0">
-      <BrandLogo size="md" />
-      <span className="text-lg font-bold text-steam-text tracking-tight uppercase truncate">
-        Skin<span className="text-steam-accent">vestments</span>
-      </span>
-    </div>
-    {showClose && onClose && (
-      <button
-        type="button"
-        onClick={onClose}
-        className="p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover shrink-0"
-        aria-label="Close menu"
-      >
-        <X className="w-5 h-5" />
-      </button>
-    )}
-  </div>
-);
-
-const SidebarPanel: React.FC<SidebarPanelProps> = ({
-  onNavigate,
-  showClose,
-  onClose,
-  hideHeader,
-}) => {
+const SidebarPanel: React.FC<SidebarPanelProps> = ({ onNavigate }) => {
   const handleNav = () => onNavigate?.();
 
   return (
     <>
-      {!hideHeader && <SidebarBrandHeader showClose={showClose} onClose={onClose} />}
-
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
@@ -77,7 +43,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({
             to={item.path}
             onClick={handleNav}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+              `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 ${
                 isActive
                   ? 'bg-steam-accent/10 text-steam-accent font-bold'
                   : 'text-steam-secondary hover:bg-steam-hover hover:text-steam-text font-medium'
@@ -92,7 +58,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({
 
       <div className="p-4 border-t border-steam-border/50 bg-steam-elevated shrink-0 space-y-3">
         <div className="px-1">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-steam-tertiary mb-2">Appearance</p>
+          <p className="dashboard-label mb-2">Appearance</p>
           <ThemeToggle variant="segmented" className="w-full" />
         </div>
 
@@ -118,18 +84,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
     <>
       {/* Desktop */}
       <aside className="w-64 bg-steam-surface border-r border-steam-border hidden md:flex flex-col h-screen fixed left-0 top-0 z-40">
-        <div className="p-6 flex items-center gap-3 border-b border-steam-border/50 h-20 shrink-0">
-          <BrandLogo size="md" />
-          <span className="text-xl font-bold text-steam-text tracking-tight uppercase">
+        <div className="px-6 flex items-center gap-3 border-b border-steam-border/50 h-14 shrink-0">
+          <BrandLogo size="sm" />
+          <span className="text-sm font-bold text-steam-text tracking-tight uppercase truncate">
             Skin<span className="text-steam-accent">vestments</span>
           </span>
         </div>
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <SidebarPanel hideHeader />
+          <SidebarPanel />
         </div>
       </aside>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — no brand header (matches top bar; avoids logo scale jump) */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Navigation menu">
           <button
@@ -139,7 +105,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
             aria-label="Close menu overlay"
           />
           <aside className="relative w-[min(100%,280px)] max-w-[85vw] h-full bg-steam-surface border-r border-steam-border flex flex-col shadow-2xl animate-fade-in">
-            <SidebarPanel showClose onClose={onMobileClose} onNavigate={onMobileClose} />
+            <div className="h-14 shrink-0 border-b border-steam-border/50 flex items-center justify-end px-4">
+              <button
+                type="button"
+                onClick={onMobileClose}
+                className="p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <SidebarPanel onNavigate={onMobileClose} />
+            </div>
           </aside>
         </div>
       )}

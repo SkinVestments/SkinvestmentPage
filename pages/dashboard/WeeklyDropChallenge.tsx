@@ -8,6 +8,7 @@ import {
   Trophy,
   Play,
   AlertCircle,
+  OctagonAlert,
   X,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -39,24 +40,29 @@ const formatWeekDate = (isoDate: string): string => {
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
-const StatRow = ({
+const MetricCard = ({
   label,
   value,
-  emphasize,
+  hint,
+  accent,
 }: {
   label: string;
   value: string;
-  emphasize?: boolean;
+  hint?: string;
+  accent?: boolean;
 }) => (
-  <div className="flex items-baseline justify-between gap-4 py-3 border-b border-steam-border/40 last:border-0">
-    <span className="text-steam-secondary text-sm font-medium">{label}</span>
-    <span
-      className={`font-mono text-right tabular-nums ${
-        emphasize ? 'text-steam-accent text-lg font-bold' : 'text-steam-text text-base font-semibold'
+  <div className="dashboard-card p-4 sm:p-5 min-w-0">
+    <p className="dashboard-label mb-2">
+      {label}
+    </p>
+    <p
+      className={`text-xl sm:text-2xl font-bold font-mono tabular-nums truncate ${
+        accent ? 'text-steam-accent' : 'text-steam-text'
       }`}
     >
       {value}
-    </span>
+    </p>
+    {hint && <p className="text-xs text-steam-secondary mt-1.5 leading-snug">{hint}</p>}
   </div>
 );
 
@@ -234,6 +240,7 @@ const WeeklyDropChallengePage = () => {
   const [isDropModalOpen, setIsDropModalOpen] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState<WeeklyDropChallengeWeek | null>(null);
   const [hover, setHover] = useState<HoverState | null>(null);
+  const [abandonConfirm, setAbandonConfirm] = useState(false);
   const hoverClearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const clearHoverSoon = useCallback(() => {
@@ -266,7 +273,7 @@ const WeeklyDropChallengePage = () => {
       });
     } catch (err) {
       console.error('Error fetching weekly drop challenge:', err);
-      setError('Could not load challenge. Apply the SQL migration if this is a new feature.');
+      setError('Could not load challenge. Please try again.');
       setData({ has_challenge: false, challenge: null, stats: null });
     } finally {
       setLoading(false);
@@ -302,7 +309,8 @@ const WeeklyDropChallengePage = () => {
 
   const handleAbandon = async () => {
     if (!user) return;
-    if (!window.confirm('Abandon this challenge? Your drop history stays — only the challenge resets.')) {
+    if (!abandonConfirm) {
+      setAbandonConfirm(true);
       return;
     }
     setActionLoading(true);
@@ -311,10 +319,12 @@ const WeeklyDropChallengePage = () => {
       if (rpcError) throw rpcError;
       setSelectedWeek(null);
       setHover(null);
+      setAbandonConfirm(false);
       await fetchChallenge();
     } catch (err) {
       console.error('Error abandoning challenge:', err);
       setError('Failed to abandon challenge');
+      setAbandonConfirm(false);
     } finally {
       setActionLoading(false);
     }
@@ -322,8 +332,23 @@ const WeeklyDropChallengePage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[40vh] text-steam-accent">
-        <Loader2 className="w-8 h-8 animate-spin" />
+      <div className="text-steam-text animate-fade-in pb-10 space-y-4">
+        <div className="space-y-2">
+          <div className="h-8 w-56 rounded-lg bg-steam-elevated animate-pulse" />
+          <div className="h-4 w-80 max-w-full rounded bg-steam-elevated/70 animate-pulse" />
+        </div>
+        <div className="dashboard-card p-5">
+          <div className="h-2.5 w-full rounded-full bg-steam-elevated animate-pulse" />
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="dashboard-card p-4 sm:p-5 space-y-3">
+              <div className="h-2.5 w-20 rounded bg-steam-elevated animate-pulse" />
+              <div className="h-7 w-24 rounded bg-steam-elevated/80 animate-pulse" />
+            </div>
+          ))}
+        </div>
+        <div className="dashboard-card-hero p-6 min-h-[180px] animate-pulse" />
       </div>
     );
   }
@@ -347,7 +372,7 @@ const WeeklyDropChallengePage = () => {
             <span className="text-xs font-bold uppercase tracking-widest">52-week run</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1">
-            Weekly Drop Challenge
+            Drop Challenge
           </h1>
           <p className="text-steam-secondary max-w-xl">
             Log your CS2 weekly drops for a full year. Track value, luck, and consistency — one week at a
@@ -360,7 +385,7 @@ const WeeklyDropChallengePage = () => {
             <button
               type="button"
               onClick={() => setIsDropModalOpen(true)}
-              className="bg-steam-accent hover:opacity-90 text-white px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-lg theme-shadow-accent"
+              className="btn-dashboard-primary w-full sm:w-auto"
             >
               <CheckCircle className="w-4 h-4" />
               {stats?.this_week_claimed ? 'Log another drop' : 'Log this week'}
@@ -370,9 +395,21 @@ const WeeklyDropChallengePage = () => {
       </div>
 
       {error && (
-        <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-          <p>{error}</p>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl theme-alert-error px-4 py-3 text-sm">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <p className="text-steam-text">{error}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setLoading(true);
+              void fetchChallenge();
+            }}
+            className="shrink-0 text-xs font-bold text-steam-accent hover:underline self-start sm:self-auto"
+          >
+            Retry
+          </button>
         </div>
       )}
 
@@ -396,7 +433,7 @@ const WeeklyDropChallengePage = () => {
               type="button"
               disabled={actionLoading}
               onClick={() => void handleStart()}
-              className="bg-steam-accent hover:opacity-90 disabled:opacity-60 text-white px-6 py-3 rounded-xl text-sm font-bold transition-all inline-flex items-center gap-2 shadow-lg theme-shadow-accent"
+              className="btn-dashboard-primary"
             >
               {actionLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -411,103 +448,92 @@ const WeeklyDropChallengePage = () => {
 
       {showStats && stats && data?.challenge && (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-steam-card rounded-2xl border border-steam-border shadow-xl p-6 sm:p-8">
-              <div className="flex items-center gap-2 text-steam-accent mb-6">
-                <div className="p-1.5 bg-blue-500/20 rounded-lg">
-                  <Package className="w-4 h-4" />
+          <div className="mb-6 space-y-4">
+            <div className="dashboard-card p-4 sm:p-5">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                <div className="flex items-center gap-2 text-steam-accent">
+                  <div className="p-1.5 bg-steam-accent/15 rounded-lg">
+                    <Package className="w-4 h-4" />
+                  </div>
+                  <span className="dashboard-label">
+                    Challenge progress
+                  </span>
                 </div>
-                <span className="font-bold text-xs uppercase tracking-widest">Weekly Drop Challenge</span>
-              </div>
-
-              <div className="space-y-0">
-                <StatRow
-                  label="Weeks completed:"
-                  value={`${stats.weeks_completed} / ${stats.duration_weeks}`}
-                  emphasize
-                />
-                <StatRow label="Current value:" value={formatCurrency(stats.current_value)} />
-                <StatRow
-                  label="Highest drop:"
-                  value={
-                    stats.highest_drop == null ? '—' : formatCurrency(stats.highest_drop)
-                  }
-                />
-                <StatRow
-                  label="Lowest drop:"
-                  value={stats.lowest_drop == null ? '—' : formatCurrency(stats.lowest_drop)}
-                />
-                <StatRow label="Average/week:" value={formatCurrency(stats.average_per_week)} />
-                <StatRow label="ROI:" value={formatRoi(stats.roi_percentage)} />
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-steam-border/50">
-                <div className="flex justify-between text-xs text-steam-tertiary mb-2">
-                  <span>Progress</span>
-                  <span>{progressPct.toFixed(0)}%</span>
-                </div>
-                <div className="h-2 rounded-full bg-steam-elevated overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-steam-accent transition-all duration-500"
-                    style={{ width: `${progressPct}%` }}
-                  />
-                </div>
-                <p className="text-xs text-steam-tertiary mt-3">
+                <p className="text-xs text-steam-tertiary font-medium">
                   {completed ? (
                     <>Completed · {stats.weeks_completed} weeks logged</>
                   ) : (
                     <>
                       Week {data.challenge.current_week_index} of {stats.duration_weeks}
                       {stats.this_week_claimed ? ' · this week logged' : ' · awaiting this week'}
-                      {' · '}reset in {resetTime || '…'}
+                      {' · '}reset in {resetTime || '...'}
                     </>
                   )}
                 </p>
               </div>
+              <div className="flex items-center gap-3">
+                <div className="h-2.5 flex-1 rounded-full bg-steam-elevated overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-steam-accent transition-all duration-500"
+                    style={{ width: `${progressPct}%` }}
+                  />
+                </div>
+                <span className="text-xs font-bold font-mono tabular-nums text-steam-text shrink-0 w-10 text-right">
+                  {progressPct.toFixed(0)}%
+                </span>
+              </div>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <div className="bg-steam-card rounded-2xl border border-steam-border p-5 flex-1">
-                <p className="text-xs font-bold uppercase tracking-widest text-steam-tertiary mb-2">
-                  Projected yearly
-                </p>
-                <p className="text-3xl font-bold text-steam-text font-mono tabular-nums">
-                  {formatCurrency(stats.projected_yearly)}
-                </p>
-                <p className="text-xs text-steam-secondary mt-2">
-                  Based on your average so far × 52 weeks
-                </p>
-              </div>
-              <div className="bg-steam-card rounded-2xl border border-steam-border p-5 flex-1">
-                <p className="text-xs font-bold uppercase tracking-widest text-steam-tertiary mb-2">
-                  Items logged
-                </p>
-                <p className="text-3xl font-bold text-steam-text font-mono tabular-nums">
-                  {stats.drop_count}
-                </p>
-                <p className="text-xs text-steam-secondary mt-2">
-                  Cases, skins & graffiti counted in this challenge
-                </p>
-              </div>
-              {active && (
-                <button
-                  type="button"
-                  disabled={actionLoading}
-                  onClick={() => void handleAbandon()}
-                  className="text-steam-tertiary hover:text-red-400 text-xs font-medium transition-colors self-start px-1"
-                >
-                  Abandon challenge
-                </button>
-              )}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <MetricCard
+                label="Weeks completed"
+                value={`${stats.weeks_completed} / ${stats.duration_weeks}`}
+                accent
+              />
+              <MetricCard
+                label="Current value"
+                value={formatCurrency(stats.current_value)}
+              />
+              <MetricCard
+                label="Projected yearly"
+                value={formatCurrency(stats.projected_yearly)}
+                hint="Avg so far × 52 weeks"
+              />
+              <MetricCard
+                label="Items logged"
+                value={String(stats.drop_count)}
+                hint="Cases, skins & graffiti"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              <MetricCard
+                label="Highest drop"
+                value={
+                  stats.highest_drop == null ? '-' : formatCurrency(stats.highest_drop)
+                }
+              />
+              <MetricCard
+                label="Lowest drop"
+                value={stats.lowest_drop == null ? '-' : formatCurrency(stats.lowest_drop)}
+              />
+              <MetricCard
+                label="Average / week"
+                value={formatCurrency(stats.average_per_week)}
+              />
+              <MetricCard label="ROI" value={formatRoi(stats.roi_percentage)} />
             </div>
           </div>
 
-          <div className="bg-steam-card rounded-2xl border border-steam-border shadow-xl p-6">
+          <div className="dashboard-card-hero p-6 mb-6">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
               <div>
                 <h2 className="font-bold text-lg text-steam-text">Year map</h2>
                 <p className="text-xs text-steam-tertiary mt-0.5">
-                  Hover for a preview · click a week for full drops
+                  <span className="md:hidden">Tap a week for drops</span>
+                  <span className="hidden md:inline">
+                    Hover for a preview · click a week for full drops
+                  </span>
                 </p>
               </div>
               <div className="flex items-center gap-4 text-[10px] uppercase tracking-wider font-bold text-steam-tertiary">
@@ -604,7 +630,7 @@ const WeeklyDropChallengePage = () => {
                   <button
                     type="button"
                     onClick={() => setIsDropModalOpen(true)}
-                    className="mt-4 bg-steam-accent hover:opacity-90 text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all inline-flex items-center gap-2"
+                    className="btn-dashboard-primary mt-4"
                   >
                     <CheckCircle className="w-4 h-4" />
                     Log this week
@@ -613,6 +639,51 @@ const WeeklyDropChallengePage = () => {
               </div>
             )}
           </div>
+
+          {active && (
+            <div className="mt-8 rounded-2xl theme-alert-error p-5 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="p-2.5 rounded-xl bg-steam-loss/15 text-steam-loss border border-steam-loss/25 shrink-0">
+                    <OctagonAlert className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-steam-text">Abandon challenge</p>
+                    <p className="text-xs text-steam-secondary mt-1 leading-relaxed">
+                      {abandonConfirm
+                        ? 'Confirm to end this run. Challenge progress resets; logged drops stay in history.'
+                        : 'Ends this run and clears challenge progress. Your logged drops stay in history.'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  {abandonConfirm && (
+                    <button
+                      type="button"
+                      disabled={actionLoading}
+                      onClick={() => setAbandonConfirm(false)}
+                      className="inline-flex items-center justify-center rounded-xl border border-steam-border bg-steam-card px-4 py-2.5 text-sm font-bold text-steam-secondary hover:text-steam-text hover:bg-steam-hover disabled:opacity-60 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    disabled={actionLoading}
+                    onClick={() => void handleAbandon()}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-steam-loss/40 bg-steam-loss text-white px-4 py-2.5 text-sm font-bold shadow-sm hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed transition-opacity"
+                  >
+                    {actionLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <OctagonAlert className="w-4 h-4" />
+                    )}
+                    {abandonConfirm ? 'Confirm abandon' : 'Abandon challenge'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
 
