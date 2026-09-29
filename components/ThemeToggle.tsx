@@ -13,30 +13,21 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ variant = 'icon', clas
   const { theme, setTheme, toggleTheme } = useTheme();
 
   if (variant === 'segmented') {
-    const btn = (mode: ThemeMode, label: string) => (
-      <button
-        key={mode}
-        type="button"
-        onClick={() => setTheme(mode)}
-        className={`flex-1 px-4 py-2 text-xs font-bold rounded-md transition-colors ${
-          theme === mode
-            ? 'bg-steam-card text-steam-text shadow-md border border-steam-border'
-            : 'bg-transparent text-steam-tertiary hover:text-steam-text'
-        }`}
-        aria-pressed={theme === mode}
-      >
-        {label}
-      </button>
-    );
-
     return (
-      <div
-        className={`flex bg-steam-elevated rounded-lg p-1 border border-steam-border ${className}`}
-        role="group"
-        aria-label="Appearance"
-      >
-        {btn('light', 'Light')}
-        {btn('dark', 'Dark')}
+      <div className={`dashboard-segment w-full ${className}`} role="group" aria-label="Appearance">
+        {(['light', 'dark'] as ThemeMode[]).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            onClick={() => setTheme(mode)}
+            aria-pressed={theme === mode}
+            className={`dashboard-segment-btn flex-1 capitalize ${
+              theme === mode ? 'dashboard-segment-btn-active' : ''
+            }`}
+          >
+            {mode}
+          </button>
+        ))}
       </div>
     );
   }

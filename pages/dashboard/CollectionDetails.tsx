@@ -120,7 +120,7 @@ const CollectionDetails = () => {
           </div>
           <p className="text-xs font-bold text-steam-tertiary uppercase tracking-wider mb-2">Current Worth</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-steam-text mb-1 break-all sm:break-normal">{formatCurrency(stats?.current_worth || 0)}</h2>
-          <div className={`flex items-center gap-1 text-sm font-bold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+          <div className={`flex items-center gap-1 text-sm font-bold ${isPositive ? 'text-steam-profit' : 'text-steam-loss'}`}>
             {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
             {stats?.roi_percentage.toFixed(2)}% ROI
           </div>
@@ -153,7 +153,7 @@ const CollectionDetails = () => {
              </div>
              <div className="flex justify-between items-center text-sm">
                 <span className="text-steam-secondary">Total Gain</span>
-                <span className={`font-mono font-bold ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`font-mono font-bold ${isPositive ? 'text-steam-profit' : 'text-steam-loss'}`}>
                   {isPositive ? '+' : ''}{formatCurrency(stats?.total_gain || 0)}
                 </span>
              </div>

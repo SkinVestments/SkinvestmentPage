@@ -204,31 +204,32 @@ export const StagnationDetector = ({ hasPremiumAccess }: StagnationDetectorProps
             </button>
           </div>
         ) : items.length === 0 ? (
-          <div
-            className={`flex flex-col items-center justify-center text-center h-48 px-4 transition-all duration-500 ${
-              !hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''
-            }`}
-          >
-            <TrendingUp className="w-10 h-10 text-steam-profit mb-3 opacity-80" />
-            <p className="text-steam-secondary font-bold">No stagnant assets</p>
-            <p className="text-steam-tertiary text-xs mt-1 max-w-xs">
-              Everything in your portfolio had activity within the last {daysThreshold} days.
-            </p>
-          </div>
+          hasPremiumAccess ? (
+            <div className="flex flex-col items-center justify-center text-center h-48 px-4">
+              <TrendingUp className="w-10 h-10 text-steam-profit mb-3 opacity-80" />
+              <p className="text-steam-secondary font-bold">No stagnant assets</p>
+              <p className="text-steam-tertiary text-xs mt-1 max-w-xs">
+                Everything in your portfolio had activity within the last {daysThreshold} days.
+              </p>
+            </div>
+          ) : (
+            <div className="h-48 rounded-xl theme-subtle animate-pulse" aria-hidden />
+          )
         ) : (
           <ul
             className={`space-y-2 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar transition-all duration-500 ${
               !hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''
             }`}
           >
-            {items.map((item) => {
+            {items.map((item, index) => {
               const invested = Number(item.total_invested ?? 0);
               const current = Number(item.current_total_value ?? 0);
               const roi = invested > 0 ? ((current - invested) / invested) * 100 : 0;
               const clickable = Boolean(item.folder_id);
+              const rowKey = `${item.skin_id}:${item.folder_id ?? 'none'}:${index}`;
 
               return (
-                <li key={item.skin_id}>
+                <li key={rowKey}>
                   <button
                     type="button"
                     onClick={() => handleRowClick(item)}
@@ -281,21 +282,18 @@ export const StagnationDetector = ({ hasPremiumAccess }: StagnationDetectorProps
         )}
 
         {!hasPremiumAccess && !loading && !errorMessage && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-steam-card/50 rounded-xl mx-4 sm:mx-6 mb-4 sm:mb-6">
-            <div className="bg-steam-bg p-6 rounded-2xl border border-steam-border shadow-2xl text-center max-w-sm w-full mx-4">
-              <div className="w-12 h-12 bg-steam-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Lock className="w-6 h-6 text-steam-accent" />
-              </div>
-              <h4 className="text-steam-text font-bold text-lg mb-2">Pro Analytics Required</h4>
-              <p className="text-sm text-steam-secondary mb-6">
-                Unlock stagnation alerts and see which items are tying up your capital.
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-steam-card/60 rounded-xl mx-4 sm:mx-6 mb-4 sm:mb-6 px-4">
+            <div className="inline-flex items-center gap-2 rounded-xl border border-steam-border bg-steam-bg/95 px-4 py-3 shadow-lg">
+              <Lock className="w-4 h-4 text-steam-accent shrink-0" />
+              <p className="text-sm text-steam-secondary">
+                PRO feature.{' '}
+                <Link
+                  to={MANAGE_SUBSCRIPTION_SETTINGS_PATH}
+                  className="font-bold text-steam-accent hover:underline"
+                >
+                  Upgrade
+                </Link>
               </p>
-              <Link
-                to={MANAGE_SUBSCRIPTION_SETTINGS_PATH}
-                className="block w-full bg-steam-accent hover:opacity-90 text-white font-bold py-3 rounded-xl transition-colors text-center"
-              >
-                Upgrade to PRO
-              </Link>
             </div>
           </div>
         )}

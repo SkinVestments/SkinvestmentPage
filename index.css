@@ -329,6 +329,107 @@
   color: #ffffff;
 }
 
+/* Shared dashboard primary CTA (rounded-xl, accent fill, on-accent text) */
+.btn-dashboard-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-accent);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.625rem 1.25rem;
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  transition: opacity 0.15s ease;
+}
+
+.btn-dashboard-primary:hover {
+  opacity: 0.9;
+}
+
+.btn-dashboard-primary:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.theme-alert-error {
+  border: 1px solid color-mix(in srgb, var(--color-loss) 35%, transparent);
+  background-color: color-mix(in srgb, var(--color-loss) 10%, transparent);
+  color: var(--color-loss);
+}
+
+.theme-alert-success {
+  border: 1px solid color-mix(in srgb, var(--color-success) 35%, transparent);
+  background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+  color: var(--color-success);
+}
+
+/* Dashboard surface cards — content level */
+.dashboard-card {
+  border-radius: 1rem; /* 2xl */
+  border: 1px solid color-mix(in srgb, var(--color-card-border) 55%, transparent);
+  background-color: var(--color-surface-overlay);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* One hero / chart section per page */
+.dashboard-card-hero {
+  border-radius: 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-card-border) 55%, transparent);
+  background-color: var(--color-surface-overlay);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Metric / section micro-labels */
+.dashboard-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+/* Shared segmented control (theme / view / periods) */
+.dashboard-segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border-radius: 0.5rem; /* lg */
+  border: 1px solid color-mix(in srgb, var(--color-card-border) 55%, transparent);
+  background-color: var(--color-surface-elevated);
+}
+
+.dashboard-segment-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.375rem; /* md */
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  color: var(--color-text-tertiary);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dashboard-segment-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.dashboard-segment-btn-active {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-overlay);
+  border-color: color-mix(in srgb, var(--color-card-border) 55%, transparent);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }

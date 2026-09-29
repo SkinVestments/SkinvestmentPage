@@ -174,7 +174,7 @@ const History = () => {
                           inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border uppercase tracking-wider
                           ${tx.type === 'DROP' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : ''}
                           ${tx.type === 'BUY' ? 'bg-steam-elevated/60 text-steam-secondary border-steam-border/30' : ''}
-                          ${tx.type === 'SELL' ? 'bg-green-500/10 text-green-400 border-green-500/20' : ''}
+                          ${tx.type === 'SELL' ? 'bg-green-500/10 text-steam-profit border-green-500/20' : ''}
                         `}>
                           {tx.type === 'DROP' && <Package className="w-3.5 h-3.5" />}
                           {tx.type === 'BUY' && <ArrowDownUp className="w-3.5 h-3.5 rotate-180" />}
@@ -232,7 +232,7 @@ const History = () => {
                         
                         {/* Jeśli to sprzedaż, pokaż zysk */}
                         {tx.type === 'SELL' && tx.realized_profit !== null && (
-                            <div className={`text-xs mt-1 flex justify-end items-center gap-1 ${tx.realized_profit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                            <div className={`text-xs mt-1 flex justify-end items-center gap-1 ${tx.realized_profit >= 0 ? 'text-steam-profit' : 'text-steam-loss'}`}>
                                 {tx.realized_profit >= 0 ? '+' : ''}{formatCurrency(tx.realized_profit)}
                                 <span className={`px-1 py-0.5 rounded text-[9px] ${tx.realized_profit >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
                                     PROFIT

@@ -52,7 +52,8 @@ export const lightTheme: AppThemeTokens = {
   accent: '#FF5A5F',
   accentVariant: '#E04E53',
   profit: '#00A699',
-  loss: '#FF5A5F',
+  /** Deeper than accent coral so danger ≠ primary CTA in light mode */
+  loss: '#C62828',
   success: '#00A699',
   warning: '#FFB400',
   divider: '#E0E0E0',

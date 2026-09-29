@@ -1,10 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Apple, ShieldCheck, Globe, Package } from 'lucide-react';
 import { Button } from './Button';
 import { GooglePlayIcon } from './icons/GooglePlayIcon';
 import { APP_STORE_URL, GOOGLE_PLAY_URL } from '@/constants/appLinks';
 import { useTheme } from '@/context/ThemeContext';
 import { useWeeklyReset } from '../utils/utils';
+
+/** Keep in sync with hero LCP preload in index.html */
+const HERO_IMG_SIZES = '(max-width: 640px) 240px, (max-width: 768px) 280px, 340px';
 
 const HERO_SCREEN = {
   dark: {
@@ -22,25 +25,6 @@ export const Hero: React.FC = () => {
   const { theme } = useTheme();
   const screen = theme === 'light' ? HERO_SCREEN.light : HERO_SCREEN.dark;
 
-  useEffect(() => {
-    const id = 'hero-lcp-preload';
-    let link = document.getElementById(id) as HTMLLinkElement | null;
-    if (!link) {
-      link = document.createElement('link');
-      link.id = id;
-      link.rel = 'preload';
-      link.as = 'image';
-      link.type = 'image/webp';
-      document.head.appendChild(link);
-    }
-    if (link.getAttribute('href') === screen.src) return;
-    link.setAttribute('href', screen.src);
-
-    return () => {
-      document.getElementById(id)?.remove();
-    };
-  }, [screen.src]);
-  
   return (
     <section className="relative min-h-[90vh] sm:min-h-[95vh] flex items-center pt-24 sm:pt-32 pb-16 sm:pb-24 bg-steam-bg">
       
@@ -132,7 +116,7 @@ export const Hero: React.FC = () => {
                 <img
                   src={screen.src}
                   srcSet={screen.srcSet}
-                  sizes="(max-width: 640px) 240px, (max-width: 768px) 280px, 340px"
+                  sizes={HERO_IMG_SIZES}
                   alt="Skinvestments CS2 portfolio tracker app on iPhone"
                   width={335}
                   height={725}

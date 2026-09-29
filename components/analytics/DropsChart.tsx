@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { Lock, TrendingUp } from 'lucide-react';
 import { MANAGE_SUBSCRIPTION_SETTINGS_PATH } from '@/constants/settingsLinks';
 import { AreaChartSkeleton } from './AnalyticsSkeletons';
+import { CustomSelect } from '@/components/ui/CustomSelect';
 import {
   chartAxisLineStyle,
   chartAxisTickStyle,
@@ -16,6 +17,14 @@ import {
   formatChartYAxis,
 } from '@/utils/chartTheme';
 import { formatCurrency } from '@/utils/display';
+
+const DROPS_RANGE_OPTIONS = [
+  { value: '1M', label: '1 Month' },
+  { value: '3M', label: '3 Months' },
+  { value: '6M', label: '6 Months' },
+  { value: '1Y', label: '1 Year' },
+  { value: 'ALL', label: 'All Time' },
+];
 
 interface DropsChartProps {
   hasPremiumAccess: boolean;
@@ -50,25 +59,21 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
   }, [user, timeRange]);
 
   return (
-    <div className="bg-steam-card p-6 rounded-2xl border border-steam-border shadow-lg h-full relative overflow-hidden flex flex-col">
-      <div className="flex justify-between items-center mb-6 relative z-10">
-        <div className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-steam-secondary" />
-          <h3 className="font-bold text-steam-text">Drops Performance</h3>
+    <div className="dashboard-card-hero p-6 h-full relative overflow-hidden flex flex-col">
+      <div className="flex justify-between items-center gap-3 mb-6 relative z-10">
+        <div className="flex items-center gap-2 min-w-0">
+          <TrendingUp className="w-5 h-5 text-steam-secondary shrink-0" />
+          <h3 className="font-bold text-steam-text truncate">Drops Performance</h3>
         </div>
         
-        <select 
+        <CustomSelect
           value={timeRange}
-          onChange={(e) => setTimeRange(e.target.value)}
+          onChange={setTimeRange}
+          options={DROPS_RANGE_OPTIONS}
           disabled={!hasPremiumAccess}
-          className="bg-steam-bg border border-steam-border text-xs text-steam-text rounded-lg px-2 py-1 focus:outline-none"
-        >
-          <option value="1M">1 Month</option>
-          <option value="3M">3 Months</option>
-          <option value="6M">6 Months</option>
-          <option value="1Y">1 Year</option>
-          <option value="ALL">All Time</option>
-        </select>
+          aria-label="Drops chart period"
+          className="w-36 shrink-0"
+        />
       </div>
 
       <div className="w-full min-h-[300px] relative">
