@@ -4,6 +4,7 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { PublicShell } from '@/routes/PublicShell';
 import { RouteFallback } from '@/components/ui/RouteFallback';
+import { adminPortfolioRoute } from '@/routes/adminRoutes';
 
 import Home from '@/pages/Home';
 
@@ -48,6 +49,9 @@ export const AppRoutes = () => (
     <Routes>
       {/* Embed widget: no PublicShell chrome (iframe / OBS) */}
       <Route path="/embed/:token" element={<EmbedPortfolio />} />
+
+      {/* Internal admin lookup — noindex, gated by AdminGate + RPC */}
+      {adminPortfolioRoute}
 
       <Route element={<PublicShell />}>
         <Route path="/" element={<Home />} />
