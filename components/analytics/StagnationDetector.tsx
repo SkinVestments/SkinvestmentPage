@@ -221,14 +221,15 @@ export const StagnationDetector = ({ hasPremiumAccess }: StagnationDetectorProps
               !hasPremiumAccess ? 'blur-md opacity-40 select-none pointer-events-none' : ''
             }`}
           >
-            {items.map((item) => {
+            {items.map((item, index) => {
               const invested = Number(item.total_invested ?? 0);
               const current = Number(item.current_total_value ?? 0);
               const roi = invested > 0 ? ((current - invested) / invested) * 100 : 0;
               const clickable = Boolean(item.folder_id);
+              const rowKey = `${item.skin_id}:${item.folder_id ?? 'none'}:${index}`;
 
               return (
-                <li key={item.skin_id}>
+                <li key={rowKey}>
                   <button
                     type="button"
                     onClick={() => handleRowClick(item)}
