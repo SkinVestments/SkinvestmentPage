@@ -129,6 +129,12 @@
       color 0.2s ease;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    body {
+      transition: none;
+    }
+  }
+
   body::before {
     content: '';
     position: fixed;
@@ -343,16 +349,51 @@
   line-height: 1.25rem;
   padding: 0.625rem 1.25rem;
   box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent) 22%, transparent);
-  transition: opacity 0.15s ease;
+  transition:
+    opacity 100ms ease,
+    transform 100ms ease-out;
 }
 
 .btn-dashboard-primary:hover {
   opacity: 0.9;
 }
 
+.btn-dashboard-primary:active {
+  transform: scale(0.97);
+}
+
 .btn-dashboard-primary:disabled {
   opacity: 0.6;
   pointer-events: none;
+}
+
+/* Pointer-down press for buttons, chips, tabs, nav, icon buttons */
+.pressable {
+  transition:
+    transform 100ms ease-out,
+    opacity 100ms ease,
+    color 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.pressable:active {
+  transform: scale(0.97);
+}
+
+/* Dense table / full-width list rows: tint only (no scale jitter) */
+.pressable-row {
+  transition: background-color 100ms ease;
+}
+
+.pressable-row:active {
+  background-color: var(--color-surface-hover);
+}
+
+/* Tabular lining for money, %, quantities, numeric columns */
+.num {
+  font-variant-numeric: tabular-nums;
 }
 
 .theme-alert-error {
@@ -383,9 +424,9 @@
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
-/* Metric / section micro-labels */
+/* Metric / section micro-labels (10px at 16px root) */
 .dashboard-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -416,11 +457,20 @@
   color: var(--color-text-tertiary);
   background: transparent;
   border: 1px solid transparent;
-  transition: color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 100ms ease-out;
 }
 
 .dashboard-segment-btn:hover {
   color: var(--color-text-primary);
+}
+
+.dashboard-segment-btn:active {
+  transform: scale(0.97);
 }
 
 .dashboard-segment-btn-active {
@@ -501,4 +551,73 @@
 .feature-card-spotlight[data-spotlight='on'] .feature-card-spotlight-border,
 .feature-card-spotlight.group:hover .feature-card-spotlight-border {
   opacity: 1;
+}
+
+/* === Accessibility: reduced motion / transparency / contrast === */
+@media (prefers-reduced-motion: reduce) {
+  .pressable:active,
+  .btn-dashboard-primary:active,
+  .dashboard-segment-btn:active {
+    transform: none;
+  }
+
+  .animate-fade-in,
+  .animate-fade-in-up {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .animate-glow,
+  .animate-float,
+  .animate-float-delayed,
+  .animate-scroll,
+  .animate-pulse-slow,
+  .animate-blog-spin,
+  .animate-blog-orbit,
+  .animate-blog-pulse,
+  .shimmer {
+    animation: none !important;
+  }
+
+  .shimmer {
+    background: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-surface-elevated));
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel,
+  .theme-scrim,
+  .theme-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .glass-panel {
+    background: var(--color-surface-overlay);
+  }
+}
+
+@media (prefers-contrast: more) {
+  .dashboard-card,
+  .dashboard-card-hero,
+  .theme-card,
+  .btn-dashboard-primary {
+    border-width: 1px;
+    border-style: solid;
+  }
+
+  .dashboard-card,
+  .dashboard-card-hero,
+  .theme-card {
+    background-color: var(--color-surface-overlay);
+    border-color: var(--color-card-border);
+  }
+
+  .glass-panel {
+    background: var(--color-surface-overlay);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-color: var(--color-card-border);
+  }
 }

@@ -119,7 +119,7 @@ const CollectionDetails = () => {
             <Wallet className="w-20 h-20" />
           </div>
           <p className="text-xs font-bold text-steam-tertiary uppercase tracking-wider mb-2">Current Worth</p>
-          <h2 className="text-2xl sm:text-3xl font-bold text-steam-text mb-1 break-all sm:break-normal">{formatCurrency(stats?.current_worth || 0)}</h2>
+          <h2 className="num text-2xl sm:text-3xl font-bold text-steam-text mb-1 leading-tight break-all sm:break-normal">{formatCurrency(stats?.current_worth || 0)}</h2>
           <div className={`flex items-center gap-1 text-sm font-bold ${isPositive ? 'text-steam-profit' : 'text-steam-loss'}`}>
             {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
             {stats?.roi_percentage.toFixed(2)}% ROI
@@ -129,7 +129,7 @@ const CollectionDetails = () => {
         {/* KAFELEK 2: Włożony kapitał */}
         <div className="bg-steam-card p-5 rounded-2xl border border-steam-border shadow-lg">
           <p className="text-xs font-bold text-steam-tertiary uppercase tracking-wider mb-2">Total Invested</p>
-          <h2 className="text-3xl font-bold text-steam-text mb-1">{formatCurrency(stats?.total_invested || 0)}</h2>
+          <h2 className="num text-3xl font-bold text-steam-text mb-1 leading-tight">{formatCurrency(stats?.total_invested || 0)}</h2>
           <p className="text-xs text-steam-secondary mt-1">Initial capital used</p>
         </div>
 
@@ -149,11 +149,11 @@ const CollectionDetails = () => {
            <div className="space-y-2 mt-2">
              <div className="flex justify-between items-center text-sm">
                 <span className="text-steam-secondary">Investments Value</span>
-                <span className="font-mono text-steam-text font-bold">{formatCurrency(stats?.investment_worth || 0)}</span>
+                <span className="font-mono num text-steam-text font-bold">{formatCurrency(stats?.investment_worth || 0)}</span>
              </div>
              <div className="flex justify-between items-center text-sm">
                 <span className="text-steam-secondary">Total Gain</span>
-                <span className={`font-mono font-bold ${isPositive ? 'text-steam-profit' : 'text-steam-loss'}`}>
+                <span className={`font-mono num font-bold ${isPositive ? 'text-steam-profit' : 'text-steam-loss'}`}>
                   {isPositive ? '+' : ''}{formatCurrency(stats?.total_gain || 0)}
                 </span>
              </div>
@@ -222,8 +222,8 @@ const CollectionDetails = () => {
                             </span>
                         </td>
                         <td className="p-4 font-medium text-steam-secondary">x{item.quantity}</td>
-                        <td className="p-4 text-steam-secondary font-mono">{formatCurrency(item.item_price)}</td>
-                        <td className="p-4 text-right pr-6 font-bold text-steam-text font-mono">
+                        <td className="p-4 text-right text-steam-secondary font-mono num">{formatCurrency(item.item_price)}</td>
+                        <td className="p-4 text-right pr-6 font-bold text-steam-text font-mono num">
                             <div className="flex items-center justify-end gap-2">
                             {formatCurrency(totalVal)}
                             <ChevronRight className="w-4 h-4 text-steam-tertiary group-hover:text-steam-accent transition-colors" />

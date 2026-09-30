@@ -45,8 +45,9 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
     setPurchaseError('');
 
     try {
+      // Free plan: local select only (no checkout). The old 250ms delay was
+      // artificial UX latency from commit 08ee80ba and is not needed for popup safety.
       if (selectedPlanId === 'free') {
-        await new Promise((r) => setTimeout(r, 250));
         onSelectPlan(selectedPlanId, billingCycle);
         onClose();
         return;
@@ -63,6 +64,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
         );
       }
 
+      // Must stay synchronous inside the click handler so popup blockers allow it.
       window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
       onClose();
     } catch (err) {
@@ -95,7 +97,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover transition-colors shrink-0"
+            className="pressable p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover shrink-0"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -111,7 +113,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                   key={cycle}
                   type="button"
                   onClick={() => setBillingCycle(cycle)}
-                  className={`relative z-10 flex-1 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold capitalize transition-colors ${
+                  className={`pressable relative z-10 flex-1 px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold capitalize ${
                     billingCycle === cycle ? 'text-steam-text' : 'text-steam-tertiary hover:text-steam-secondary'
                   }`}
                 >
@@ -129,7 +131,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                 </button>
               ))}
               <div
-                className="absolute top-1.5 bottom-1.5 rounded-lg theme-subtle-strong border border-steam-border/50 transition-all duration-300 w-[calc(33.33%-4px)]"
+                className="absolute top-1.5 bottom-1.5 rounded-lg theme-subtle-strong border border-steam-border/50 transition-[left] duration-300 ease-out w-[calc(33.33%-4px)]"
                 style={{
                   left:
                     billingCycle === 'monthly'
@@ -155,7 +157,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                   key={plan.id}
                   type="button"
                   onClick={() => setSelectedPlanId(plan.id)}
-                  className={`relative text-left p-5 rounded-2xl border transition-all flex flex-col ${
+                  className={`pressable relative text-left p-5 rounded-2xl border flex flex-col ${
                     isSelected
                       ? 'border-steam-accent bg-steam-accent/10 ring-2 ring-steam-accent/40'
                       : 'border-steam-border bg-steam-card hover:border-steam-border'
@@ -183,7 +185,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
                   <h4 className="font-bold text-steam-text text-lg">{plan.name}</h4>
                   <div className="mt-1">
                     <div className="flex items-baseline gap-1 flex-wrap">
-                      <span className="text-2xl font-bold text-steam-text">{price}</span>
+                      <span className="num text-2xl font-bold text-steam-text leading-tight">{price}</span>
                       <span className="text-steam-tertiary text-xs">{period}</span>
                     </div>
                     {yearlyNote && (
@@ -247,7 +249,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 rounded-xl font-bold text-steam-secondary hover:text-steam-text hover:bg-steam-hover transition-colors border border-steam-border"
+            className="pressable flex-1 py-3 rounded-xl font-bold text-steam-secondary hover:text-steam-text hover:bg-steam-hover border border-steam-border"
           >
             Cancel
           </button>
@@ -255,7 +257,7 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
             type="button"
             onClick={handleConfirm}
             disabled={isSaving}
-            className="flex-1 py-3 rounded-xl font-bold bg-steam-accent hover:opacity-90 text-white transition-colors shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
+            className="pressable flex-1 py-3 rounded-xl font-bold bg-steam-accent hover:opacity-90 text-white shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSaving ? (
               <>

@@ -43,7 +43,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({ onNavigate }) => {
             to={item.path}
             onClick={handleNav}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 ${
+              `pressable flex items-center gap-3 px-4 py-2.5 rounded-xl ${
                 isActive
                   ? 'bg-steam-accent/10 text-steam-accent font-bold'
                   : 'text-steam-secondary hover:bg-steam-hover hover:text-steam-text font-medium'
@@ -65,7 +65,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({ onNavigate }) => {
         <NavLink
           to="/"
           onClick={handleNav}
-          className="flex items-center gap-3 px-4 py-2.5 text-steam-tertiary hover:text-steam-text transition-colors text-sm font-medium rounded-xl hover:bg-steam-hover"
+          className="pressable flex items-center gap-3 px-4 py-2.5 text-steam-tertiary hover:text-steam-text text-sm font-medium rounded-xl hover:bg-steam-hover"
         >
           <Home className="w-4 h-4 shrink-0" /> Back to Home
         </NavLink>
@@ -109,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
               <button
                 type="button"
                 onClick={onMobileClose}
-                className="p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover"
+                className="pressable p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" />

@@ -194,14 +194,14 @@ const Wishlist = () => {
         <div className="flex items-center gap-2">
           <Link
             to="/catalog"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-steam-border text-sm text-steam-secondary hover:text-steam-text hover:bg-steam-card"
+            className="pressable inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-steam-border text-sm text-steam-secondary hover:text-steam-text hover:bg-steam-card"
           >
             <Plus className="w-4 h-4" /> Add more
           </Link>
           <button
             type="button"
             onClick={fetchWishlist}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-steam-border text-sm text-steam-secondary hover:text-steam-text hover:bg-steam-card"
+            className="pressable inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-steam-border text-sm text-steam-secondary hover:text-steam-text hover:bg-steam-card"
           >
             <RefreshCw className="w-4 h-4" /> Refresh
           </button>
@@ -210,16 +210,16 @@ const Wishlist = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-steam-card rounded-2xl p-5 border border-steam-border">
-          <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Items</p>
-          <p className="text-2xl font-bold">{totals.itemsCount}</p>
+          <p className="dashboard-label mb-1">Items</p>
+          <p className="num text-2xl font-bold leading-tight">{totals.itemsCount}</p>
         </div>
         <div className="bg-steam-card rounded-2xl p-5 border border-steam-border">
-          <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Est. Cost Now</p>
-          <p className="text-2xl font-bold font-mono">{formatCurrency(totals.estNow)}</p>
+          <p className="dashboard-label mb-1">Est. Cost Now</p>
+          <p className="num text-2xl font-bold font-mono leading-tight">{formatCurrency(totals.estNow)}</p>
         </div>
         <div className="bg-steam-card rounded-2xl p-5 border border-steam-border">
-          <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Est. Target Cost</p>
-          <p className="text-2xl font-bold font-mono">{formatCurrency(totals.estTarget)}</p>
+          <p className="dashboard-label mb-1">Est. Target Cost</p>
+          <p className="num text-2xl font-bold font-mono leading-tight">{formatCurrency(totals.estTarget)}</p>
         </div>
       </div>
 
@@ -336,7 +336,7 @@ const Wishlist = () => {
                           <option value="low">low</option>
                         </select>
                       </td>
-                      <td className="p-4 text-right font-mono text-sm">{formatCurrency(currentPrice)}</td>
+                      <td className="p-4 text-right font-mono num text-sm">{formatCurrency(currentPrice)}</td>
                       <td className="p-4 text-right">
                         <input
                           type="number"
@@ -361,15 +361,15 @@ const Wishlist = () => {
                               saveWishlistItem(row);
                             }
                           }}
-                          className="w-28 bg-steam-bg border border-steam-border rounded-lg px-2 py-1 text-right font-mono text-sm focus:outline-none focus:border-steam-accent"
+                          className="w-28 bg-steam-bg border border-steam-border rounded-lg px-2 py-1 text-right font-mono num text-sm focus:outline-none focus:border-steam-accent"
                         />
                       </td>
                       <td className="p-4 text-right">
                         <div className="flex flex-col items-end gap-1">
-                          <span className={`font-mono text-sm font-bold ${deltaToneClass}`}>
+                          <span className={`font-mono num text-sm font-bold ${deltaToneClass}`}>
                             {delta == null ? '--' : `${delta > 0 ? '+' : ''}${formatCurrency(delta)}`}
                           </span>
-                          <span className={`text-[11px] font-mono ${deltaToneClass}`}>
+                          <span className={`text-[11px] font-mono num ${deltaToneClass}`}>
                             {deltaPercent == null ? 'set target' : `${deltaPercent > 0 ? '+' : ''}${deltaPercent.toFixed(1)}% vs target`}
                           </span>
                         </div>
