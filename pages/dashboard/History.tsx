@@ -164,7 +164,32 @@ const History = () => {
                 {transactions.map((tx) => {
                   const rarityStyle = getRarityStyle(tx.cs2_items?.rarity);
                   const totalValue = tx.quantity * tx.price;
-                  
+                  const realizedProfit = tx.realized_profit;
+                  const profitTone =
+                    realizedProfit == null
+                      ? ''
+                      : realizedProfit > 0
+                        ? 'text-steam-profit'
+                        : realizedProfit < 0
+                          ? 'text-steam-loss'
+                          : 'text-steam-secondary';
+                  const profitBadgeClass =
+                    realizedProfit == null
+                      ? ''
+                      : realizedProfit > 0
+                        ? 'bg-green-500/10'
+                        : realizedProfit < 0
+                          ? 'bg-red-500/10'
+                          : 'bg-steam-elevated';
+                  const profitBadgeLabel =
+                    realizedProfit == null
+                      ? ''
+                      : realizedProfit > 0
+                        ? 'PROFIT'
+                        : realizedProfit < 0
+                          ? 'LOSS'
+                          : 'EVEN';
+
                   return (
                     <tr key={tx.id} className="hover:bg-steam-hover transition-colors group">
                       
@@ -231,11 +256,11 @@ const History = () => {
                         </div>
                         
                         {/* Jeśli to sprzedaż, pokaż zysk */}
-                        {tx.type === 'SELL' && tx.realized_profit !== null && (
-                            <div className={`text-xs mt-1 flex justify-end items-center gap-1 ${tx.realized_profit >= 0 ? 'text-steam-profit' : 'text-steam-loss'}`}>
-                                {tx.realized_profit >= 0 ? '+' : ''}{formatCurrency(tx.realized_profit)}
-                                <span className={`px-1 py-0.5 rounded text-[9px] ${tx.realized_profit >= 0 ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
-                                    PROFIT
+                        {tx.type === 'SELL' && realizedProfit !== null && (
+                            <div className={`text-xs mt-1 flex justify-end items-center gap-1 ${profitTone}`}>
+                                {realizedProfit > 0 ? '+' : ''}{formatCurrency(realizedProfit)}
+                                <span className={`px-1 py-0.5 rounded text-[9px] font-bold uppercase ${profitBadgeClass}`}>
+                                    {profitBadgeLabel}
                                 </span>
                             </div>
                         )}
