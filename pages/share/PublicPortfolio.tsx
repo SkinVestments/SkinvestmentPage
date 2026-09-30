@@ -15,6 +15,7 @@ import { Calendar, Loader2, Package, PieChart as PieIcon, TrendingUp, User, Wall
 import { usePageSeo } from '@/hooks/usePageSeo';
 import { ItemImage } from '@/components/ui/ItemImage';
 import { GetAppButton } from '@/components/GetAppButton';
+import { PublicPortfolioSkeleton } from '@/components/share/ShareSkeletons';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import {
   chartAxisLineStyle,
@@ -142,17 +143,7 @@ const PublicPortfolioPage: React.FC = () => {
   }, [chartData]);
 
   if (data === undefined) {
-    return (
-      <div className="min-h-screen bg-steam-bg pt-24 sm:pt-32 pb-20 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto flex justify-center py-24">
-          <div
-            className="w-8 h-8 border-2 border-steam-accent border-t-transparent rounded-full animate-spin"
-            role="status"
-            aria-label="Loading"
-          />
-        </div>
-      </div>
-    );
+    return <PublicPortfolioSkeleton />;
   }
 
   if (!data) {
