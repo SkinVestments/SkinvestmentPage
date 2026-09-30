@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import * as m from 'motion/react-m';
 import {
   LayoutDashboard,
   Package,
@@ -15,6 +16,12 @@ import {
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { BrandLogo } from './BrandLogo';
+import {
+  drawerPanelVariants,
+  drawerScrimVariants,
+  fadeCross,
+  springDefault,
+} from '@/lib/motion';
 
 const navItems: { icon: LucideIcon; label: string; path: string }[] = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/panel' },
@@ -80,6 +87,19 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) => {
+  // Escape closes while open (including mid-open animation).
+  useEffect(() => {
+    if (!mobileOpen || !onMobileClose) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onMobileClose();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [mobileOpen, onMobileClose]);
+
   return (
     <>
       {/* Desktop */}
@@ -95,32 +115,51 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
         </div>
       </aside>
 
-      {/* Mobile drawer — no brand header (matches top bar; avoids logo scale jump) */}
-      {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Navigation menu">
+      {/*
+        Mobile drawer stays mounted so reopen mid-close continues from the
+        live transform (interruptible spring), instead of remounting from -100%.
+      */}
+      <m.button
+        type="button"
+        className="md:hidden fixed inset-0 z-50 bg-steam-bg/80 backdrop-blur-sm"
+        initial={false}
+        animate={mobileOpen ? 'visible' : 'hidden'}
+        variants={drawerScrimVariants}
+        transition={fadeCross}
+        style={{ pointerEvents: mobileOpen ? 'auto' : 'none' }}
+        onClick={onMobileClose}
+        aria-label="Close menu overlay"
+        aria-hidden={!mobileOpen}
+        tabIndex={mobileOpen ? 0 : -1}
+      />
+
+      <m.aside
+        className="md:hidden fixed left-0 top-0 z-50 w-[min(100%,280px)] max-w-[85vw] h-full bg-steam-surface border-r border-steam-border flex flex-col shadow-2xl"
+        initial={false}
+        animate={mobileOpen ? 'visible' : 'hidden'}
+        variants={drawerPanelVariants}
+        transition={springDefault}
+        style={{ pointerEvents: mobileOpen ? 'auto' : 'none' }}
+        role="dialog"
+        aria-modal={mobileOpen}
+        aria-label="Navigation menu"
+        aria-hidden={!mobileOpen}
+      >
+        <div className="h-14 shrink-0 border-b border-steam-border/50 flex items-center justify-end px-4">
           <button
             type="button"
-            className="absolute inset-0 bg-steam-bg/80 backdrop-blur-sm"
             onClick={onMobileClose}
-            aria-label="Close menu overlay"
-          />
-          <aside className="relative w-[min(100%,280px)] max-w-[85vw] h-full bg-steam-surface border-r border-steam-border flex flex-col shadow-2xl animate-fade-in">
-            <div className="h-14 shrink-0 border-b border-steam-border/50 flex items-center justify-end px-4">
-              <button
-                type="button"
-                onClick={onMobileClose}
-                className="pressable p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover"
-                aria-label="Close menu"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-              <SidebarPanel onNavigate={onMobileClose} />
-            </div>
-          </aside>
+            className="pressable p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover"
+            aria-label="Close menu"
+            tabIndex={mobileOpen ? 0 : -1}
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
-      )}
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          <SidebarPanel onNavigate={onMobileClose} />
+        </div>
+      </m.aside>
     </>
   );
 };
