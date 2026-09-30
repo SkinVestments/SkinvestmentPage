@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import * as m from 'motion/react-m';
 import {
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { BrandLogo } from './BrandLogo';
+import { useScrollEdge } from '@/hooks/useScrollEdge';
 import {
   drawerPanelVariants,
   drawerScrimVariants,
@@ -43,7 +44,7 @@ const SidebarPanel: React.FC<SidebarPanelProps> = ({ onNavigate }) => {
 
   return (
     <>
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-4 space-y-1">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
@@ -87,7 +88,14 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileClose }) => {
-  // Escape closes while open (including mid-open animation).
+  const desktopScrollRef = useRef<HTMLDivElement>(null);
+  const desktopSentinelRef = useRef<HTMLDivElement>(null);
+  const desktopEdged = useScrollEdge(desktopScrollRef, desktopSentinelRef);
+
+  const drawerScrollRef = useRef<HTMLDivElement>(null);
+  const drawerSentinelRef = useRef<HTMLDivElement>(null);
+  const drawerEdged = useScrollEdge(drawerScrollRef, drawerSentinelRef);
+
   useEffect(() => {
     if (!mobileOpen || !onMobileClose) return;
     const onKeyDown = (event: KeyboardEvent) => {
@@ -102,23 +110,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
 
   return (
     <>
-      {/* Desktop */}
+      {/* Desktop — sticky frosted brand header; nav scrolls underneath */}
       <aside className="w-64 bg-steam-surface border-r border-steam-border hidden md:flex flex-col h-screen fixed left-0 top-0 z-40">
-        <div className="px-6 flex items-center gap-3 border-b border-steam-border/50 h-14 shrink-0">
-          <BrandLogo size="sm" />
-          <span className="text-sm font-bold text-steam-text tracking-tight uppercase truncate">
-            Skin<span className="text-steam-accent">vestments</span>
-          </span>
-        </div>
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <SidebarPanel />
+        <div
+          ref={desktopScrollRef}
+          className="flex-1 flex flex-col min-h-0 overflow-y-auto"
+        >
+          <div ref={desktopSentinelRef} className="h-px w-full pointer-events-none shrink-0" aria-hidden />
+          <div
+            className="sticky top-0 z-10 h-14 shrink-0 chrome-material px-6 flex items-center gap-3"
+            data-edge={desktopEdged ? 'on' : 'off'}
+          >
+            <BrandLogo size="sm" />
+            <span className="text-sm font-bold text-steam-text tracking-tight uppercase truncate">
+              Skin<span className="text-steam-accent">vestments</span>
+            </span>
+          </div>
+          <div className="flex flex-col min-h-0 flex-1">
+            <SidebarPanel />
+          </div>
         </div>
       </aside>
 
-      {/*
-        Mobile drawer stays mounted so reopen mid-close continues from the
-        live transform (interruptible spring), instead of remounting from -100%.
-      */}
       <m.button
         type="button"
         className="md:hidden fixed inset-0 z-50 bg-steam-bg/80 backdrop-blur-sm"
@@ -145,19 +158,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ mobileOpen = false, onMobileCl
         aria-label="Navigation menu"
         aria-hidden={!mobileOpen}
       >
-        <div className="h-14 shrink-0 border-b border-steam-border/50 flex items-center justify-end px-4">
-          <button
-            type="button"
-            onClick={onMobileClose}
-            className="pressable p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover"
-            aria-label="Close menu"
-            tabIndex={mobileOpen ? 0 : -1}
+        <div
+          ref={drawerScrollRef}
+          className="flex-1 flex flex-col min-h-0 overflow-y-auto"
+        >
+          <div ref={drawerSentinelRef} className="h-px w-full pointer-events-none shrink-0" aria-hidden />
+          <div
+            className="sticky top-0 z-10 h-14 shrink-0 chrome-material flex items-center justify-end px-4"
+            data-edge={drawerEdged ? 'on' : 'off'}
           >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-          <SidebarPanel onNavigate={onMobileClose} />
+            <button
+              type="button"
+              onClick={onMobileClose}
+              className="pressable p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover"
+              aria-label="Close menu"
+              tabIndex={mobileOpen ? 0 : -1}
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="flex flex-col min-h-0 flex-1">
+            <SidebarPanel onNavigate={onMobileClose} />
+          </div>
         </div>
       </m.aside>
     </>
