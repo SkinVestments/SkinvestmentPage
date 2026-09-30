@@ -28,3 +28,33 @@ export const fadeCross: Transition = {
   duration: 0.2,
   ease: 'easeOut',
 };
+
+/** Variant set for modal tree (propagates enter/exit via AnimatePresence). */
+export const modalRootVariants = {
+  hidden: {},
+  visible: {},
+} as const;
+
+/** Dim scrim behind modals — opacity only. */
+export const modalScrimVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+} as const;
+
+/** Centered modal panel — scale + opacity, same path enter/exit. */
+export const modalPanelVariants = {
+  hidden: { opacity: 0, scale: 0.96 },
+  visible: { opacity: 1, scale: 1 },
+} as const;
+
+/** Mobile nav drawer — slide from left, exit to left. */
+export const drawerPanelVariants = {
+  hidden: { x: '-100%' },
+  visible: { x: 0 },
+} as const;
+
+/** Drawer scrim — opacity only, synced with drawer. */
+export const drawerScrimVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+} as const;
