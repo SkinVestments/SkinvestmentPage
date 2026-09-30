@@ -67,6 +67,7 @@ const ItemDetail = () => {
   const filterCollectionId = navState?.collectionId;
 
   const [detail, setDetail] = useState<PortfolioItemDetail | null>(null);
+  const [itemType, setItemType] = useState<string | null>(null);
   const [batches, setBatches] = useState<PurchaseBatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [batchesLoading, setBatchesLoading] = useState(true);
@@ -172,6 +173,17 @@ const ItemDetail = () => {
         return;
       }
       setDetail(parsed);
+
+      const { data: typeRow } = await supabase
+        .from('cs2_items')
+        .select('type')
+        .eq('id', itemId)
+        .maybeSingle();
+      setItemType(
+        typeRow && typeof typeRow === 'object' && 'type' in typeRow
+          ? (typeRow.type as string | null)
+          : null,
+      );
     } catch (err) {
       console.error('Error fetching item detail:', err);
       const message =
@@ -180,6 +192,7 @@ const ItemDetail = () => {
           : 'Failed to load item details.';
       setErrorMessage(message);
       setDetail(null);
+      setItemType(null);
     } finally {
       setLoading(false);
     }
@@ -338,6 +351,7 @@ const ItemDetail = () => {
             market={itemId ? marketPrices.get(itemId) : undefined}
             loading={marketLoading}
             error={marketError}
+            categoryOrType={itemType}
           />
         </div>
 

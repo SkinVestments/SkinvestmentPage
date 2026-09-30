@@ -1,34 +1,48 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/utils/supabaseClient';
-import type { MarketPriceMap, MarketPriceRow } from '@/types/marketPrices';
+import type { MarketListing, MarketPriceMap, MarketPriceRow } from '@/types/marketPrices';
 
 const CHUNK = 2000;
 
-function toRow(raw: Record<string, unknown>): MarketPriceRow {
-  const num = (v: unknown): number | null => {
-    if (v == null || v === '') return null;
-    const n = Number(v);
-    return Number.isFinite(n) ? n : null;
-  };
+function num(v: unknown): number | null {
+  if (v == null || v === '') return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
 
+function toListing(raw: Record<string, unknown>): MarketListing | null {
+  const source = String(raw.source ?? '').trim();
+  if (!source) return null;
   return {
-    item_id: String(raw.item_id ?? ''),
-    steam_price: num(raw.steam_price),
-    csmoney_price: num(raw.csmoney_price),
-    csmoney_listings:
-      raw.csmoney_listings == null ? null : Math.trunc(Number(raw.csmoney_listings)),
-    csmoney_updated_at:
-      raw.csmoney_updated_at == null ? null : String(raw.csmoney_updated_at),
-    csmoney_prev_price: num(raw.csmoney_prev_price),
-    csmoney_change_pct: num(raw.csmoney_change_pct),
+    source,
+    price: num(raw.price),
+    listings: raw.listings == null ? null : Math.trunc(Number(raw.listings)),
+    updated_at: raw.updated_at == null ? null : String(raw.updated_at),
+    prev_price: num(raw.prev_price),
+    change_pct: num(raw.change_pct),
     spread_pct: num(raw.spread_pct),
   };
 }
 
-/**
- * Fetch CS.MONEY (+ steam) market rows for inventory item ids.
- * TODO: if we add polling later, consider a brief flash when chip prices change.
- */
+function toRow(raw: Record<string, unknown>): MarketPriceRow {
+  const marketsRaw = raw.markets;
+  const markets: MarketListing[] = [];
+  if (Array.isArray(marketsRaw)) {
+    for (const entry of marketsRaw) {
+      if (!entry || typeof entry !== 'object') continue;
+      const listing = toListing(entry as Record<string, unknown>);
+      if (listing) markets.push(listing);
+    }
+  }
+
+  return {
+    item_id: String(raw.item_id ?? ''),
+    steam_price: num(raw.steam_price),
+    markets,
+  };
+}
+
+/** Fetch Steam + multi-market prices via get_market_prices_for_items_v2. */
 export function useMarketPrices(itemIds: string[]) {
   const idsKey = useMemo(() => {
     const unique = [...new Set(itemIds.filter(Boolean))];
@@ -61,7 +75,7 @@ export function useMarketPrices(itemIds: string[]) {
         for (let i = 0; i < ids.length; i += CHUNK) {
           const chunk = ids.slice(i, i + CHUNK);
           const { data, error: rpcError } = await supabase.rpc(
-            'get_market_prices_for_items',
+            'get_market_prices_for_items_v2',
             { p_item_ids: chunk },
           );
 
@@ -78,7 +92,7 @@ export function useMarketPrices(itemIds: string[]) {
           setLoading(false);
         }
       } catch (err) {
-        console.warn('[useMarketPrices] get_market_prices_for_items failed', err);
+        console.warn('[useMarketPrices] get_market_prices_for_items_v2 failed', err);
         if (!cancelled) {
           setPrices(new Map());
           setError(err instanceof Error ? err.message : 'Market prices unavailable');

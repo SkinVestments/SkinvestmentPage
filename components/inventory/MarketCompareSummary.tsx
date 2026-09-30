@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
-import { ExternalLink } from 'lucide-react';
-import { CSMONEY_LINK_REL, CSMONEY_MARKET_URL } from '@/constants/csmoney';
 import { formatCurrency } from '@/utils/display';
 import type { MarketPriceMap } from '@/types/marketPrices';
+import { getCheapestUnitPrice } from '@/types/marketPrices';
+import { getMarketLabel } from '@/constants/marketSources';
 
 interface InventoryLine {
   item_id: string;
@@ -17,6 +17,15 @@ interface MarketCompareSummaryProps {
   error?: string | null;
 }
 
+type MarketTotal = {
+  source: string;
+  label: string;
+  steamTotal: number;
+  marketTotal: number;
+  compared: number;
+  diffPct: number | null;
+};
+
 export const MarketCompareSummary: React.FC<MarketCompareSummaryProps> = ({
   lines,
   prices,
@@ -24,9 +33,12 @@ export const MarketCompareSummary: React.FC<MarketCompareSummaryProps> = ({
   error = null,
 }) => {
   const stats = useMemo(() => {
-    let steamTotal = 0;
-    let csmoneyTotal = 0;
-    let compared = 0;
+    const bySource = new Map<
+      string,
+      { steamTotal: number; marketTotal: number; compared: number }
+    >();
+    let cheapestTotal = 0;
+    let cheapestCount = 0;
 
     for (const line of lines) {
       const row = prices.get(line.item_id);
@@ -34,100 +46,127 @@ export const MarketCompareSummary: React.FC<MarketCompareSummaryProps> = ({
         row?.steam_price != null && Number.isFinite(row.steam_price)
           ? row.steam_price
           : line.steamUnitPrice;
-      const cm = row?.csmoney_price;
-      if (cm == null || !Number.isFinite(cm) || !Number.isFinite(steam) || steam <= 0) {
-        continue;
+
+      const cheapest = getCheapestUnitPrice(steam, row?.markets);
+      if (cheapest != null) {
+        cheapestTotal += cheapest * line.quantity;
+        cheapestCount += 1;
       }
-      steamTotal += steam * line.quantity;
-      csmoneyTotal += cm * line.quantity;
-      compared += 1;
+
+      for (const m of row?.markets ?? []) {
+        if (m.price == null || !Number.isFinite(m.price) || !Number.isFinite(steam) || steam <= 0) {
+          continue;
+        }
+        const agg = bySource.get(m.source) ?? {
+          steamTotal: 0,
+          marketTotal: 0,
+          compared: 0,
+        };
+        agg.steamTotal += steam * line.quantity;
+        agg.marketTotal += m.price * line.quantity;
+        agg.compared += 1;
+        bySource.set(m.source, agg);
+      }
     }
 
-    const totalItems = lines.length;
-    const diffPct =
-      steamTotal > 0 ? ((csmoneyTotal / steamTotal - 1) * 100) : null;
+    const markets: MarketTotal[] = [...bySource.entries()]
+      .map(([source, agg]) => ({
+        source,
+        label: getMarketLabel(source),
+        steamTotal: agg.steamTotal,
+        marketTotal: agg.marketTotal,
+        compared: agg.compared,
+        diffPct:
+          agg.steamTotal > 0
+            ? ((agg.marketTotal / agg.steamTotal - 1) * 100)
+            : null,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
 
-    return { steamTotal, csmoneyTotal, compared, totalItems, diffPct };
+    const anyCompared = markets.reduce((s, m) => s + m.compared, 0);
+
+    return {
+      markets,
+      cheapestTotal,
+      cheapestCount,
+      totalItems: lines.length,
+      anyCompared,
+    };
   }, [lines, prices]);
 
-  const empty = !loading && !error && stats.compared === 0 && stats.totalItems > 0;
+  const empty =
+    !loading && !error && stats.anyCompared === 0 && stats.totalItems > 0;
   const noItems = !loading && stats.totalItems === 0;
 
   return (
     <div className="mb-6 dashboard-card p-4 sm:p-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <p className="dashboard-label mb-1">
-            Market comparison
-          </p>
-          {loading && stats.compared === 0 ? (
-            <p className="text-sm text-steam-secondary">Loading CS.MONEY prices...</p>
+          <p className="dashboard-label mb-1">Market comparison</p>
+          {loading && stats.anyCompared === 0 ? (
+            <p className="text-sm text-steam-secondary">Loading market prices...</p>
           ) : error ? (
             <p className="text-sm text-steam-loss">
-              Could not load CS.MONEY prices. Open an item for details later, or try again.
+              Could not load market prices. Open an item for details later, or try again.
             </p>
           ) : empty || noItems ? (
             <p className="text-sm text-steam-secondary">
-              No CS.MONEY listings for your items yet. Spread sort stays available when prices appear.
+              No third-party listings for your items yet. Spread sort stays available when
+              prices appear.
             </p>
           ) : (
             <p className="text-sm text-steam-secondary">
-              Based on{' '}
-              <span className="font-bold text-steam-text">{stats.compared}</span> of{' '}
-              <span className="font-bold text-steam-text">{stats.totalItems}</span>{' '}
-              items
+              Totals use only items that have both Steam and that market.
             </p>
           )}
         </div>
-        <a
-          href={CSMONEY_MARKET_URL}
-          target="_blank"
-          rel={CSMONEY_LINK_REL}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-steam-secondary hover:text-steam-text border border-steam-border rounded-lg px-2.5 py-1.5 hover:bg-steam-hover transition-colors shrink-0"
-        >
-          Browse CS.MONEY
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
       </div>
 
-      {stats.compared > 0 && (
-        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
-          <div className="rounded-lg border border-steam-border bg-steam-elevated/40 px-3 py-2">
-            <p className="dashboard-label">
-              Steam total
-            </p>
-            <p className="text-base font-bold font-mono text-steam-text mt-0.5">
-              {formatCurrency(stats.steamTotal)}
-            </p>
-          </div>
-          <div className="rounded-lg border border-steam-border bg-steam-elevated/40 px-3 py-2">
-            <p className="dashboard-label">
-              CS.MONEY total
-            </p>
-            <p className="text-base font-bold font-mono text-steam-text mt-0.5">
-              {formatCurrency(stats.csmoneyTotal)}
-            </p>
-          </div>
-          <div className="rounded-lg border border-steam-border bg-steam-elevated/40 px-3 py-2">
-            <p className="dashboard-label">
-              Difference
-            </p>
-            <p
-              className={`text-base font-bold font-mono mt-0.5 ${
-                stats.diffPct == null
-                  ? 'text-steam-tertiary'
-                  : stats.diffPct < -0.1
-                    ? 'text-steam-profit'
-                    : stats.diffPct > 0.1
-                      ? 'text-steam-loss'
-                      : 'text-steam-text'
-              }`}
+      {stats.markets.length > 0 && (
+        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-3">
+          {stats.markets.map((m) => (
+            <div
+              key={m.source}
+              className="rounded-lg border border-steam-border bg-steam-elevated/40 px-3 py-2"
             >
-              {stats.diffPct == null
-                ? '-'
-                : `${stats.diffPct > 0 ? '+' : ''}${stats.diffPct.toFixed(1)}%`}
-            </p>
-          </div>
+              <p className="dashboard-label">{m.label}</p>
+              <p className="text-base font-bold font-mono text-steam-text mt-0.5">
+                {formatCurrency(m.marketTotal)}
+              </p>
+              <p className="text-[11px] text-steam-tertiary mt-0.5">
+                Steam (same items): {formatCurrency(m.steamTotal)}
+                {m.diffPct != null && (
+                  <span
+                    className={`ml-1.5 font-bold font-mono ${
+                      m.diffPct < -0.1
+                        ? 'text-steam-profit'
+                        : m.diffPct > 0.1
+                          ? 'text-steam-loss'
+                          : 'text-steam-secondary'
+                    }`}
+                  >
+                    ({m.diffPct > 0 ? '+' : ''}
+                    {m.diffPct.toFixed(1)}%)
+                  </span>
+                )}
+              </p>
+              <p className="text-[10px] text-steam-tertiary mt-0.5">
+                {m.compared} of {stats.totalItems} items
+              </p>
+            </div>
+          ))}
+
+          {stats.cheapestCount > 0 && (
+            <div className="rounded-lg border border-steam-accent/40 bg-steam-accent/10 px-3 py-2">
+              <p className="dashboard-label">Cheapest overall</p>
+              <p className="text-base font-bold font-mono text-steam-text mt-0.5">
+                {formatCurrency(stats.cheapestTotal)}
+              </p>
+              <p className="text-[11px] text-steam-tertiary mt-0.5">
+                Sum of the lowest price per item (Steam or markets)
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

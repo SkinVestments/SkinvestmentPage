@@ -37,6 +37,7 @@ import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { Shimmer } from '@/components/ui/Shimmer';
 import { useMarketPrices } from '@/hooks/useMarketPrices';
 import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
+import { getBestAbsoluteSpread } from '@/types/marketPrices';
 
 const INVENTORY_SORT_OPTIONS = [
   { value: 'value_desc', label: 'Highest Value' },
@@ -203,15 +204,15 @@ const Inventory = () => {
           case 'recent':
             return new Date(b.acquired_at).getTime() - new Date(a.acquired_at).getTime();
           case 'spread': {
-            const sa = marketPrices.get(a.item_id)?.spread_pct;
-            const sb = marketPrices.get(b.item_id)?.spread_pct;
+            const sa = getBestAbsoluteSpread(marketPrices.get(a.item_id))?.spread;
+            const sb = getBestAbsoluteSpread(marketPrices.get(b.item_id))?.spread;
             const aMissing = sa == null || !Number.isFinite(sa);
             const bMissing = sb == null || !Number.isFinite(sb);
             if (aMissing && bMissing) return 0;
             if (aMissing) return 1;
             if (bMissing) return -1;
-            // Biggest absolute discount first (most negative spread)
-            return (sa as number) - (sb as number);
+            // Largest |spread| across markets first
+            return Math.abs(sb as number) - Math.abs(sa as number);
           }
           default:
             return 0;
@@ -312,7 +313,7 @@ const Inventory = () => {
           <div className="flex items-center gap-2">
             <span className="dashboard-label hidden sm:inline shrink-0">Market</span>
             <SegmentedControl
-              aria-label="CS.MONEY market comparison"
+              aria-label="Market price comparison"
               value={showMarketCompare ? 'on' : 'off'}
               onChange={(v) => setShowMarketCompare(v === 'on')}
               options={[
@@ -545,7 +546,7 @@ const Inventory = () => {
                           {showMarketCompare && (
                             <MarketSpreadBadge
                               className="mt-1.5"
-                              spread={marketPrices.get(item.item_id)?.spread_pct}
+                              row={marketPrices.get(item.item_id)}
                               loading={marketLoading && !marketPrices.has(item.item_id)}
                             />
                           )}
@@ -636,7 +637,7 @@ const Inventory = () => {
                           {showMarketCompare && (
                             <td className="p-4 text-right">
                               <MarketSpreadBadge
-                                spread={marketPrices.get(item.item_id)?.spread_pct}
+                                row={marketPrices.get(item.item_id)}
                                 loading={marketLoading && !marketPrices.has(item.item_id)}
                               />
                             </td>
