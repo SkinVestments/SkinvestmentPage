@@ -14,26 +14,44 @@ import {
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
+export type ModalMaxWidth = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '5xl';
+
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** Accessible name (and visible title unless `header` / `titleSrOnly`). */
   title: string;
   description?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
+  maxWidth?: ModalMaxWidth;
   /**
    * Optional trigger element. When set, the panel scales from that element's
    * center; otherwise origin is the panel center.
    */
   originRef?: React.RefObject<HTMLElement | null>;
+  /** Replace the default title row. `title` remains for aria (sr-only). */
+  header?: React.ReactNode;
+  /** Hide the visible title when using the default header chrome. */
+  titleSrOnly?: boolean;
+  /** When false, overlay click does not call onClose. Default true. */
+  closeOnOverlayClick?: boolean;
+  panelClassName?: string;
+  bodyClassName?: string;
+  footerClassName?: string;
+  rootClassName?: string;
+  /** Stacking class, default `z-50`. */
+  zClassName?: string;
 }
 
-const maxWidthClass = {
+const maxWidthClass: Record<ModalMaxWidth, string> = {
   sm: 'max-w-sm',
   md: 'max-w-md',
   lg: 'max-w-lg',
   xl: 'max-w-4xl',
+  '2xl': 'max-w-2xl',
+  '3xl': 'max-w-3xl',
+  '5xl': 'max-w-5xl',
 };
 
 export const Modal: React.FC<ModalProps> = ({
@@ -45,6 +63,14 @@ export const Modal: React.FC<ModalProps> = ({
   footer,
   maxWidth = 'md',
   originRef,
+  header,
+  titleSrOnly = false,
+  closeOnOverlayClick = true,
+  panelClassName = '',
+  bodyClassName = '',
+  footerClassName = '',
+  rootClassName = '',
+  zClassName = 'z-50',
 }) => {
   const titleId = useId();
   const descriptionId = useId();
@@ -57,8 +83,6 @@ export const Modal: React.FC<ModalProps> = ({
     setMounted(true);
   }, []);
 
-  // Body scroll lock while open; released as soon as close is requested
-  // (even if the exit animation is still running or interrupted).
   useEffect(() => {
     if (!isOpen) return;
     const prev = document.body.style.overflow;
@@ -68,7 +92,6 @@ export const Modal: React.FC<ModalProps> = ({
     };
   }, [isOpen]);
 
-  // Remember trigger focus on open; restore when close is requested.
   useEffect(() => {
     if (isOpen) {
       previousFocusRef.current =
@@ -83,7 +106,6 @@ export const Modal: React.FC<ModalProps> = ({
     }
   }, [isOpen, originRef]);
 
-  // Move initial focus into the dialog when it opens.
   useEffect(() => {
     if (!isOpen) return;
     const id = requestAnimationFrame(() => {
@@ -115,7 +137,6 @@ export const Modal: React.FC<ModalProps> = ({
     updateOrigin();
   }, [isOpen, updateOrigin]);
 
-  // Escape + focus trap — active while open (including mid enter animation).
   useEffect(() => {
     if (!isOpen) return;
 
@@ -158,12 +179,14 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!mounted) return null;
 
+  const showDefaultHeader = header == null;
+
   return createPortal(
     <AnimatePresence>
       {isOpen ? (
         <m.div
           key="modal"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+          className={`fixed inset-0 ${zClassName} flex items-center justify-center p-4 sm:p-6 ${rootClassName}`}
           data-modal-root
           variants={modalRootVariants}
           initial="hidden"
@@ -173,47 +196,75 @@ export const Modal: React.FC<ModalProps> = ({
           <m.div
             className="absolute inset-0 bg-steam-bg/80 backdrop-blur-sm"
             aria-hidden
-            onClick={onClose}
+            onClick={closeOnOverlayClick ? onClose : undefined}
             variants={modalScrimVariants}
             transition={fadeCross}
           />
           <m.div
             ref={panelRef}
-            className={`relative z-10 bg-steam-card border border-steam-border rounded-2xl w-full ${maxWidthClass[maxWidth]} max-h-[90vh] overflow-hidden shadow-2xl flex flex-col outline-none`}
+            className={`relative z-10 bg-steam-card border border-steam-border rounded-2xl w-full ${maxWidthClass[maxWidth]} max-h-[90vh] overflow-hidden shadow-2xl flex flex-col outline-none ${panelClassName}`}
             style={{ transformOrigin }}
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            aria-describedby={description ? descriptionId : undefined}
+            aria-describedby={description && showDefaultHeader ? descriptionId : undefined}
             tabIndex={-1}
             variants={modalPanelVariants}
             transition={springDefault}
           >
-            <div className="flex items-start justify-between gap-4 p-5 sm:p-6 border-b border-steam-border shrink-0">
-              <div>
-                <h3 id={titleId} className="text-xl font-bold text-steam-text">
+            {showDefaultHeader ? (
+              <div className="flex items-start justify-between gap-4 p-5 sm:p-6 border-b border-steam-border shrink-0">
+                <div>
+                  <h3
+                    id={titleId}
+                    className={
+                      titleSrOnly
+                        ? 'sr-only'
+                        : 'text-xl font-bold text-steam-text'
+                    }
+                  >
+                    {title}
+                  </h3>
+                  {description && !titleSrOnly && (
+                    <p id={descriptionId} className="text-sm text-steam-secondary mt-1">
+                      {description}
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="pressable p-2 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover shrink-0"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            ) : (
+              <>
+                <h3 id={titleId} className="sr-only">
                   {title}
                 </h3>
-                {description && (
-                  <p id={descriptionId} className="text-sm text-steam-secondary mt-1">
-                    {description}
-                  </p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={onClose}
-                className="pressable p-2 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover shrink-0"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
+                {header}
+              </>
+            )}
+
+            <div
+              className={
+                bodyClassName ||
+                'overflow-y-auto flex-1 p-5 sm:p-6 text-steam-text min-h-0'
+              }
+            >
+              {children}
             </div>
 
-            <div className="overflow-y-auto flex-1 p-5 sm:p-6 text-steam-text">{children}</div>
-
             {footer && (
-              <div className="flex flex-col-reverse sm:flex-row gap-3 p-5 sm:p-6 border-t border-steam-border shrink-0 bg-steam-elevated/50">
+              <div
+                className={
+                  footerClassName ||
+                  'flex flex-col-reverse sm:flex-row gap-3 p-5 sm:p-6 border-t border-steam-border shrink-0 bg-steam-elevated/50'
+                }
+              >
                 {footer}
               </div>
             )}
