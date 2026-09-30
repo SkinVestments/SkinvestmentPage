@@ -54,12 +54,14 @@ const Settings = () => {
       setSteamFlash({
         type: 'success',
         message: steamId
-          ? `Steam account linked (${steamId}).`
-          : 'Steam account linked successfully.',
+          ? `Steam account linked (SteamID ${steamId}). You can sync inventory from Steam accounts below.`
+          : 'Steam account linked. You can sync inventory from Steam accounts below.',
       });
       trackSteamEvent('steam_account_linked', { steam_id: steamId ?? undefined });
     } else {
-      const message = searchParams.get('message') || 'Steam linking failed.';
+      const message =
+        searchParams.get('message') ||
+        'Steam could not be linked. Cancel in the Steam window and try Link Steam again.';
       setSteamFlash({ type: 'error', message });
     }
 
@@ -106,28 +108,42 @@ const Settings = () => {
     setSteamProfileUrl(profile?.steam_profile_url?.trim() ?? '');
   }, [profile, user?.email]);
 
+  const validateNickname = (value: string): string | null => {
+    if (!value.trim()) return 'Add a display name so others can recognize your shared portfolio.';
+    return null;
+  };
+
+  const validateSteamUrl = (value: string): string | null => {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    try {
+      const url = new URL(trimmed);
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        return 'Steam profile URL must start with https:// (or http://).';
+      }
+      return null;
+    } catch {
+      return 'Enter a full Steam profile URL, for example https://steamcommunity.com/id/yourname.';
+    }
+  };
+
   const handleSaveProfile = async () => {
     setProfileSuccess(false);
-    const trimmedNick = nickname.trim();
-    if (!trimmedNick) {
-      setProfileError('Display name cannot be empty.');
+    const nickError = validateNickname(nickname);
+    if (nickError) {
+      setProfileError(nickError);
       return;
     }
-
-    const trimmedSteam = steamProfileUrl.trim();
-    if (trimmedSteam) {
-      try {
-        new URL(trimmedSteam);
-      } catch {
-        setProfileError('Enter a valid Steam profile URL (https://…).');
-        return;
-      }
+    const steamError = validateSteamUrl(steamProfileUrl);
+    if (steamError) {
+      setProfileError(steamError);
+      return;
     }
 
     try {
       await saveProfile({
-        nickname: trimmedNick,
-        steam_profile_url: trimmedSteam || null,
+        nickname: nickname.trim(),
+        steam_profile_url: steamProfileUrl.trim() || null,
       });
       setProfileSuccess(true);
       window.setTimeout(() => setProfileSuccess(false), 3000);
@@ -266,7 +282,7 @@ const Settings = () => {
                   {profileSuccess && (
                     <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-400">
                       <CheckCircle2 className="w-4 h-4 shrink-0" />
-                      <span>Profile saved.</span>
+                      <span>Display name and Steam URL updated on your profile.</span>
                     </div>
                   )}
 
@@ -275,10 +291,17 @@ const Settings = () => {
                     <input
                       type="text"
                       value={nickname}
-                      onChange={(e) => setNickname(e.target.value)}
+                      onChange={(e) => {
+                        setNickname(e.target.value);
+                        if (profileError) setProfileError(null);
+                      }}
+                      onBlur={() => {
+                        const msg = validateNickname(nickname);
+                        if (msg) setProfileError(msg);
+                      }}
                       disabled={profileLoading}
                       maxLength={64}
-                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-bold rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors disabled:opacity-60"
+                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-bold rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent disabled:opacity-60"
                     />
                   </div>
 
@@ -289,13 +312,20 @@ const Settings = () => {
                     <input
                       type="url"
                       value={steamProfileUrl}
-                      onChange={(e) => setSteamProfileUrl(e.target.value)}
+                      onChange={(e) => {
+                        setSteamProfileUrl(e.target.value);
+                        if (profileError) setProfileError(null);
+                      }}
+                      onBlur={() => {
+                        const msg = validateSteamUrl(steamProfileUrl);
+                        if (msg) setProfileError(msg);
+                      }}
                       disabled={profileLoading}
                       placeholder="https://steamcommunity.com/id/…"
-                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-medium rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors disabled:opacity-60"
+                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-medium rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent disabled:opacity-60"
                     />
                     <p className="text-[10px] text-steam-tertiary mt-1.5">
-                      Leave empty to unlink. Saved via your Supabase profile.
+                      Optional public Steam Community link. Clear the field and save to remove it.
                     </p>
                   </div>
 
