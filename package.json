@@ -17,6 +17,7 @@
     "@supabase/supabase-js": "^2.95.3",
     "lucide-react": "^0.563.0",
     "marked": "^18.0.7",
+    "motion": "^13.4.6",
     "react": "^19.2.4",
     "react-day-picker": "^10.0.1",
     "react-dom": "^19.2.4",
