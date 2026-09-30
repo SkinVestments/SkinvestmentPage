@@ -50,22 +50,22 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
     setSuccess(false);
 
     if (!user?.email) {
-      setError('No email on this account.');
+      setError('This account has no email address, so a password cannot be set here.');
       return;
     }
 
     if (newPassword.length < MIN_PASSWORD_LENGTH) {
-      setError(`New password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
+      setError(`New password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setError('New passwords do not match.');
+      setError('New password and confirmation do not match. Re-enter both fields.');
       return;
     }
 
     if (newPassword === currentPassword) {
-      setError('New password must be different from the current one.');
+      setError('Choose a new password that is different from your current one.');
       return;
     }
 
@@ -78,7 +78,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       });
 
       if (signInError) {
-        throw new Error('Current password is incorrect.');
+        throw new Error('Current password is incorrect. Check Caps Lock and try again.');
       }
 
       const { error: updateError } = await supabase.auth.updateUser({
@@ -92,7 +92,10 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Could not update password.';
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Could not update your password. Wait a moment and try again.';
       setError(message);
     } finally {
       setIsSaving(false);
@@ -123,7 +126,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
           <CheckCircle2 className="w-12 h-12 text-green-400" />
           <p className="text-steam-text font-bold">Password updated</p>
           <p className="text-sm text-steam-secondary">
-            Your password has been changed successfully.
+            Use your new password the next time you sign in with email.
           </p>
           <button
             type="button"
@@ -146,7 +149,10 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             id="current-password"
             label="Current password"
             value={currentPassword}
-            onChange={setCurrentPassword}
+            onChange={(v) => {
+              setCurrentPassword(v);
+              if (error) setError('');
+            }}
             show={showCurrent}
             onToggleShow={() => setShowCurrent((v) => !v)}
             autoComplete="current-password"
@@ -156,7 +162,17 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             id="new-password"
             label="New password"
             value={newPassword}
-            onChange={setNewPassword}
+            onChange={(v) => {
+              setNewPassword(v);
+              if (error) setError('');
+            }}
+            onBlur={() => {
+              if (newPassword && newPassword.length < MIN_PASSWORD_LENGTH) {
+                setError(`New password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
+              } else if (newPassword && currentPassword && newPassword === currentPassword) {
+                setError('Choose a new password that is different from your current one.');
+              }
+            }}
             show={showNew}
             onToggleShow={() => setShowNew((v) => !v)}
             autoComplete="new-password"
@@ -167,7 +183,15 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             id="confirm-password"
             label="Confirm new password"
             value={confirmPassword}
-            onChange={setConfirmPassword}
+            onChange={(v) => {
+              setConfirmPassword(v);
+              if (error) setError('');
+            }}
+            onBlur={() => {
+              if (confirmPassword && newPassword && confirmPassword !== newPassword) {
+                setError('New password and confirmation do not match. Re-enter both fields.');
+              }
+            }}
             show={showConfirm}
             onToggleShow={() => setShowConfirm((v) => !v)}
             autoComplete="new-password"
@@ -207,6 +231,7 @@ interface PasswordFieldProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  onBlur?: () => void;
   show: boolean;
   onToggleShow: () => void;
   autoComplete: string;
@@ -218,6 +243,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
   label,
   value,
   onChange,
+  onBlur,
   show,
   onToggleShow,
   autoComplete,
@@ -234,6 +260,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({
         className="theme-input w-full rounded-xl p-3 pr-10"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         required
         minLength={minLength}
         autoComplete={autoComplete}

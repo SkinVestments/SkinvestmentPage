@@ -53,13 +53,13 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
       }
 
       if (!userId) {
-        throw new Error('Sign in to purchase a subscription.');
+        throw new Error('Sign in again, then reopen Choose your plan to continue checkout.');
       }
 
       const checkoutUrl = buildRevenueCatCheckoutUrl(userId, selectedPlanId, billingCycle);
       if (!checkoutUrl) {
         throw new Error(
-          `Checkout is not configured for ${selectedPlanId} (${billingCycle}).`,
+          `Checkout is not available for ${selectedPlanId} (${billingCycle}) yet. Pick another plan or contact support.`,
         );
       }
 
@@ -67,7 +67,10 @@ export const ManageSubscriptionModal: React.FC<ManageSubscriptionModalProps> = (
       window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
       onClose();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Cannot open purchase link.';
+      const message =
+        err instanceof Error
+          ? err.message
+          : 'Could not open the checkout tab. Allow popups for this site and try again.';
       setPurchaseError(message);
     } finally {
       setIsSaving(false);
