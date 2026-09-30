@@ -492,7 +492,7 @@ const Inventory = () => {
                         openItemDetail(item.item_id);
                       }
                     }}
-                    className="dashboard-card group relative overflow-hidden flex flex-col cursor-pointer hover:border-steam-accent/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-steam-accent/40"
+                    className="dashboard-card inventory-grid-card group relative overflow-hidden flex flex-col cursor-pointer hover:border-steam-accent/40 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-steam-accent/40"
                   >
                     
                     {/* Badges */}

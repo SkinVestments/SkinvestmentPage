@@ -8,9 +8,10 @@ import {
   PieChart,
   ResponsiveContainer,
 } from 'recharts';
-import { ExternalLink, Loader2, Package, User } from 'lucide-react';
+import { ExternalLink, Package, User } from 'lucide-react';
 import { usePageSeo } from '@/hooks/usePageSeo';
 import { ItemImage } from '@/components/ui/ItemImage';
+import { EmbedPortfolioSkeleton } from '@/components/share/ShareSkeletons';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { fetchPublicPortfolio, sharePath, shareUrl } from '@/utils/portfolioShare';
 import type { PublicPortfolioPayload } from '@/types/portfolioShare';
@@ -74,13 +75,7 @@ const EmbedPortfolioPage: React.FC = () => {
   }, [chartData]);
 
   if (data === undefined) {
-    return (
-      <Shell>
-        <div className="flex items-center justify-center py-10">
-          <Loader2 className="w-6 h-6 text-steam-accent animate-spin" aria-label="Loading" />
-        </div>
-      </Shell>
-    );
+    return <EmbedPortfolioSkeleton layout={layout} />;
   }
 
   if (!data || !token) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -7,6 +7,8 @@ import {
   CreditCard, Bell, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import { useDashboardScrollRoot } from '@/context/DashboardScrollContext';
+import { useScrollEdge } from '@/hooks/useScrollEdge';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
 import { ChangePasswordModal } from '@/components/dashboard/ChangePasswordModal';
 import { SteamAccountsPanel } from '@/components/dashboard/SteamAccountsPanel';
@@ -18,6 +20,7 @@ import { getProfileDisplayName } from '@/utils/profile';
 import { ExportDataPanel } from '@/components/dashboard/ExportDataPanel';
 import { PortfolioSharePanel } from '@/components/dashboard/PortfolioSharePanel';
 import { CookiePreferencesPanel } from '@/components/consent/CookiePreferencesPanel';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { trackSteamEvent } from '@/utils/steamAccounts';
 
 const Settings = () => {
@@ -52,12 +55,14 @@ const Settings = () => {
       setSteamFlash({
         type: 'success',
         message: steamId
-          ? `Steam account linked (${steamId}).`
-          : 'Steam account linked successfully.',
+          ? `Steam account linked (SteamID ${steamId}). You can sync inventory from Steam accounts below.`
+          : 'Steam account linked. You can sync inventory from Steam accounts below.',
       });
       trackSteamEvent('steam_account_linked', { steam_id: steamId ?? undefined });
     } else {
-      const message = searchParams.get('message') || 'Steam linking failed.';
+      const message =
+        searchParams.get('message') ||
+        'Steam could not be linked. Cancel in the Steam window and try Link Steam again.';
       setSteamFlash({ type: 'error', message });
     }
 
@@ -104,28 +109,42 @@ const Settings = () => {
     setSteamProfileUrl(profile?.steam_profile_url?.trim() ?? '');
   }, [profile, user?.email]);
 
+  const validateNickname = (value: string): string | null => {
+    if (!value.trim()) return 'Add a display name so others can recognize your shared portfolio.';
+    return null;
+  };
+
+  const validateSteamUrl = (value: string): string | null => {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    try {
+      const url = new URL(trimmed);
+      if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+        return 'Steam profile URL must start with https:// (or http://).';
+      }
+      return null;
+    } catch {
+      return 'Enter a full Steam profile URL, for example https://steamcommunity.com/id/yourname.';
+    }
+  };
+
   const handleSaveProfile = async () => {
     setProfileSuccess(false);
-    const trimmedNick = nickname.trim();
-    if (!trimmedNick) {
-      setProfileError('Display name cannot be empty.');
+    const nickError = validateNickname(nickname);
+    if (nickError) {
+      setProfileError(nickError);
       return;
     }
-
-    const trimmedSteam = steamProfileUrl.trim();
-    if (trimmedSteam) {
-      try {
-        new URL(trimmedSteam);
-      } catch {
-        setProfileError('Enter a valid Steam profile URL (https://…).');
-        return;
-      }
+    const steamError = validateSteamUrl(steamProfileUrl);
+    if (steamError) {
+      setProfileError(steamError);
+      return;
     }
 
     try {
       await saveProfile({
-        nickname: trimmedNick,
-        steam_profile_url: trimmedSteam || null,
+        nickname: nickname.trim(),
+        steam_profile_url: steamProfileUrl.trim() || null,
       });
       setProfileSuccess(true);
       window.setTimeout(() => setProfileSuccess(false), 3000);
@@ -155,6 +174,12 @@ const Settings = () => {
     updateSubscription(_planId, billingCycle);
   };
 
+  const scrollRoot = useDashboardScrollRoot();
+  const tabSentinelRef = useRef<HTMLDivElement>(null);
+  const fallbackScrollRef = useRef<HTMLElement | null>(null);
+  const edgeRootRef = scrollRoot ?? fallbackScrollRef;
+  const tabsEdged = useScrollEdge(edgeRootRef, tabSentinelRef);
+
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
       
@@ -168,42 +193,52 @@ const Settings = () => {
         </p>
       </div>
 
-      {/* === ZAKŁADKI (TABS) === */}
-      <div className="flex border-b border-steam-border mb-8 gap-8 overflow-x-auto no-scrollbar">
-        <button 
-          onClick={() => setActiveTab('account')}
-          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-            activeTab === 'account' 
-              ? 'border-steam-accent text-steam-accent' 
-              : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
-          }`}
-        >
-          <User className="w-4 h-4" /> Account
-        </button>
-        <button 
-          onClick={() => setActiveTab('app')}
-          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-            activeTab === 'app' 
-              ? 'border-steam-accent text-steam-accent' 
-              : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
-          }`}
-        >
-          <SettingsIcon className="w-4 h-4" /> App
-        </button>
-        <button 
-          onClick={() => setActiveTab('privacy')}
-          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-            activeTab === 'privacy' 
-              ? 'border-steam-accent text-steam-accent' 
-              : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
-          }`}
-        >
-          <Shield className="w-4 h-4" /> Privacy
-        </button>
+      {/* Sentinel for sticky switcher scroll-edge */}
+      <div ref={tabSentinelRef} className="h-px w-full pointer-events-none" aria-hidden />
+
+      <div
+        className="sticky top-14 md:top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 mb-8 chrome-material py-2.5"
+        data-edge={tabsEdged ? 'on' : 'off'}
+      >
+        <SegmentedControl<'account' | 'app' | 'privacy'>
+          aria-label="Settings sections"
+          value={activeTab}
+          onChange={setActiveTab}
+          className="settings-section-switch !flex w-full [&>button]:flex-1 [&>button]:py-2.5 [&>button]:text-sm"
+          options={[
+            {
+              value: 'account',
+              label: (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <User className="w-4 h-4 shrink-0" aria-hidden />
+                  Account
+                </span>
+              ),
+            },
+            {
+              value: 'app',
+              label: (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <SettingsIcon className="w-4 h-4 shrink-0" aria-hidden />
+                  App
+                </span>
+              ),
+            },
+            {
+              value: 'privacy',
+              label: (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Shield className="w-4 h-4 shrink-0" aria-hidden />
+                  Privacy
+                </span>
+              ),
+            },
+          ]}
+        />
       </div>
 
-      {/* === ZAWARTOŚĆ === */}
-      <div className="max-w-3xl">
+      {/* Full main width — same as Panel / Inventory */}
+      <div className="w-full min-w-0">
         
         {/* ================= ACCOUNT TAB ================= */}
         {activeTab === 'account' && (
@@ -239,7 +274,7 @@ const Settings = () => {
                   {profileSuccess && (
                     <div className="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-2 text-xs text-green-400">
                       <CheckCircle2 className="w-4 h-4 shrink-0" />
-                      <span>Profile saved.</span>
+                      <span>Display name and Steam URL updated on your profile.</span>
                     </div>
                   )}
 
@@ -248,10 +283,17 @@ const Settings = () => {
                     <input
                       type="text"
                       value={nickname}
-                      onChange={(e) => setNickname(e.target.value)}
+                      onChange={(e) => {
+                        setNickname(e.target.value);
+                        if (profileError) setProfileError(null);
+                      }}
+                      onBlur={() => {
+                        const msg = validateNickname(nickname);
+                        if (msg) setProfileError(msg);
+                      }}
                       disabled={profileLoading}
                       maxLength={64}
-                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-bold rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors disabled:opacity-60"
+                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-bold rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent disabled:opacity-60"
                     />
                   </div>
 
@@ -262,13 +304,20 @@ const Settings = () => {
                     <input
                       type="url"
                       value={steamProfileUrl}
-                      onChange={(e) => setSteamProfileUrl(e.target.value)}
+                      onChange={(e) => {
+                        setSteamProfileUrl(e.target.value);
+                        if (profileError) setProfileError(null);
+                      }}
+                      onBlur={() => {
+                        const msg = validateSteamUrl(steamProfileUrl);
+                        if (msg) setProfileError(msg);
+                      }}
                       disabled={profileLoading}
                       placeholder="https://steamcommunity.com/id/…"
-                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-medium rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent transition-colors disabled:opacity-60"
+                      className="w-full bg-steam-bg border border-steam-border text-steam-text font-medium rounded-xl px-4 py-3 focus:outline-none focus:border-steam-accent disabled:opacity-60"
                     />
                     <p className="text-[10px] text-steam-tertiary mt-1.5">
-                      Leave empty to unlink. Saved via your Supabase profile.
+                      Optional public Steam Community link. Clear the field and save to remove it.
                     </p>
                   </div>
 

@@ -55,8 +55,8 @@ export const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
     if (!canCreate) {
       setError(
         limit == null
-          ? 'Collections limit reached.'
-          : `Your plan allows ${limit} collections. Upgrade to create more.`,
+          ? 'You have reached the collection limit for your plan. Upgrade to create more vaults.'
+          : `Your plan allows ${limit} collections. Upgrade under Settings → Account to create more.`,
       );
       return;
     }
@@ -75,7 +75,12 @@ export const CreateCollectionModal: React.FC<CreateCollectionModalProps> = ({
       onClose();
     } catch (err) {
       console.error('Error creating collection:', err);
-      setError(getErrorMessage(err, 'Could not create collection.'));
+      setError(
+        getErrorMessage(
+          err,
+          'Could not create this collection. Check the name and try again, or refresh if the limit looks wrong.',
+        ),
+      );
     } finally {
       setIsCreating(false);
     }

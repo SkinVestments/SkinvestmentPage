@@ -24,7 +24,7 @@ export function useOwnProfile(userId: string | undefined) {
       const message =
         err && typeof err === 'object' && 'message' in err
           ? String((err as { message?: string }).message)
-          : 'Failed to load profile';
+          : 'Could not load your profile. Check your connection and refresh the page.';
       setError(message);
       setProfile(null);
     } finally {
@@ -48,7 +48,7 @@ export function useOwnProfile(userId: string | undefined) {
         const message =
           err && typeof err === 'object' && 'message' in err
             ? String((err as { message?: string }).message)
-            : 'Failed to save profile';
+            : 'Could not save your profile. Check the fields below and try again.';
         setError(message);
         throw err;
       } finally {

@@ -81,7 +81,9 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
       setConnections(rows);
     } catch (err) {
       console.error(err);
-      setError(getErrorMessage(err, 'Could not load Steam accounts.'));
+      setError(
+        getErrorMessage(err, 'Could not load linked Steam accounts. Refresh the page and try again.'),
+      );
     } finally {
       setLoading(false);
     }
@@ -107,7 +109,13 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
     try {
       startSteamAccountLink({ userId: user.id });
     } catch (err) {
-      setBanner({ type: 'error', message: getErrorMessage(err, 'Could not start Steam link.') });
+      setBanner({
+        type: 'error',
+        message: getErrorMessage(
+          err,
+          'Could not open Steam login. Check your connection, then try Link Steam again.',
+        ),
+      });
     }
   };
 
@@ -163,7 +171,13 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
       await runImportPipeline([steamId]);
     } catch (err) {
       console.error(err);
-      setBanner({ type: 'error', message: getErrorMessage(err, 'Inventory sync failed.') });
+      setBanner({
+        type: 'error',
+        message: getErrorMessage(
+          err,
+          'Inventory sync failed. Make sure the Steam inventory is public, then retry.',
+        ),
+      });
     } finally {
       setActionId(null);
     }
@@ -177,7 +191,13 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
       await runImportPipeline(connections.map((c) => c.steam_id_64));
     } catch (err) {
       console.error(err);
-      setBanner({ type: 'error', message: getErrorMessage(err, 'Inventory sync failed.') });
+      setBanner({
+        type: 'error',
+        message: getErrorMessage(
+          err,
+          'Inventory sync failed. Make sure the Steam inventory is public, then retry.',
+        ),
+      });
     } finally {
       setSyncingAll(false);
     }
@@ -195,9 +215,15 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
     try {
       await setMainSteamAccount(steamId);
       await reload();
-      setBanner({ type: 'success', message: 'Main Steam account updated.' });
+      setBanner({
+        type: 'success',
+        message: 'Main Steam account updated. New imports will use this account by default.',
+      });
     } catch (err) {
-      setBanner({ type: 'error', message: getErrorMessage(err, 'Could not set main account.') });
+      setBanner({
+        type: 'error',
+        message: getErrorMessage(err, 'Could not set the main Steam account. Try again.'),
+      });
     } finally {
       setActionId(null);
     }
@@ -238,11 +264,17 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
             'Unlink did not remove the account. Run migration 20260806_unlink_steam_account_text.sql in Supabase SQL Editor, then retry.',
         });
       } else {
-        setBanner({ type: 'success', message: 'Steam account unlinked.' });
+        setBanner({
+          type: 'success',
+          message: 'Steam account unlinked. Inventory sync for that account is no longer available.',
+        });
       }
     } catch (err) {
       console.error('[Steam] unlink failed', err);
-      setBanner({ type: 'error', message: getErrorMessage(err, 'Could not unlink account.') });
+      setBanner({
+        type: 'error',
+        message: getErrorMessage(err, 'Could not unlink this Steam account. Try again in a moment.'),
+      });
     } finally {
       setActionId(null);
     }
@@ -462,7 +494,10 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
         skippedUnknown={skippedUnknown}
         onClose={() => setImportOpen(false)}
         onSuccess={() => {
-          setBanner({ type: 'success', message: 'Items imported as BUY transactions.' });
+          setBanner({
+            type: 'success',
+            message: 'Selected Steam items were imported as BUY transactions into your inventory.',
+          });
           void reload();
         }}
       />

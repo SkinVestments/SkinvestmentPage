@@ -99,7 +99,8 @@ export const CookieConsentBanner: React.FC = () => {
       role="dialog"
       aria-label="Privacy choices"
     >
-      <div className="max-w-3xl mx-auto pointer-events-auto rounded-2xl border border-steam-border bg-steam-surface/95 backdrop-blur-xl shadow-2xl p-5 sm:p-6">
+      {/* Solid surface — avoid stacking frost on frosted dashboard chrome */}
+      <div className="chrome-solid max-w-3xl mx-auto pointer-events-auto rounded-2xl shadow-2xl p-5 sm:p-6">
         <p className="text-sm text-steam-secondary leading-relaxed mb-4">{copy.body}</p>
         <div className="flex flex-col sm:flex-row gap-2 sm:justify-end">
           <button

@@ -210,15 +210,75 @@
 
 /* Theme tokens are applied via ThemeContext on :root */
 
+/* === Chrome materials (sticky headers / sidebars) — theme tokens, no hardcoded rgba === */
+:root,
+[data-theme='dark'] {
+  --chrome-bg: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  --chrome-blur: 20px;
+  --chrome-saturate: 180%;
+  --chrome-edge-from: color-mix(in srgb, var(--color-background) 55%, transparent);
+  --chrome-edge-height: 1.25rem;
+  --chrome-highlight: color-mix(in srgb, var(--color-text-primary) 10%, transparent);
+}
+
+[data-theme='light'] {
+  --chrome-bg: color-mix(in srgb, var(--color-surface) 78%, transparent);
+  --chrome-blur: 18px;
+  --chrome-saturate: 160%;
+  --chrome-edge-from: color-mix(in srgb, var(--color-background) 45%, transparent);
+  --chrome-edge-height: 1.25rem;
+  --chrome-highlight: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+}
+
 [data-theme='light'] body::before {
   opacity: 0.02;
+}
+
+/**
+ * Frosted sticky chrome. Pair with data-edge="on" when content is scrolled under.
+ * At scroll top: no border, no fade.
+ */
+.chrome-material {
+  position: relative;
+  background: var(--chrome-bg);
+  -webkit-backdrop-filter: blur(var(--chrome-blur)) saturate(var(--chrome-saturate));
+  backdrop-filter: blur(var(--chrome-blur)) saturate(var(--chrome-saturate));
+  border-bottom: none;
+  box-shadow: inset 0 1px 0 var(--chrome-highlight);
+}
+
+.chrome-material[data-edge='on']::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: var(--chrome-edge-height);
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--chrome-edge-from), transparent);
+}
+
+/* Solid floating surfaces (cookie banner, etc.) — never stack frost on frost */
+.chrome-solid {
+  background: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .chrome-material {
+    background: var(--color-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 .glass-panel {
   background: color-mix(in srgb, var(--color-surface-overlay) 85%, transparent);
   backdrop-filter: blur(12px);
   border: 1px solid color-mix(in srgb, var(--color-card-border) 60%, transparent);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 30px color-mix(in srgb, var(--color-background) 40%, transparent);
 }
 
 .text-gradient {
@@ -414,6 +474,15 @@
   border: 1px solid color-mix(in srgb, var(--color-card-border) 55%, transparent);
   background-color: var(--color-surface-overlay);
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* Never frost dense content cards (chrome-material only on sticky chrome). */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Inventory grid: skip paint for off-screen cards (500+ scroll). */
+.inventory-grid-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 280px;
 }
 
 /* One hero / chart section per page */
@@ -478,6 +547,14 @@
   background-color: var(--color-surface-overlay);
   border-color: color-mix(in srgb, var(--color-card-border) 55%, transparent);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+/* Settings (and other full-width switchers): active segment uses accent */
+.dashboard-segment.settings-section-switch [aria-pressed='true'],
+.dashboard-segment.settings-section-switch .dashboard-segment-btn-active {
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface-overlay));
+  border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -588,13 +665,22 @@
 @media (prefers-reduced-transparency: reduce) {
   .glass-panel,
   .theme-scrim,
-  .theme-overlay {
+  .theme-overlay,
+  .chrome-material {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
   }
 
   .glass-panel {
     background: var(--color-surface-overlay);
+  }
+
+  .chrome-material {
+    background: var(--color-surface);
+  }
+
+  .chrome-material[data-edge='on']::after {
+    display: none;
   }
 }
 
@@ -619,5 +705,17 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     border-color: var(--color-card-border);
+  }
+
+  .chrome-material {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid var(--color-card-border);
+    box-shadow: none;
+  }
+
+  .chrome-material[data-edge='on']::after {
+    display: none;
   }
 }
