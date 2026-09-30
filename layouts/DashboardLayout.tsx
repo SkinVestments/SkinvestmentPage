@@ -4,6 +4,7 @@ import { Sidebar } from '../components/Sidebar';
 import { BrandLogo } from '../components/BrandLogo';
 import { AdSenseScript } from '@/components/ads/AdSenseScript';
 import { useScrollEdge } from '@/hooks/useScrollEdge';
+import { DashboardScrollProvider } from '@/context/DashboardScrollContext';
 import { Menu, X } from 'lucide-react';
 
 export const DashboardLayout = () => {
@@ -61,7 +62,9 @@ export const DashboardLayout = () => {
           </header>
 
           <div className="p-4 sm:p-6 md:p-8 max-w-[1600px] w-full mx-auto min-w-0">
-            <Outlet />
+            <DashboardScrollProvider scrollRef={mainRef}>
+              <Outlet />
+            </DashboardScrollProvider>
           </div>
         </main>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -7,6 +7,8 @@ import {
   CreditCard, Bell, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
+import { useDashboardScrollRoot } from '@/context/DashboardScrollContext';
+import { useScrollEdge } from '@/hooks/useScrollEdge';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
 import { ChangePasswordModal } from '@/components/dashboard/ChangePasswordModal';
 import { SteamAccountsPanel } from '@/components/dashboard/SteamAccountsPanel';
@@ -155,6 +157,12 @@ const Settings = () => {
     updateSubscription(_planId, billingCycle);
   };
 
+  const scrollRoot = useDashboardScrollRoot();
+  const tabSentinelRef = useRef<HTMLDivElement>(null);
+  const fallbackScrollRef = useRef<HTMLElement | null>(null);
+  const edgeRootRef = scrollRoot ?? fallbackScrollRef;
+  const tabsEdged = useScrollEdge(edgeRootRef, tabSentinelRef);
+
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
       
@@ -168,38 +176,57 @@ const Settings = () => {
         </p>
       </div>
 
-      {/* === ZAKŁADKI (TABS) === */}
-      <div className="flex border-b border-steam-border mb-8 gap-8 overflow-x-auto no-scrollbar">
-        <button 
-          onClick={() => setActiveTab('account')}
-          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-            activeTab === 'account' 
-              ? 'border-steam-accent text-steam-accent' 
-              : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
-          }`}
-        >
-          <User className="w-4 h-4" /> Account
-        </button>
-        <button 
-          onClick={() => setActiveTab('app')}
-          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-            activeTab === 'app' 
-              ? 'border-steam-accent text-steam-accent' 
-              : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
-          }`}
-        >
-          <SettingsIcon className="w-4 h-4" /> App
-        </button>
-        <button 
-          onClick={() => setActiveTab('privacy')}
-          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-            activeTab === 'privacy' 
-              ? 'border-steam-accent text-steam-accent' 
-              : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
-          }`}
-        >
-          <Shield className="w-4 h-4" /> Privacy
-        </button>
+      {/* Sentinel for tab strip scroll-edge (content under frosted tabs) */}
+      <div ref={tabSentinelRef} className="h-px w-full pointer-events-none" aria-hidden />
+
+      {/* Sticky tab strip — chrome material; active tab keeps accent underline */}
+      <div
+        className="sticky top-14 md:top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 mb-8 chrome-material"
+        data-edge={tabsEdged ? 'on' : 'off'}
+        role="tablist"
+        aria-label="Settings sections"
+      >
+        <div className="flex gap-8 overflow-x-auto no-scrollbar max-w-3xl">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'account'}
+            onClick={() => setActiveTab('account')}
+            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
+              activeTab === 'account'
+                ? 'border-steam-accent text-steam-accent'
+                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
+            }`}
+          >
+            <User className="w-4 h-4" /> Account
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'app'}
+            onClick={() => setActiveTab('app')}
+            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
+              activeTab === 'app'
+                ? 'border-steam-accent text-steam-accent'
+                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
+            }`}
+          >
+            <SettingsIcon className="w-4 h-4" /> App
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={activeTab === 'privacy'}
+            onClick={() => setActiveTab('privacy')}
+            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
+              activeTab === 'privacy'
+                ? 'border-steam-accent text-steam-accent'
+                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
+            }`}
+          >
+            <Shield className="w-4 h-4" /> Privacy
+          </button>
+        </div>
       </div>
 
       {/* === ZAWARTOŚĆ === */}
