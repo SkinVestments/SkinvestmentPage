@@ -255,7 +255,7 @@ const Inventory = () => {
           <button
             type="button"
             onClick={() => setFlashMessage(null)}
-            className="p-1 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover"
+            className="pressable p-1 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover"
             aria-label="Dismiss"
           >
             <X className="w-4 h-4" />
@@ -277,7 +277,7 @@ const Inventory = () => {
            </div>
            <div className="px-4">
               <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total Value</p>
-              <p className="text-xl font-bold text-steam-text font-mono">{formatCurrency(totalValue)}</p>
+              <p className="num text-xl font-bold text-steam-text font-mono leading-tight">{formatCurrency(totalValue)}</p>
            </div>
            <button
               type="button"
@@ -529,16 +529,16 @@ const Inventory = () => {
                           <p className="dashboard-label mb-0.5">
                             Total Value
                           </p>
-                          <p className="text-sm font-bold text-steam-text font-mono">
+                          <p className="num text-sm font-bold text-steam-text font-mono leading-tight">
                             {formatCurrency(totalVal)}
                           </p>
                           {pnlStatus === 'profit' && gainPct != null && (
-                            <p className="text-[10px] font-bold text-steam-profit mt-0.5">
+                            <p className="num text-[10px] font-bold text-steam-profit mt-0.5">
                               +{gainPct.toFixed(1)}%
                             </p>
                           )}
                           {pnlStatus === 'loss' && gainPct != null && (
-                            <p className="text-[10px] font-bold text-steam-loss mt-0.5">
+                            <p className="num text-[10px] font-bold text-steam-loss mt-0.5">
                               {gainPct.toFixed(1)}%
                             </p>
                           )}
@@ -551,7 +551,7 @@ const Inventory = () => {
                           )}
                         </div>
                         {item.quantity > 1 && !showMarketCompare && (
-                          <p className="text-[10px] text-steam-secondary font-mono shrink-0">
+                          <p className="num text-[10px] text-steam-secondary font-mono shrink-0">
                             ({formatCurrency(itemPrice)} ea)
                           </p>
                         )}
@@ -598,7 +598,7 @@ const Inventory = () => {
                               openItemDetail(item.item_id);
                             }
                           }}
-                          className="hover:bg-steam-hover transition-colors group cursor-pointer focus-visible:outline-none focus-visible:bg-steam-hover focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-steam-accent/40"
+                          className="pressable-row hover:bg-steam-hover group cursor-pointer focus-visible:outline-none focus-visible:bg-steam-hover focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-steam-accent/40"
                         >
                           <td className="p-3 pl-6">
                             <div className="flex items-center gap-4">
@@ -626,11 +626,11 @@ const Inventory = () => {
                             </div>
                           </td>
                           <td className="p-4">
-                            <span className="bg-steam-elevated px-2 py-1 rounded text-xs font-bold text-steam-secondary">
+                            <span className="num bg-steam-elevated px-2 py-1 rounded text-xs font-bold text-steam-secondary">
                               {item.quantity}
                             </span>
                           </td>
-                          <td className="p-4 text-right text-steam-secondary font-mono">
+                          <td className="p-4 text-right text-steam-secondary font-mono num">
                             {formatCurrency(item.cs2_items?.price || 0)}
                           </td>
                           {showMarketCompare && (
@@ -641,7 +641,7 @@ const Inventory = () => {
                               />
                             </td>
                           )}
-                          <td className="p-4 text-right pr-6 font-mono">
+                          <td className="p-4 text-right pr-6 font-mono num">
                             <div className="font-bold text-steam-text">
                               {formatCurrency(unitPrice * item.quantity)}
                             </div>

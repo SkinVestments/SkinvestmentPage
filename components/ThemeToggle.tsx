@@ -38,7 +38,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ variant = 'icon', clas
     <button
       type="button"
       onClick={toggleTheme}
-      className={`p-2.5 rounded-lg border border-steam-border bg-steam-surface hover:bg-steam-hover text-steam-secondary hover:text-steam-text transition-colors ${className}`}
+      className={`pressable p-2.5 rounded-lg border border-steam-border bg-steam-surface hover:bg-steam-hover text-steam-secondary hover:text-steam-text ${className}`}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       title={isDark ? 'Light mode' : 'Dark mode'}
     >
