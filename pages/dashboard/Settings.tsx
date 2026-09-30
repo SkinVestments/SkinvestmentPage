@@ -20,6 +20,7 @@ import { getProfileDisplayName } from '@/utils/profile';
 import { ExportDataPanel } from '@/components/dashboard/ExportDataPanel';
 import { PortfolioSharePanel } from '@/components/dashboard/PortfolioSharePanel';
 import { CookiePreferencesPanel } from '@/components/consent/CookiePreferencesPanel';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { trackSteamEvent } from '@/utils/steamAccounts';
 
 const Settings = () => {
@@ -192,61 +193,52 @@ const Settings = () => {
         </p>
       </div>
 
-      {/* Sentinel for tab strip scroll-edge (content under frosted tabs) */}
+      {/* Sentinel for sticky switcher scroll-edge */}
       <div ref={tabSentinelRef} className="h-px w-full pointer-events-none" aria-hidden />
 
-      {/* Sticky tab strip — chrome material; active tab keeps accent underline */}
       <div
-        className="sticky top-14 md:top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 mb-8 chrome-material"
+        className="sticky top-14 md:top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 mb-8 chrome-material py-2.5"
         data-edge={tabsEdged ? 'on' : 'off'}
-        role="tablist"
-        aria-label="Settings sections"
       >
-        <div className="flex gap-8 overflow-x-auto no-scrollbar max-w-3xl">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'account'}
-            onClick={() => setActiveTab('account')}
-            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-              activeTab === 'account'
-                ? 'border-steam-accent text-steam-accent'
-                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
-            }`}
-          >
-            <User className="w-4 h-4" /> Account
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'app'}
-            onClick={() => setActiveTab('app')}
-            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-              activeTab === 'app'
-                ? 'border-steam-accent text-steam-accent'
-                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
-            }`}
-          >
-            <SettingsIcon className="w-4 h-4" /> App
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'privacy'}
-            onClick={() => setActiveTab('privacy')}
-            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-              activeTab === 'privacy'
-                ? 'border-steam-accent text-steam-accent'
-                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
-            }`}
-          >
-            <Shield className="w-4 h-4" /> Privacy
-          </button>
-        </div>
+        <SegmentedControl<'account' | 'app' | 'privacy'>
+          aria-label="Settings sections"
+          value={activeTab}
+          onChange={setActiveTab}
+          className="settings-section-switch !flex w-full [&>button]:flex-1 [&>button]:py-2.5 [&>button]:text-sm"
+          options={[
+            {
+              value: 'account',
+              label: (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <User className="w-4 h-4 shrink-0" aria-hidden />
+                  Account
+                </span>
+              ),
+            },
+            {
+              value: 'app',
+              label: (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <SettingsIcon className="w-4 h-4 shrink-0" aria-hidden />
+                  App
+                </span>
+              ),
+            },
+            {
+              value: 'privacy',
+              label: (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Shield className="w-4 h-4 shrink-0" aria-hidden />
+                  Privacy
+                </span>
+              ),
+            },
+          ]}
+        />
       </div>
 
-      {/* === ZAWARTOŚĆ === */}
-      <div className="max-w-3xl">
+      {/* Full main width — same as Panel / Inventory */}
+      <div className="w-full min-w-0">
         
         {/* ================= ACCOUNT TAB ================= */}
         {activeTab === 'account' && (

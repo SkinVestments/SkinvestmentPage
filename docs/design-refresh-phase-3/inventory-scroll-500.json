@@ -1,0 +1,25 @@
+{
+  "capturedAt": "2026-09-30T11:34:19.235Z",
+  "scenario": "500 synthetic inventory grid cards @ 390x844",
+  "beforeContentVisibility": {
+    "withContainment": false,
+    "cards": 500,
+    "frostedCards": 0,
+    "avgFrameMs": 15.96,
+    "approxFps": 62.6,
+    "scrollDistance": 4000
+  },
+  "afterContentVisibility": {
+    "withContainment": true,
+    "cards": 500,
+    "frostedCards": 0,
+    "avgFrameMs": 16.2,
+    "approxFps": 61.7,
+    "scrollDistance": 4000
+  },
+  "confirmation": {
+    "frostedCardsBefore": 0,
+    "frostedCardsAfter": 0,
+    "note": "Both must be 0 (no backdrop-filter on cards)."
+  }
+}

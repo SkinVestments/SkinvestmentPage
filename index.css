@@ -474,6 +474,15 @@
   border: 1px solid color-mix(in srgb, var(--color-card-border) 55%, transparent);
   background-color: var(--color-surface-overlay);
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* Never frost dense content cards (chrome-material only on sticky chrome). */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Inventory grid: skip paint for off-screen cards (500+ scroll). */
+.inventory-grid-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 280px;
 }
 
 /* One hero / chart section per page */
@@ -538,6 +547,14 @@
   background-color: var(--color-surface-overlay);
   border-color: color-mix(in srgb, var(--color-card-border) 55%, transparent);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+}
+
+/* Settings (and other full-width switchers): active segment uses accent */
+.dashboard-segment.settings-section-switch [aria-pressed='true'],
+.dashboard-segment.settings-section-switch .dashboard-segment-btn-active {
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface-overlay));
+  border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 
 .custom-scrollbar::-webkit-scrollbar {

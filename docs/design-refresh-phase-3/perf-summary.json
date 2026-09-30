@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-09-30T11:33:35.819Z",
+  "base": "http://127.0.0.1:4173",
+  "storageState": false,
+  "sharePath": "/p/demo",
+  "inventoryScroll": {
+    "cardCount": 0,
+    "frostedRowOrCardCount": 0,
+    "frames": 25,
+    "avgFrameMs": 15.76,
+    "approxFps": 63.4,
+    "scrollDistance": 800,
+    "href": "http://127.0.0.1:4173/login",
+    "title": "Sign in | Skinvestments"
+  },
+  "lighthouse": [
+    {
+      "slug": "panel",
+      "url": "http://127.0.0.1:4173/panel",
+      "performance": 85,
+      "cls": 0.026,
+      "lcpMs": 4160,
+      "report": "C:\\Users\\janpe\\Desktop\\KJLABS\\SKINVESTMENTS\\Page\\skinvestments-page\\SkinvestmentPage\\docs\\design-refresh-phase-3\\lighthouse-panel.json"
+    },
+    {
+      "slug": "inventory",
+      "url": "http://127.0.0.1:4173/inventory",
+      "performance": 96,
+      "cls": 0.026,
+      "lcpMs": 2731,
+      "report": "C:\\Users\\janpe\\Desktop\\KJLABS\\SKINVESTMENTS\\Page\\skinvestments-page\\SkinvestmentPage\\docs\\design-refresh-phase-3\\lighthouse-inventory.json"
+    },
+    {
+      "slug": "share",
+      "url": "http://127.0.0.1:4173/p/demo",
+      "performance": 66,
+      "cls": 0.3,
+      "lcpMs": 4990,
+      "report": "C:\\Users\\janpe\\Desktop\\KJLABS\\SKINVESTMENTS\\Page\\skinvestments-page\\SkinvestmentPage\\docs\\design-refresh-phase-3\\lighthouse-share.json"
+    }
+  ],
+  "notes": [
+    "Phase 1 Lighthouse baselines were not checked into the repo; compare manually if you kept local numbers.",
+    "Without PHASE3_STORAGE_STATE, Panel/Inventory may be Sign In redirects."
+  ]
+}
