@@ -195,14 +195,14 @@ const Settings = () => {
       {/* Sentinel for tab strip scroll-edge (content under frosted tabs) */}
       <div ref={tabSentinelRef} className="h-px w-full pointer-events-none" aria-hidden />
 
-      {/* Sticky tab strip — chrome material; active tab keeps accent underline */}
+      {/* Sticky tab strip — same width as content cards; frost only over this column */}
       <div
-        className="sticky top-14 md:top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 mb-8 chrome-material"
+        className="sticky top-14 md:top-0 z-20 mb-8 max-w-6xl chrome-material"
         data-edge={tabsEdged ? 'on' : 'off'}
         role="tablist"
         aria-label="Settings sections"
       >
-        <div className="flex gap-8 overflow-x-auto no-scrollbar max-w-3xl">
+        <div className="flex gap-6 sm:gap-8 overflow-x-auto no-scrollbar">
           <button
             type="button"
             role="tab"
@@ -246,7 +246,7 @@ const Settings = () => {
       </div>
 
       {/* === ZAWARTOŚĆ === */}
-      <div className="max-w-3xl">
+      <div className="max-w-6xl">
         
         {/* ================= ACCOUNT TAB ================= */}
         {activeTab === 'account' && (
