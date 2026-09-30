@@ -20,6 +20,7 @@ import { getProfileDisplayName } from '@/utils/profile';
 import { ExportDataPanel } from '@/components/dashboard/ExportDataPanel';
 import { PortfolioSharePanel } from '@/components/dashboard/PortfolioSharePanel';
 import { CookiePreferencesPanel } from '@/components/consent/CookiePreferencesPanel';
+import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { trackSteamEvent } from '@/utils/steamAccounts';
 
 const Settings = () => {
@@ -195,54 +196,46 @@ const Settings = () => {
       {/* Sentinel for tab strip scroll-edge (content under frosted tabs) */}
       <div ref={tabSentinelRef} className="h-px w-full pointer-events-none" aria-hidden />
 
-      {/* Sticky tab strip — same width as content cards; frost only over this column */}
+      {/* Sticky section switcher — segmented control on chrome material */}
       <div
-        className="sticky top-14 md:top-0 z-20 mb-8 max-w-6xl chrome-material"
+        className="sticky top-14 md:top-0 z-20 mb-8 max-w-6xl chrome-material py-3"
         data-edge={tabsEdged ? 'on' : 'off'}
-        role="tablist"
-        aria-label="Settings sections"
       >
-        <div className="flex gap-6 sm:gap-8 overflow-x-auto no-scrollbar">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'account'}
-            onClick={() => setActiveTab('account')}
-            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-              activeTab === 'account'
-                ? 'border-steam-accent text-steam-accent'
-                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
-            }`}
-          >
-            <User className="w-4 h-4" /> Account
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'app'}
-            onClick={() => setActiveTab('app')}
-            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-              activeTab === 'app'
-                ? 'border-steam-accent text-steam-accent'
-                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
-            }`}
-          >
-            <SettingsIcon className="w-4 h-4" /> App
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'privacy'}
-            onClick={() => setActiveTab('privacy')}
-            className={`pressable py-3.5 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
-              activeTab === 'privacy'
-                ? 'border-steam-accent text-steam-accent'
-                : 'border-transparent text-steam-tertiary hover:text-steam-secondary'
-            }`}
-          >
-            <Shield className="w-4 h-4" /> Privacy
-          </button>
-        </div>
+        <SegmentedControl<'account' | 'app' | 'privacy'>
+          aria-label="Settings sections"
+          value={activeTab}
+          onChange={setActiveTab}
+          className="w-full sm:w-auto max-sm:[&>button]:flex-1"
+          options={[
+            {
+              value: 'account',
+              label: (
+                <span className="inline-flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5" aria-hidden />
+                  Account
+                </span>
+              ),
+            },
+            {
+              value: 'app',
+              label: (
+                <span className="inline-flex items-center gap-1.5">
+                  <SettingsIcon className="w-3.5 h-3.5" aria-hidden />
+                  App
+                </span>
+              ),
+            },
+            {
+              value: 'privacy',
+              label: (
+                <span className="inline-flex items-center gap-1.5">
+                  <Shield className="w-3.5 h-3.5" aria-hidden />
+                  Privacy
+                </span>
+              ),
+            },
+          ]}
+        />
       </div>
 
       {/* === ZAWARTOŚĆ === */}
