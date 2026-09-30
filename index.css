@@ -549,6 +549,14 @@
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.08);
 }
 
+/* Settings (and other full-width switchers): active segment uses accent */
+.dashboard-segment.settings-section-switch [aria-pressed='true'],
+.dashboard-segment.settings-section-switch .dashboard-segment-btn-active {
+  color: var(--color-accent);
+  background-color: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface-overlay));
+  border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }

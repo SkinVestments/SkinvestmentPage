@@ -193,25 +193,24 @@ const Settings = () => {
         </p>
       </div>
 
-      {/* Sentinel for tab strip scroll-edge (content under frosted tabs) */}
+      {/* Sentinel for sticky switcher scroll-edge */}
       <div ref={tabSentinelRef} className="h-px w-full pointer-events-none" aria-hidden />
 
-      {/* Sticky section switcher — segmented control on chrome material */}
       <div
-        className="sticky top-14 md:top-0 z-20 mb-8 max-w-6xl chrome-material py-3"
+        className="sticky top-14 md:top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 mb-8 chrome-material py-2.5"
         data-edge={tabsEdged ? 'on' : 'off'}
       >
         <SegmentedControl<'account' | 'app' | 'privacy'>
           aria-label="Settings sections"
           value={activeTab}
           onChange={setActiveTab}
-          className="w-full sm:w-auto max-sm:[&>button]:flex-1"
+          className="settings-section-switch !flex w-full [&>button]:flex-1 [&>button]:py-2.5 [&>button]:text-sm"
           options={[
             {
               value: 'account',
               label: (
-                <span className="inline-flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5" aria-hidden />
+                <span className="inline-flex items-center justify-center gap-2">
+                  <User className="w-4 h-4 shrink-0" aria-hidden />
                   Account
                 </span>
               ),
@@ -219,8 +218,8 @@ const Settings = () => {
             {
               value: 'app',
               label: (
-                <span className="inline-flex items-center gap-1.5">
-                  <SettingsIcon className="w-3.5 h-3.5" aria-hidden />
+                <span className="inline-flex items-center justify-center gap-2">
+                  <SettingsIcon className="w-4 h-4 shrink-0" aria-hidden />
                   App
                 </span>
               ),
@@ -228,8 +227,8 @@ const Settings = () => {
             {
               value: 'privacy',
               label: (
-                <span className="inline-flex items-center gap-1.5">
-                  <Shield className="w-3.5 h-3.5" aria-hidden />
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Shield className="w-4 h-4 shrink-0" aria-hidden />
                   Privacy
                 </span>
               ),
@@ -238,8 +237,8 @@ const Settings = () => {
         />
       </div>
 
-      {/* === ZAWARTOŚĆ === */}
-      <div className="max-w-6xl">
+      {/* Full main width — same as Panel / Inventory */}
+      <div className="w-full min-w-0">
         
         {/* ================= ACCOUNT TAB ================= */}
         {activeTab === 'account' && (
