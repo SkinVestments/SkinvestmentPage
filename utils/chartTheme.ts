@@ -17,6 +17,7 @@ export const chartAccentStroke = 'var(--color-accent)';
 export const chartAxisTickStyle = {
   fill: 'var(--color-text-tertiary)',
   fontSize: 10,
+  fontVariantNumeric: 'tabular-nums' as const,
 };
 
 export const chartAxisLineStyle = { stroke: 'var(--color-card-border)' };

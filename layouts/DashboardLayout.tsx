@@ -38,7 +38,7 @@ export const DashboardLayout = () => {
           <button
             type="button"
             onClick={() => setMobileNavOpen((open) => !open)}
-            className="p-2.5 rounded-lg text-steam-text hover:bg-steam-hover border border-steam-border transition-colors shrink-0"
+            className="pressable p-2.5 rounded-lg text-steam-text hover:bg-steam-hover border border-steam-border shrink-0"
             aria-expanded={mobileNavOpen}
             aria-label={mobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
           >

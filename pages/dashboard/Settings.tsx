@@ -172,7 +172,7 @@ const Settings = () => {
       <div className="flex border-b border-steam-border mb-8 gap-8 overflow-x-auto no-scrollbar">
         <button 
           onClick={() => setActiveTab('account')}
-          className={`pb-4 text-sm font-bold uppercase tracking-wider transition-all flex items-center gap-2 border-b-2 whitespace-nowrap ${
+          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
             activeTab === 'account' 
               ? 'border-steam-accent text-steam-accent' 
               : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
@@ -182,7 +182,7 @@ const Settings = () => {
         </button>
         <button 
           onClick={() => setActiveTab('app')}
-          className={`pb-4 text-sm font-bold uppercase tracking-wider transition-all flex items-center gap-2 border-b-2 whitespace-nowrap ${
+          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
             activeTab === 'app' 
               ? 'border-steam-accent text-steam-accent' 
               : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'
@@ -192,7 +192,7 @@ const Settings = () => {
         </button>
         <button 
           onClick={() => setActiveTab('privacy')}
-          className={`pb-4 text-sm font-bold uppercase tracking-wider transition-all flex items-center gap-2 border-b-2 whitespace-nowrap ${
+          className={`pressable pb-4 text-sm font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 whitespace-nowrap ${
             activeTab === 'privacy' 
               ? 'border-steam-accent text-steam-accent' 
               : 'border-transparent text-steam-tertiary hover:text-steam-secondary hover:border-steam-border'

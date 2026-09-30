@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
-import { Loader2, ArrowDownUp, Calendar, Package, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { ArrowDownUp, Package, TrendingUp, DollarSign } from 'lucide-react';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { ItemImage } from '@/components/ui/ItemImage';
+import { HistoryTableSkeleton } from '@/components/ui/TableRowSkeleton';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 
@@ -115,10 +116,11 @@ const History = () => {
           {(['ALL', 'DROP', 'BUY', 'SELL'] as const).map((type) => (
             <button
               key={type}
+              type="button"
               onClick={() => { setFilterType(type); setPage(1); }}
-              className={`px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all uppercase tracking-wide whitespace-nowrap shrink-0 ${
+              className={`pressable px-3 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold uppercase tracking-wide whitespace-nowrap shrink-0 ${
                 filterType === type 
-                  ? 'bg-steam-accent text-white shadow-md sm:scale-105' 
+                  ? 'bg-steam-accent text-white shadow-md' 
                   : 'text-steam-secondary hover:text-steam-text hover:bg-steam-hover'
               }`}
             >
@@ -137,9 +139,7 @@ const History = () => {
       {/* Tabela */}
       <div className="bg-steam-card rounded-2xl border border-steam-border shadow-xl overflow-hidden">
         {loading ? (
-          <div className="p-20 flex justify-center text-steam-accent">
-            <Loader2 className="animate-spin w-8 h-8" />
-          </div>
+          <HistoryTableSkeleton rows={ITEMS_PER_PAGE} />
         ) : transactions.length === 0 ? (
           <div className="p-20 text-center text-steam-secondary">
             <div className="w-16 h-16 bg-steam-elevated rounded-full flex items-center justify-center mx-auto mb-4">
@@ -191,7 +191,7 @@ const History = () => {
                           : 'EVEN';
 
                   return (
-                    <tr key={tx.id} className="hover:bg-steam-hover transition-colors group">
+                    <tr key={tx.id} className="pressable-row hover:bg-steam-hover group">
                       
                       {/* 1. Typ Transakcji */}
                       <td className="p-5 pl-8">
@@ -233,7 +233,7 @@ const History = () => {
                                     {tx.cs2_items?.rarity || 'Common'}
                                 </span>
                                 {tx.quantity > 1 && (
-                                    <span className="bg-steam-elevated text-steam-text px-1.5 rounded text-[10px]">x{tx.quantity}</span>
+                                    <span className="num bg-steam-elevated text-steam-text px-1.5 rounded text-[10px]">x{tx.quantity}</span>
                                 )}
                              </div>
                           </div>
@@ -241,7 +241,7 @@ const History = () => {
                       </td>
 
                       {/* 3. Cena Jednostkowa */}
-                      <td className="p-5 text-right font-mono text-steam-secondary">
+                      <td className="p-5 text-right font-mono num text-steam-secondary">
                         {tx.type === 'DROP' ? (
                           <span className="text-steam-accent font-bold text-xs uppercase">Free Drop</span>
                         ) : (
@@ -250,7 +250,7 @@ const History = () => {
                       </td>
 
                       {/* 4. Suma / Profit */}
-                      <td className="p-5 text-right font-mono">
+                      <td className="p-5 text-right font-mono num">
                         <div className="font-bold text-steam-text">
                             {formatCurrency(totalValue)}
                         </div>
@@ -291,19 +291,21 @@ const History = () => {
         {/* Paginacja */}
         <div className="bg-steam-elevated px-6 py-4 border-t border-steam-border flex justify-between items-center">
             <button 
+                type="button"
                 disabled={page===1 || loading} 
                 onClick={()=>setPage(p=>p-1)}
-                className="text-steam-secondary hover:text-steam-text disabled:opacity-30 text-sm font-bold flex items-center gap-1"
+                className="pressable text-steam-secondary hover:text-steam-text disabled:opacity-30 text-sm font-bold flex items-center gap-1"
             >
                 Previous
             </button>
             <span className="text-xs text-steam-tertiary font-bold uppercase tracking-widest">
-                Page <span className="text-steam-text text-sm">{page}</span> of {totalPages || 1}
+                Page <span className="num text-steam-text text-sm">{page}</span> of <span className="num">{totalPages || 1}</span>
             </span>
             <button 
+                type="button"
                 disabled={page>=totalPages || loading} 
                 onClick={()=>setPage(p=>p+1)}
-                className="text-steam-secondary hover:text-steam-text disabled:opacity-30 text-sm font-bold flex items-center gap-1"
+                className="pressable text-steam-secondary hover:text-steam-text disabled:opacity-30 text-sm font-bold flex items-center gap-1"
             >
                 Next
             </button>

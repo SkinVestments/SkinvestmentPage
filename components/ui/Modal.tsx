@@ -54,7 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover transition-colors shrink-0"
+            className="pressable p-2 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover shrink-0"
             aria-label="Close"
           >
             <X className="w-5 h-5" />

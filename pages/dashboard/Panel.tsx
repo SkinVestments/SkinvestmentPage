@@ -35,6 +35,7 @@ import {
 } from '@/utils/portfolioRpc';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
+import { PanelHeroValueSkeleton, PanelMetricTileSkeleton } from '@/components/ui/TableRowSkeleton';
 
 // --- TYPY DANYCH ---
 interface CS2Item {
@@ -296,7 +297,7 @@ const Panel = () => {
           <button
             type="button"
             onClick={() => setIsShareModalOpen(true)}
-            className="bg-steam-card hover:bg-steam-hover text-steam-text px-5 py-2.5 rounded-xl font-bold text-sm border border-steam-border shadow-lg transition-all flex items-center gap-2"
+            className="pressable bg-steam-card hover:bg-steam-hover text-steam-text px-5 py-2.5 rounded-xl font-bold text-sm border border-steam-border shadow-lg flex items-center gap-2"
           >
             <Share2 className="w-5 h-5 text-steam-accent" /> Share
           </button>
@@ -322,12 +323,15 @@ const Panel = () => {
             </div>
             
             <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 min-w-0">
+              {!portfolioStats ? (
+                <PanelHeroValueSkeleton />
+              ) : (
               <div className="min-w-0 w-full">
                 <h2 className="text-steam-secondary text-xs font-bold uppercase tracking-wider mb-2">Total Portfolio Value</h2>
                 <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-3">
-                  <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-steam-text tracking-tight break-all sm:break-normal">{formatCurrency(currentTotalValue)}</span>
+                  <span className="num text-3xl sm:text-4xl md:text-5xl font-bold text-steam-text tracking-tight leading-none break-all sm:break-normal">{formatCurrency(currentTotalValue)}</span>
                   
-                  <span className={`px-2 py-1 rounded-md text-xs sm:text-sm font-bold border flex items-center gap-1.5 w-fit flex-wrap ${
+                  <span className={`num px-2 py-1 rounded-md text-xs sm:text-sm font-bold border flex items-center gap-1.5 w-fit flex-wrap ${
                     isPositive ? 'text-steam-profit bg-green-500/10 border-green-500/20' : 'text-steam-loss bg-red-500/10 border-red-500/20'
                   }`}>
                     {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -338,6 +342,7 @@ const Panel = () => {
                   </span>
                 </div>
               </div>
+              )}
               
               <SegmentedControl
                 aria-label="Portfolio period"
@@ -461,27 +466,38 @@ const Panel = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-6">
-            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
-              <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Investments</p>
-              <p className="text-xl font-bold text-steam-text">{formatCurrency(currentInvestmentsValue)}</p>
+            {!portfolioStats ? (
+              <>
+                <PanelMetricTileSkeleton />
+                <PanelMetricTileSkeleton />
+                <PanelMetricTileSkeleton />
+                <PanelMetricTileSkeleton />
+              </>
+            ) : (
+              <>
+            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors min-h-[5.5rem]">
+              <p className="dashboard-label mb-1">Investments</p>
+              <p className="num text-xl font-bold text-steam-text leading-tight">{formatCurrency(currentInvestmentsValue)}</p>
             </div>
 
-            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
-              <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Inventory</p>
-              <p className="text-xl font-bold text-steam-text">{formatCurrency(currentInventoryValue)}</p>
+            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors min-h-[5.5rem]">
+              <p className="dashboard-label mb-1">Inventory</p>
+              <p className="num text-xl font-bold text-steam-text leading-tight">{formatCurrency(currentInventoryValue)}</p>
             </div>
 
-            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
-              <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Deposited</p>
-              <p className="text-xl font-bold text-steam-text">{formatCurrency(currentDeposited)}</p>
+            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors min-h-[5.5rem]">
+              <p className="dashboard-label mb-1">Deposited</p>
+              <p className="num text-xl font-bold text-steam-text leading-tight">{formatCurrency(currentDeposited)}</p>
               <p className="text-[10px] text-steam-tertiary mt-1 uppercase tracking-wider">Period: {periodLabel}</p>
             </div>
 
-            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors">
-              <p className="text-steam-tertiary text-[10px] font-bold uppercase tracking-wider mb-1">Withdrawn</p>
-              <p className="text-xl font-bold text-steam-text">{formatCurrency(currentWithdrawn)}</p>
+            <div className="bg-steam-card rounded-2xl p-5 border border-steam-border hover:border-steam-accent/30 transition-colors min-h-[5.5rem]">
+              <p className="dashboard-label mb-1">Withdrawn</p>
+              <p className="num text-xl font-bold text-steam-text leading-tight">{formatCurrency(currentWithdrawn)}</p>
               <p className="text-[10px] text-steam-tertiary mt-1 uppercase tracking-wider">Period: {periodLabel}</p>
             </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -650,7 +666,7 @@ const Panel = () => {
             {collections.map((col) => (
               <div key={col.id} 
               onClick={() => navigate(`/collection/${col.id}`)}
-              className="bg-steam-card p-5 rounded-2xl border border-steam-border hover:border-steam-accent/50 transition-all cursor-pointer group relative overflow-hidden flex flex-col justify-between h-36">
+              className="pressable bg-steam-card p-5 rounded-2xl border border-steam-border hover:border-steam-accent/50 cursor-pointer group relative overflow-hidden flex flex-col justify-between h-36">
                   {/* Dekoracyjne ikony w tle */}
                   <div className="absolute -right-4 -bottom-4 opacity-[0.03] group-hover:opacity-10 transition-opacity transform group-hover:scale-110 group-hover:-rotate-12 duration-500">
                     <Wallet className="w-32 h-32" />
@@ -666,7 +682,7 @@ const Panel = () => {
                   </div>
                   
                   <div className="flex justify-between items-end">
-                    <p className="text-steam-secondary font-mono text-lg font-bold">
+                    <p className="text-steam-secondary font-mono num text-lg font-bold leading-tight">
                       {formatCurrency(col.total_value || 0)}
                     </p>
                     <div className="w-6 h-6 rounded-full bg-steam-elevated flex items-center justify-center group-hover:bg-steam-accent transition-colors">
@@ -712,8 +728,8 @@ const Panel = () => {
                       {sortBy === 'quantity' && <ArrowUpDown className="w-3 h-3" />}
                     </div>
                   </th>
-                  <th className="p-5">Price</th>
-                  <th className="p-5">Value</th>
+                  <th className="p-5 text-right">Price</th>
+                  <th className="p-5 text-right">Value</th>
                   <th className="p-5 text-right pr-6">Date</th>
                 </tr>
               </thead>
@@ -751,8 +767,8 @@ const Panel = () => {
                       <td className="p-4 font-medium text-steam-secondary">
                         <span className="bg-steam-elevated px-2 py-1 rounded text-xs">{item.quantity}</span>
                       </td>
-                      <td className="p-4 text-steam-secondary font-mono">{formatCurrency(currentPrice)}</td>
-                      <td className="p-4 font-bold text-steam-text font-mono">{formatCurrency(currentPrice * item.quantity)}</td>
+                      <td className="p-4 text-right text-steam-secondary font-mono num">{formatCurrency(currentPrice)}</td>
+                      <td className="p-4 text-right font-bold text-steam-text font-mono num">{formatCurrency(currentPrice * item.quantity)}</td>
                       <td className="p-4 text-right pr-6 text-steam-tertiary text-xs">{new Date(item.acquired_at).toLocaleDateString()}</td>
                     </tr>
                    )
