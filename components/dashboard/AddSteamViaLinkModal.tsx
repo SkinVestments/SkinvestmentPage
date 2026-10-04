@@ -257,26 +257,26 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
       title="Add Steam account"
       maxWidth="md"
       closeOnOverlayClick={!linking}
-      panelClassName="border-orange-400/30 bg-steam-card shadow-[0_25px_60px_-15px_rgba(234,88,12,0.28)] overflow-hidden"
+      panelClassName="border-steam-border bg-steam-card shadow-2xl overflow-hidden"
       bodyClassName="overflow-y-auto flex-1 p-5 sm:p-6 text-steam-text min-h-0 space-y-5"
-      footerClassName="flex flex-col-reverse sm:flex-row gap-3 p-5 sm:p-6 border-t border-orange-500/15 shrink-0 bg-orange-500/[0.06]"
+      footerClassName="flex flex-col-reverse sm:flex-row gap-3 p-5 sm:p-6 border-t border-steam-border shrink-0 bg-steam-elevated/50"
       header={
-        <div className="relative shrink-0 border-b border-orange-500/20 bg-gradient-to-br from-orange-500/20 via-orange-500/5 to-transparent px-5 sm:px-6 pt-5 sm:pt-6 pb-4">
+        <div className="relative shrink-0 border-b border-steam-border bg-steam-elevated/40 px-5 sm:px-6 pt-5 sm:pt-6 pb-4">
           <button
             type="button"
             onClick={requestClose}
             disabled={linking}
-            className="pressable absolute right-3 top-3 sm:right-4 sm:top-4 p-2 rounded-lg text-steam-tertiary hover:text-steam-text hover:bg-steam-hover/80 disabled:opacity-40"
+            className="pressable absolute right-3 top-3 sm:right-4 sm:top-4 p-2 rounded-lg text-steam-secondary hover:text-steam-text hover:bg-steam-hover/80 disabled:opacity-40"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
           <div className="flex items-start gap-3.5 pr-10">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-b from-orange-400 to-orange-600 text-white shadow-lg shadow-orange-950/40 border border-orange-300/40 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-steam-accent/15 text-steam-accent border border-steam-accent/25 flex items-center justify-center shrink-0">
               <Link2 className="w-5 h-5" aria-hidden />
             </div>
             <div className="min-w-0 pt-0.5">
-              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-orange-300/90 mb-1">
+              <p className="text-xs font-bold uppercase tracking-[0.12em] text-steam-accent mb-1">
                 Public inventory
               </p>
               <h3 className="text-xl font-bold text-steam-text tracking-tight">
@@ -301,7 +301,7 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
                 onClose();
                 onConnectViaSteam();
               }}
-              className="pressable text-xs font-bold text-steam-secondary hover:text-steam-text order-2 sm:order-1 py-2"
+              className="pressable text-sm font-bold text-steam-secondary hover:text-steam-accent order-2 sm:order-1 py-2"
             >
               Connect via Steam instead
             </button>
@@ -309,7 +309,7 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
               type="button"
               disabled={busy || rateBlocked}
               onClick={() => void handleContinue()}
-              className="pressable inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-300 hover:to-orange-500 text-white px-6 py-2.5 text-sm font-bold shadow-lg shadow-orange-950/30 border border-orange-300/30 disabled:opacity-50 order-1 sm:order-2"
+              className="pressable inline-flex items-center justify-center gap-2 rounded-xl bg-steam-accent hover:opacity-90 text-white px-6 py-2.5 text-sm font-bold shadow-lg theme-shadow-accent disabled:opacity-50 order-1 sm:order-2"
             >
               {resolving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Continue
@@ -321,7 +321,7 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
               type="button"
               disabled={linking}
               onClick={handleUseDifferent}
-              className="pressable inline-flex items-center justify-center rounded-xl border border-steam-border bg-steam-elevated/70 px-4 py-2.5 text-sm font-bold text-steam-text hover:bg-steam-hover disabled:opacity-50"
+              className="pressable inline-flex items-center justify-center rounded-xl border border-steam-border bg-steam-card px-4 py-2.5 text-sm font-bold text-steam-text hover:bg-steam-hover disabled:opacity-50"
             >
               Use a different account
             </button>
@@ -329,7 +329,7 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
               type="button"
               disabled={linking || rateBlocked}
               onClick={() => void handleAddInventory()}
-              className="pressable inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-300 hover:to-orange-500 text-white px-6 py-2.5 text-sm font-bold shadow-lg shadow-orange-950/30 border border-orange-300/30 disabled:opacity-50"
+              className="pressable inline-flex items-center justify-center gap-2 rounded-xl bg-steam-accent hover:opacity-90 text-white px-6 py-2.5 text-sm font-bold shadow-lg theme-shadow-accent disabled:opacity-50"
             >
               {linking ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Add inventory
@@ -347,51 +347,51 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
           <div className="space-y-2">
             <label
               htmlFor={fieldId}
-              className="block text-xs font-bold text-steam-tertiary uppercase tracking-wider"
+              className="block text-sm font-bold text-steam-text"
             >
               Steam link or profile ID
             </label>
-            <div className="relative rounded-2xl p-[1px] bg-gradient-to-b from-orange-400/50 to-steam-border/80 shadow-inner">
-              <div className="relative rounded-[15px] bg-steam-elevated/90">
-                <input
-                  ref={inputRef}
-                  id={fieldId}
-                  type="text"
-                  inputMode="text"
-                  autoCapitalize="off"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  maxLength={2048}
-                  disabled={busy}
-                  value={rawInput}
-                  onChange={(e) => handleInputChange(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      void handleContinue();
-                    }
-                  }}
-                  placeholder="steamcommunity.com/id/yourname"
-                  aria-invalid={Boolean(fieldError)}
-                  aria-describedby={fieldError ? errorId : helpId}
-                  className={`w-full rounded-[15px] border-0 bg-transparent px-3.5 py-3.5 pr-[5.5rem] text-sm text-steam-text placeholder:text-steam-tertiary focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/40 ${
-                    fieldError ? 'ring-2 ring-steam-loss/50' : ''
-                  } disabled:opacity-60`}
-                />
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => void handlePaste()}
-                  className="pressable absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-xl border border-orange-400/30 bg-orange-500/15 px-2.5 py-1.5 text-[11px] font-bold text-orange-200 hover:bg-orange-500/25 disabled:opacity-50"
-                >
-                  <ClipboardPaste className="w-3.5 h-3.5" />
-                  Paste
-                </button>
-              </div>
+            <div className="relative">
+              <input
+                ref={inputRef}
+                id={fieldId}
+                type="text"
+                inputMode="text"
+                autoCapitalize="off"
+                autoCorrect="off"
+                spellCheck={false}
+                maxLength={2048}
+                disabled={busy}
+                value={rawInput}
+                onChange={(e) => handleInputChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    void handleContinue();
+                  }
+                }}
+                placeholder="steamcommunity.com/id/yourname"
+                aria-invalid={Boolean(fieldError)}
+                aria-describedby={fieldError ? errorId : helpId}
+                className={`w-full rounded-xl border bg-steam-elevated px-3.5 py-3.5 pr-[5.75rem] text-sm text-steam-text placeholder:text-steam-tertiary focus:outline-none focus-visible:ring-2 focus-visible:ring-steam-accent/40 ${
+                  fieldError
+                    ? 'border-steam-loss/60 ring-2 ring-steam-loss/30'
+                    : 'border-steam-border focus-visible:border-steam-accent/50'
+                } disabled:opacity-60`}
+              />
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void handlePaste()}
+                className="pressable absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-lg border border-steam-border bg-steam-card px-2.5 py-1.5 text-xs font-bold text-steam-text hover:border-steam-accent/40 hover:text-steam-accent disabled:opacity-50"
+              >
+                <ClipboardPaste className="w-3.5 h-3.5" />
+                Paste
+              </button>
             </div>
 
             {fieldError ? (
-              <p id={errorId} role="alert" className="text-xs text-steam-loss leading-relaxed">
+              <p id={errorId} role="alert" className="text-sm text-steam-loss leading-relaxed">
                 {fieldError}
                 {fieldError.toLowerCase().includes('plan') && (
                   <>
@@ -406,48 +406,48 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
                 )}
               </p>
             ) : (
-              <p id={helpId} className="text-xs text-steam-tertiary leading-relaxed">
+              <p id={helpId} className="text-sm text-steam-secondary leading-relaxed">
                 Paste a profile, inventory or trade link. Your inventory must be set to Public.
               </p>
             )}
           </div>
 
-          <p className="text-xs font-medium text-steam-secondary">
+          <p className="text-sm font-medium text-steam-text">
             You&apos;ll check the account before adding it.
           </p>
 
-          <div className="rounded-2xl border border-steam-border/60 bg-steam-bg/40 px-3.5 py-3">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary mb-2.5">
+          <div className="rounded-xl border border-steam-border bg-steam-elevated/50 px-3.5 py-3">
+            <p className="text-xs font-bold uppercase tracking-wider text-steam-secondary mb-2.5">
               Accepted examples
             </p>
             <div className="flex flex-wrap gap-1.5">
               {EXAMPLES.map((ex) => (
                 <span
                   key={ex.label}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-steam-border/70 bg-steam-elevated/70 px-2 py-1 text-[11px]"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-steam-border bg-steam-card px-2.5 py-1.5 text-xs"
                 >
-                  <span className="font-bold text-orange-300/90">{ex.label}</span>
-                  <span className="font-mono text-steam-tertiary">{ex.value}</span>
+                  <span className="font-bold text-steam-text">{ex.label}</span>
+                  <span className="font-mono text-steam-secondary">{ex.value}</span>
                 </span>
               ))}
             </div>
-            <p className="mt-2.5 text-[11px] text-steam-tertiary leading-relaxed">
+            <p className="mt-2.5 text-sm text-steam-secondary leading-relaxed">
               Use the name in your profile URL, not your display name or Steam login.
             </p>
           </div>
 
           <details
-            className="rounded-2xl border border-steam-border/50 bg-steam-elevated/30 open:bg-steam-elevated/45"
+            className="rounded-xl border border-steam-border bg-steam-elevated/40 open:bg-steam-elevated/60"
             open={helpOpen}
             onToggle={(e) => setHelpOpen((e.target as HTMLDetailsElement).open)}
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3.5 py-2.5 text-xs font-bold text-steam-secondary">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-3.5 py-3 text-sm font-bold text-steam-text">
               Where do I find my profile link?
               <ChevronDown
-                className={`w-4 h-4 shrink-0 transition-transform ${helpOpen ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 shrink-0 text-steam-secondary transition-transform ${helpOpen ? 'rotate-180' : ''}`}
               />
             </summary>
-            <p className="px-3.5 pb-3.5 text-xs text-steam-tertiary leading-relaxed">
+            <p className="px-3.5 pb-3.5 text-sm text-steam-secondary leading-relaxed">
               Open your Steam profile and copy its link using Share. In a browser, copy the address
               of your profile or inventory. For your trade link, open Inventory → Trade Offers → Who
               can send me Trade Offers? and copy your Trade URL.
@@ -458,24 +458,24 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
 
       {step === 'preview' && preview && (
         <div className="space-y-3">
-          <div className="rounded-2xl border border-orange-400/25 bg-gradient-to-br from-orange-500/10 via-steam-elevated/50 to-steam-card p-4 shadow-inner">
+          <div className="rounded-xl border border-steam-border bg-steam-elevated/50 p-4">
             <div className="flex items-center gap-3">
               {preview.steam_avatar_url ? (
                 <img
                   src={preview.steam_avatar_url}
                   alt=""
-                  className="w-14 h-14 rounded-2xl object-cover border border-orange-400/30 shrink-0 shadow-md"
+                  className="w-14 h-14 rounded-2xl object-cover border border-steam-border shrink-0"
                 />
               ) : (
                 <div className="w-14 h-14 rounded-2xl bg-steam-card border border-steam-border flex items-center justify-center shrink-0">
-                  <User className="w-6 h-6 text-steam-tertiary" aria-hidden />
+                  <User className="w-6 h-6 text-steam-secondary" aria-hidden />
                 </div>
               )}
               <div className="min-w-0 flex-1">
                 <p className="text-base font-bold text-steam-text truncate">
                   {preview.steam_username?.trim() || 'Steam account'}
                 </p>
-                <p className="text-xs font-mono text-steam-tertiary mt-0.5">
+                <p className="text-sm font-mono text-steam-secondary mt-0.5">
                   {preview.steam_id_64}
                 </p>
                 {profileHref && (
@@ -483,31 +483,31 @@ export const AddSteamViaLinkModal: React.FC<AddSteamViaLinkModalProps> = ({
                     href={profileHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-orange-300 hover:text-orange-200 hover:underline mt-1"
+                    className="inline-flex items-center gap-1 text-sm font-bold text-steam-accent hover:underline mt-1"
                   >
                     Open Steam profile
-                    <ExternalLink className="w-3 h-3" />
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 )}
               </div>
             </div>
 
             <div className="mt-3.5 flex flex-wrap gap-2">
-              <span className="inline-flex items-center gap-1 rounded-lg border border-green-500/35 bg-green-500/15 px-2.5 py-1 text-[11px] font-bold text-green-300">
+              <span className="inline-flex items-center gap-1 rounded-lg border border-green-600/30 bg-green-500/10 px-2.5 py-1 text-xs font-bold text-green-700 dark:text-green-300">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Public inventory available
               </span>
             </div>
 
             <p className="mt-3.5 text-sm font-bold text-steam-text">Is this the right account?</p>
-            <p className="mt-1 text-xs text-steam-secondary leading-relaxed">
+            <p className="mt-1 text-sm text-steam-secondary leading-relaxed">
               We&apos;ll read this account&apos;s public CS2 inventory. This doesn&apos;t grant access
               to trading or Steam sign-in.
             </p>
           </div>
 
           {linkError && (
-            <p role="alert" className="text-xs text-steam-loss leading-relaxed">
+            <p role="alert" className="text-sm text-steam-loss leading-relaxed">
               {linkError}
               {linkError.toLowerCase().includes('plan') && (
                 <>

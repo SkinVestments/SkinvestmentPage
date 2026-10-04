@@ -289,8 +289,8 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h3 className="font-bold text-steam-text text-base">Steam Accounts</h3>
-          <p className="text-xs text-steam-tertiary mt-0.5">
+          <h3 className="font-bold text-steam-text text-lg">Steam Accounts</h3>
+          <p className="text-sm text-steam-secondary mt-0.5">
             {connections.length} / {limit} linked · sync pulls inventory, then you choose what to import
           </p>
         </div>
@@ -300,7 +300,7 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
               type="button"
               disabled={syncingAll || Boolean(actionId)}
               onClick={() => void handleSyncAll()}
-              className="pressable inline-flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border border-steam-border bg-steam-elevated hover:bg-steam-hover text-steam-text disabled:opacity-50"
+              className="pressable inline-flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold border border-steam-border bg-steam-elevated hover:bg-steam-hover text-steam-text disabled:opacity-50"
             >
               {syncingAll ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -314,7 +314,7 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
             type="button"
             disabled={!canLinkMore}
             onClick={() => setAddViaLinkOpen(true)}
-            className="pressable inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-white shadow-lg shadow-orange-950/40 bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-300 hover:to-orange-500 border border-orange-300/30 disabled:opacity-50"
+            className="pressable inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-steam-accent hover:opacity-90 shadow-lg theme-shadow-accent disabled:opacity-50"
           >
             <Link2 className="w-4 h-4" />
             Add via link
@@ -323,7 +323,7 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
             type="button"
             disabled={!canLinkMore}
             onClick={handleLink}
-            className="pressable inline-flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold border border-steam-border bg-steam-card text-steam-text hover:border-steam-accent/50 hover:text-steam-accent disabled:opacity-50"
+            className="pressable inline-flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold border border-steam-border bg-steam-card text-steam-text hover:border-steam-accent/50 hover:text-steam-accent disabled:opacity-50"
           >
             Link Steam
           </button>
@@ -380,20 +380,20 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
           <Loader2 className="w-6 h-6 animate-spin" />
         </div>
       ) : connections.length === 0 ? (
-        <div className="rounded-2xl border border-orange-500/25 bg-gradient-to-br from-orange-500/10 via-steam-elevated/50 to-steam-card p-6 sm:p-8 text-center shadow-lg shadow-orange-950/20">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-orange-400/30 bg-orange-500/15 text-orange-300">
+        <div className="rounded-2xl border border-steam-border bg-steam-elevated/60 p-6 sm:p-8 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-steam-accent/30 bg-steam-accent/10 text-steam-accent">
             <Link2 className="w-6 h-6" />
           </div>
-          <p className="text-base font-bold text-steam-text">Add a public Steam inventory</p>
-          <p className="text-xs text-steam-secondary mt-1.5 max-w-sm mx-auto leading-relaxed">
-            Paste a profile or trade link - no Steam sign-in. Then sync and pick items to import.
+          <p className="text-lg font-bold text-steam-text">Add a public Steam inventory</p>
+          <p className="text-sm text-steam-secondary mt-2 max-w-md mx-auto leading-relaxed">
+            Paste a profile or trade link — no Steam sign-in. Then sync and pick items to import.
           </p>
           <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-2">
             <button
               type="button"
               disabled={!canLinkMore}
               onClick={() => setAddViaLinkOpen(true)}
-              className="pressable inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-lg shadow-orange-950/40 bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-300 hover:to-orange-500 border border-orange-300/30 disabled:opacity-50"
+              className="pressable inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-steam-accent hover:opacity-90 shadow-lg theme-shadow-accent disabled:opacity-50"
             >
               <Link2 className="w-4 h-4" />
               Add via link
@@ -402,7 +402,7 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
               type="button"
               disabled={!canLinkMore}
               onClick={handleLink}
-              className="pressable inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border border-steam-border bg-steam-card/80 text-steam-secondary hover:text-steam-text disabled:opacity-50"
+              className="pressable inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border border-steam-border bg-steam-card text-steam-text hover:border-steam-accent/40 hover:text-steam-accent disabled:opacity-50"
             >
               Or connect via Steam
             </button>
