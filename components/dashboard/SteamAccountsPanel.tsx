@@ -30,6 +30,7 @@ import {
   matchSteamInventoryToCatalog,
 } from '@/utils/steamInventory';
 import { SteamInventoryImportModal } from '@/components/dashboard/SteamInventoryImportModal';
+import { AddSteamViaLinkModal } from '@/components/dashboard/AddSteamViaLinkModal';
 
 const getErrorMessage = (err: unknown, fallback: string): string => {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -67,6 +68,7 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
   const [skippedUnknown, setSkippedUnknown] = useState(0);
   /** Two-step unlink — avoid window.confirm (often blocked / silent false). */
   const [unlinkConfirmId, setUnlinkConfirmId] = useState<string | null>(null);
+  const [addViaLinkOpen, setAddViaLinkOpen] = useState(false);
 
   const steamLogin = isSteamLoginUser(user);
   const limit = getSteamAccountLimit(planId);
@@ -119,7 +121,10 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
     }
   };
 
-  const runImportPipeline = async (steamIds: string[]) => {
+  const runImportPipeline = async (
+    steamIds: string[],
+    opts?: { afterPublicLink?: boolean },
+  ) => {
     if (!user || !session?.access_token) {
       throw new Error('Not authenticated');
     }
@@ -132,11 +137,12 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
 
     if (assets.length === 0) {
       setBanner({
-        type: 'error',
-        message:
-          result.hint ||
-          result.error ||
-          'Inventory is empty or private. Set Steam inventory to Public and retry.',
+        type: opts?.afterPublicLink ? 'success' : 'error',
+        message: opts?.afterPublicLink
+          ? 'Account added. No items to import yet - set inventory to Public and use Sync when ready.'
+          : result.hint ||
+            result.error ||
+            'Inventory is empty or private. Set Steam inventory to Public and retry.',
       });
       return;
     }
@@ -308,6 +314,15 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
           <button
             type="button"
             disabled={!canLinkMore}
+            onClick={() => setAddViaLinkOpen(true)}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold border border-orange-500/35 bg-orange-500/10 text-orange-200 hover:bg-orange-500/20 disabled:opacity-50"
+          >
+            <Link2 className="w-3.5 h-3.5" />
+            Add via link
+          </button>
+          <button
+            type="button"
+            disabled={!canLinkMore}
             onClick={handleLink}
             className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold bg-steam-accent text-white hover:opacity-90 disabled:opacity-50"
           >
@@ -371,8 +386,8 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
           <Package className="w-8 h-8 text-steam-tertiary mx-auto mb-3 opacity-60" />
           <p className="text-sm font-bold text-steam-secondary">No Steam accounts linked</p>
           <p className="text-xs text-steam-tertiary mt-1 max-w-sm mx-auto">
-            Link Steam, sync inventory, then pick items to add as BUY transactions — nothing is imported
-            automatically.
+            Add via a public Steam link or Connect via Steam, sync inventory, then pick items to
+            import as BUY transactions. Nothing is imported automatically.
           </p>
         </div>
       ) : (
@@ -499,6 +514,34 @@ export const SteamAccountsPanel: React.FC<SteamAccountsPanelProps> = ({ flash = 
             message: 'Selected Steam items were imported as BUY transactions into your inventory.',
           });
           void reload();
+        }}
+      />
+
+      <AddSteamViaLinkModal
+        isOpen={addViaLinkOpen}
+        onClose={() => setAddViaLinkOpen(false)}
+        onConnectViaSteam={handleLink}
+        onLinked={async ({ steamId64, createdConnection }) => {
+          setBanner({
+            type: 'success',
+            message: createdConnection
+              ? 'Inventory added'
+              : 'This inventory is already added',
+          });
+          await reload();
+          // Link succeeded even if sync fails — keep messages separate.
+          try {
+            await runImportPipeline([steamId64], { afterPublicLink: true });
+          } catch (err) {
+            console.warn('[Steam] post-link sync failed', err instanceof Error ? err.message : 'error');
+            setBanner({
+              type: 'error',
+              message: getErrorMessage(
+                err,
+                'Account added, but inventory sync failed. Use Sync on the account card to retry.',
+              ),
+            });
+          }
         }}
       />
     </div>
