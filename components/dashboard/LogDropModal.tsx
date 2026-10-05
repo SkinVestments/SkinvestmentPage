@@ -5,6 +5,7 @@ import { X, Search, CheckCircle, Folder, TrendingUp, Loader2, Box, AlertCircle }
 import { ItemImage } from '@/components/ui/ItemImage';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { useCs2CatalogSearch } from '@/hooks/useCs2CatalogSearch';
 import { getCollectionItemLimit } from '@/constants/subscriptionPlans';
 import { countCollectionItems } from '@/utils/steamInventory';
 
@@ -23,15 +24,6 @@ interface DropItem {
   icon: string;
 }
 
-interface SearchResultDB {
-  id: string;
-  name: string;
-  photo: string;
-  price: number;
-  category: string;
-  rarity: string;
-}
-
 interface LogDropModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -46,11 +38,30 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
   const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<DropItem[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-
   const [selectedCase, setSelectedCase] = useState<DropItem | null>(null);
   const [selectedWeapon, setSelectedWeapon] = useState<DropItem | null>(null);
+
+  const {
+    results: catalogResults,
+    isSearching,
+    error: searchError,
+    canSearch,
+    trimmedQuery: searchTrimmed,
+  } = useCs2CatalogSearch(searchQuery, {
+    enabled: isOpen && !selectedWeapon,
+    limit: 25,
+  });
+
+  const searchResults: DropItem[] = useMemo(
+    () =>
+      catalogResults.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        icon: item.image ?? '',
+      })),
+    [catalogResults],
+  );
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>('');
   const [addToInvestments, setAddToInvestments] = useState(true);
 
@@ -69,7 +80,6 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
     if (!isOpen) return;
     void fetchInitialData();
     setSearchQuery('');
-    setSearchResults([]);
     setSelectedCase(null);
     setSelectedWeapon(null);
     setSubmitError(null);
@@ -122,42 +132,6 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
     }
   };
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (searchQuery.length < 3) {
-        setSearchResults([]);
-        return;
-      }
-
-      setIsSearching(true);
-      try {
-        const { data, error } = await supabase.rpc('search_cs2_items', {
-          search_query: searchQuery,
-        });
-
-        if (error) throw error;
-
-        if (data) {
-          const dbResults = data as SearchResultDB[];
-          setSearchResults(
-            dbResults.map((item) => ({
-              id: item.id,
-              name: item.name,
-              price: item.price || 0,
-              icon: item.photo,
-            })),
-          );
-        }
-      } catch (error) {
-        console.error('Search error:', error);
-      } finally {
-        setIsSearching(false);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
-
   const handleSelectCase = (item: DropItem) => {
     setSelectedCase(item);
     setSubmitError(null);
@@ -165,7 +139,6 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
 
   const handleSelectWeapon = (item: DropItem) => {
     setSelectedWeapon(item);
-    setSearchResults([]);
     setSearchQuery(item.name);
     setSubmitError(null);
   };
@@ -354,7 +327,17 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
                     <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-steam-accent" />
                   )}
 
-                  {searchResults.length > 0 && (
+                  {searchError && !selectedWeapon && (
+                    <p className="mt-2 text-xs text-red-400 px-1">{searchError}</p>
+                  )}
+
+                  {canSearch && !isSearching && !selectedWeapon && searchResults.length === 0 && !searchError && (
+                    <p className="mt-2 text-xs text-steam-tertiary px-1">
+                      No items found for &ldquo;{searchTrimmed}&rdquo;.
+                    </p>
+                  )}
+
+                  {searchResults.length > 0 && !selectedWeapon && (
                     <div className="absolute top-full left-0 right-0 mt-2 bg-steam-elevated border border-steam-border rounded-xl shadow-2xl max-h-60 overflow-y-auto z-20 custom-scrollbar">
                       {searchResults.map((item) => (
                         <button

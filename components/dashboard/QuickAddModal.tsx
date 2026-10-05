@@ -21,6 +21,7 @@ import { ItemImage } from '@/components/ui/ItemImage';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { formatCurrency } from '@/utils/display';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
+import { useCs2CatalogSearch } from '@/hooks/useCs2CatalogSearch';
 import { getCollectionItemLimit } from '@/constants/subscriptionPlans';
 import { countCollectionItems } from '@/utils/steamInventory';
 
@@ -49,13 +50,6 @@ interface CartLine {
 interface CollectionRow {
   id: string;
   name: string;
-}
-
-interface Cs2SearchItem {
-  id: string;
-  market_hash_name: string;
-  icon_url: string | null;
-  price: number;
 }
 
 const PORTFOLIO_PREVIEW = 8;
@@ -89,11 +83,16 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
 
   const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
   const [cart, setCart] = useState<CartLine[]>([]);
+  const isBuy = type === 'BUY';
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Cs2SearchItem[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
+  const {
+    results: searchResults,
+    isSearching,
+    error: searchError,
+    canSearch,
+    trimmedQuery: searchTrimmed,
+  } = useCs2CatalogSearch(searchQuery, { enabled: isOpen && isBuy, limit: 25 });
 
   const [portfolio, setPortfolio] = useState<ItemRef[]>([]);
   const [portfolioLoading, setPortfolioLoading] = useState(false);
@@ -113,8 +112,6 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const isBuy = type === 'BUY';
-
   const ownershipMap = useMemo(() => {
     const map = new Map<string, number>();
     portfolio.forEach((p) => map.set(p.id, p.ownedQty));
@@ -133,8 +130,6 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
     setType('BUY');
     setCart([]);
     setSearchQuery('');
-    setSearchResults([]);
-    setSearchError(null);
     setPortfolioFilter('');
     setShowAllPortfolio(false);
     setDate(formatInputDate(new Date()));
@@ -203,8 +198,6 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
     setType(next);
     setCart([]);
     setSearchQuery('');
-    setSearchResults([]);
-    setSearchError(null);
     setPortfolioFilter('');
     setShowAllPortfolio(false);
     setSubmitError(null);
@@ -298,44 +291,6 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
     if (!isOpen || isBuy) return;
     fetchPortfolio();
   }, [isOpen, isBuy, fetchPortfolio]);
-
-  useEffect(() => {
-    if (!isOpen || !isBuy) return;
-
-    const searchItems = async () => {
-      if (searchQuery.length < 2) {
-        setSearchResults([]);
-        setSearchError(null);
-        return;
-      }
-      setIsSearching(true);
-      setSearchError(null);
-      try {
-        const { data, error } = await supabase.rpc('search_cs2_items_flexible', {
-          p_query: searchQuery.trim(),
-          p_limit: 20,
-        });
-
-        if (error) throw error;
-        setSearchResults(
-          ((data as Cs2SearchItem[] | null) ?? []).map((item) => ({
-            id: String(item.id),
-            market_hash_name: item.market_hash_name,
-            icon_url: item.icon_url,
-            price: Number(item.price ?? 0),
-          })),
-        );
-      } catch (err) {
-        setSearchResults([]);
-        setSearchError(getErrorMessage(err, 'Search failed. Try again.'));
-      } finally {
-        setIsSearching(false);
-      }
-    };
-
-    const timer = setTimeout(searchItems, 350);
-    return () => clearTimeout(timer);
-  }, [searchQuery, isOpen, isBuy]);
 
   const filteredPortfolio = useMemo(() => {
     const tokens = portfolioFilter
@@ -617,12 +572,12 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
             <div className="flex-1 overflow-y-auto custom-scrollbar px-2 pb-3 min-h-0">
               {isBuy ? (
                 <>
-                  {searchQuery.length < 2 && (
+                  {!canSearch && (
                     <p className="text-xs text-steam-tertiary px-2 py-4 text-center">
                       Type at least 2 characters to search the market.
                     </p>
                   )}
-                  {searchQuery.length >= 2 && isSearching && (
+                  {canSearch && isSearching && (
                     <div className="flex justify-center py-8">
                       <Loader2 className="w-6 h-6 animate-spin text-steam-accent" />
                     </div>
@@ -630,8 +585,10 @@ export const QuickAddModal: React.FC<QuickAddModalProps> = ({ isOpen, onClose, o
                   {searchError && (
                     <p className="text-xs text-red-400 px-2 py-2">{searchError}</p>
                   )}
-                  {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && !searchError && (
-                    <p className="text-xs text-steam-tertiary px-2 py-4 text-center">No items found.</p>
+                  {canSearch && !isSearching && searchResults.length === 0 && !searchError && (
+                    <p className="text-xs text-steam-tertiary px-2 py-4 text-center">
+                      No items found for &ldquo;{searchTrimmed}&rdquo;.
+                    </p>
                   )}
                   <ul className="space-y-1">
                     {searchResults.map((item) => (
