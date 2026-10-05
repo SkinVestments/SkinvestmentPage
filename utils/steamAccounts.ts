@@ -78,10 +78,11 @@ export async function fetchSteamConnections(userId: string): Promise<SteamConnec
     return sortSteamConnections(rows, userId);
   }
 
+  // Cast steam_id_64 to text so JSON never coerces bigint past Number.MAX_SAFE_INTEGER.
   const { data, error } = await supabase
     .from('steam_connections')
     .select(
-      'user_id, steam_id_64, steam_username, steam_avatar_url, linked_at, inventory_status, last_profile_sync, last_inventory_sync, is_main',
+      'user_id, steam_id_64::text, steam_username, steam_avatar_url, linked_at, inventory_status, last_profile_sync, last_inventory_sync, is_main',
     )
     .eq('user_id', userId);
 
@@ -140,6 +141,7 @@ export async function fetchSteamInventory(
 
   const json = (await res.json().catch(() => ({}))) as SteamInventoryFetchResult & {
     error?: string;
+    detail?: string;
   };
 
   if (!res.ok) {

@@ -15,6 +15,7 @@ import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { supabase } from '@/utils/supabaseClient';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
+import { searchCs2Catalog } from '@/utils/cs2CatalogSearch';
 
 interface CatalogItem {
   id: string;
@@ -58,6 +59,29 @@ interface WishlistListRow {
   item_id: string;
 }
 
+interface CatalogDetailRow {
+  id: string;
+  market_hash_name: string;
+  icon_url: string | null;
+  rarity: string | null;
+  exterior: string | null;
+  price: number | string | null;
+  game_collection_id: string | null;
+}
+
+function sortCatalogItems(rows: CatalogItem[], sortBy: SortValue): CatalogItem[] {
+  const sorted = [...rows];
+  sorted.sort((a, b) => {
+    if (sortBy === 'name_asc') return a.market_hash_name.localeCompare(b.market_hash_name);
+    if (sortBy === 'name_desc') return b.market_hash_name.localeCompare(a.market_hash_name);
+    const ap = a.reference_price ?? -Infinity;
+    const bp = b.reference_price ?? -Infinity;
+    if (sortBy === 'price_asc') return ap - bp;
+    return bp - ap;
+  });
+  return sorted;
+}
+
 const Catalog = () => {
   const adsContentReady = usePublisherContentReady();
   const [searchInput, setSearchInput] = useState('');
@@ -76,8 +100,14 @@ const Catalog = () => {
   const [inlineAdIndex, setInlineAdIndex] = useState<number | null>(null);
   const [catalogReload, setCatalogReload] = useState(0);
 
+  const collectionNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    collections.forEach((c) => map.set(c.id, c.name));
+    return map;
+  }, [collections]);
+
   useEffect(() => {
-    const timeout = setTimeout(() => setSearchQuery(searchInput.trim()), 350);
+    const timeout = setTimeout(() => setSearchQuery(searchInput.trim()), 250);
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
@@ -116,43 +146,104 @@ const Catalog = () => {
       setLoading(true);
       setError(null);
       const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
 
-      const { data, error: itemsError } = await supabase.rpc('catalog_search_items', {
-        p_search: searchQuery.length > 0 ? searchQuery : null,
-        p_collection_id: selectedCollection === COLLECTION_ALL ? null : selectedCollection,
-        p_sort: sortBy,
-        p_limit: PAGE_SIZE,
-        p_offset: from,
-      });
+      try {
+        // Free-text: smart catalog RPC (typos, word order, "st" matches StatTrak…).
+        // Browse/filter without query keeps offset pagination via catalog_search_items.
+        if (searchQuery.length === 1) {
+          setItems([]);
+          setTotalCount(0);
+          setLoading(false);
+          return;
+        }
 
-      if (itemsError) {
+        if (searchQuery.length >= 2) {
+          const hits = await searchCs2Catalog(searchQuery, 50);
+          if (hits.length === 0) {
+            setItems([]);
+            setTotalCount(0);
+            setLoading(false);
+            return;
+          }
+
+          const ids = hits.map((h) => h.id);
+          const { data: detailRows, error: detailError } = await supabase
+            .from('cs2_items')
+            .select('id, market_hash_name, icon_url, rarity, exterior, price, game_collection_id')
+            .in('id', ids);
+
+          if (detailError) throw detailError;
+
+          const byId = new Map(
+            ((detailRows as CatalogDetailRow[] | null) ?? []).map((row) => [String(row.id), row]),
+          );
+
+          let merged: CatalogItem[] = [];
+          for (const hit of hits) {
+            const row = byId.get(hit.id);
+            if (!row) continue;
+            const collectionId = row.game_collection_id ? String(row.game_collection_id) : null;
+            merged.push({
+              id: String(row.id),
+              market_hash_name: row.market_hash_name || hit.market_hash_name,
+              icon_url: row.icon_url ?? hit.icon_url,
+              rarity: row.rarity,
+              reference_price:
+                row.price != null ? Number(row.price) : hit.price > 0 ? hit.price : null,
+              exterior: row.exterior,
+              game_collection_id: collectionId,
+              collection_name:
+                (collectionId && collectionNameById.get(collectionId)) || 'No collection',
+            });
+          }
+
+          if (selectedCollection !== COLLECTION_ALL) {
+            merged = merged.filter((item) => item.game_collection_id === selectedCollection);
+          }
+
+          merged = sortCatalogItems(merged, sortBy);
+          setTotalCount(merged.length);
+          setItems(merged.slice(from, from + PAGE_SIZE));
+          setLoading(false);
+          return;
+        }
+
+        const { data, error: itemsError } = await supabase.rpc('catalog_search_items', {
+          p_search: null,
+          p_collection_id: selectedCollection === COLLECTION_ALL ? null : selectedCollection,
+          p_sort: sortBy,
+          p_limit: PAGE_SIZE,
+          p_offset: from,
+        });
+
+        if (itemsError) throw itemsError;
+
+        const normalizedItems: CatalogItem[] = ((data as CatalogDbRow[] | null) ?? []).map((row) => ({
+          id: row.id,
+          market_hash_name: row.market_hash_name,
+          icon_url: row.icon_url,
+          rarity: row.rarity,
+          reference_price: row.price != null ? Number(row.price) : null,
+          exterior: row.exterior,
+          game_collection_id: row.game_collection_id,
+          collection_name: row.collection_name?.trim() || 'No collection',
+        }));
+
+        setItems(normalizedItems);
+        const firstRow = ((data as CatalogDbRow[] | null) ?? [])[0];
+        setTotalCount(firstRow?.total_count != null ? Number(firstRow.total_count) : 0);
+      } catch (err) {
+        console.error('Error fetching catalog:', err);
         setItems([]);
         setTotalCount(0);
         setError('Data is not available');
+      } finally {
         setLoading(false);
-        return;
       }
-
-      const normalizedItems: CatalogItem[] = ((data as CatalogDbRow[] | null) ?? []).map((row) => ({
-        id: row.id,
-        market_hash_name: row.market_hash_name,
-        icon_url: row.icon_url,
-        rarity: row.rarity,
-        reference_price: row.price != null ? Number(row.price) : null,
-        exterior: row.exterior,
-        game_collection_id: row.game_collection_id,
-        collection_name: row.collection_name?.trim() || 'No collection',
-      }));
-
-      setItems(normalizedItems);
-      const firstRow = ((data as CatalogDbRow[] | null) ?? [])[0];
-      setTotalCount(firstRow?.total_count != null ? Number(firstRow.total_count) : 0);
-      setLoading(false);
     };
 
-    fetchCatalog();
-  }, [page, searchQuery, selectedCollection, sortBy, catalogReload]);
+    void fetchCatalog();
+  }, [page, searchQuery, selectedCollection, sortBy, catalogReload, collectionNameById]);
 
   useEffect(() => {
     const fetchWishlistIds = async () => {

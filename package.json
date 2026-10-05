@@ -9,7 +9,8 @@
     "generate:favicons": "node scripts/generate-favicons.mjs",
     "prebuild": "node scripts/generate-hero-images.mjs && node scripts/generate-favicons.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:steam-normalize": "node --test scripts/normalize-steam-input.test.mjs"
   },
   "dependencies": {
     "@fontsource/outfit": "^5.2.8",
