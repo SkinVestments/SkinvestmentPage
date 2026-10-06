@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { X, Search, CheckCircle, Folder, TrendingUp, Loader2, Box, AlertCircle } from 'lucide-react';
 import { ItemImage } from '@/components/ui/ItemImage';
 import { CustomSelect } from '@/components/ui/CustomSelect';
 import { useSubscriptionPlan } from '@/hooks/useSubscriptionPlan';
-import { useCs2CatalogSearch } from '@/hooks/useCs2CatalogSearch';
 import { getCollectionItemLimit } from '@/constants/subscriptionPlans';
 import { countCollectionItems } from '@/utils/steamInventory';
 
@@ -24,6 +23,16 @@ interface DropItem {
   icon: string;
 }
 
+/** Row shape from search_drop_items (drop-pool / active collections only). */
+interface DropSearchRow {
+  id: string;
+  market_hash_name?: string;
+  name?: string;
+  icon_url?: string;
+  photo?: string;
+  price?: number;
+}
+
 interface LogDropModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -38,36 +47,22 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
   const [collections, setCollections] = useState<{ id: string; name: string }[]>([]);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<DropItem[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [selectedCase, setSelectedCase] = useState<DropItem | null>(null);
   const [selectedWeapon, setSelectedWeapon] = useState<DropItem | null>(null);
+  const searchRequestRef = useRef(0);
 
-  const {
-    results: catalogResults,
-    isSearching,
-    error: searchError,
-    canSearch,
-    trimmedQuery: searchTrimmed,
-  } = useCs2CatalogSearch(searchQuery, {
-    enabled: isOpen && !selectedWeapon,
-    limit: 25,
-  });
-
-  const searchResults: DropItem[] = useMemo(
-    () =>
-      catalogResults.map((item) => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        icon: item.image ?? '',
-      })),
-    [catalogResults],
-  );
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>('');
   const [addToInvestments, setAddToInvestments] = useState(true);
 
   const [loadingPool, setLoadingPool] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const trimmedSearch = searchQuery.trim();
+  const canSearch = !selectedWeapon && trimmedSearch.length >= 2;
 
   const totalValue = useMemo(
     () => (selectedCase?.price ?? 0) + (selectedWeapon?.price ?? 0),
@@ -80,6 +75,8 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
     if (!isOpen) return;
     void fetchInitialData();
     setSearchQuery('');
+    setSearchResults([]);
+    setSearchError(null);
     setSelectedCase(null);
     setSelectedWeapon(null);
     setSubmitError(null);
@@ -132,6 +129,62 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
     }
   };
 
+  // Drop-pool search only (active_drop_pool_collections) — not full catalog.
+  useEffect(() => {
+    if (!isOpen || selectedWeapon) {
+      searchRequestRef.current += 1;
+      setIsSearching(false);
+      return;
+    }
+
+    if (trimmedSearch.length < 2) {
+      searchRequestRef.current += 1;
+      setSearchResults([]);
+      setSearchError(null);
+      setIsSearching(false);
+      return;
+    }
+
+    const requestId = ++searchRequestRef.current;
+    setIsSearching(true);
+    setSearchError(null);
+
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        try {
+          const { data, error } = await supabase.rpc('search_drop_items', {
+            p_search_query: trimmedSearch,
+            p_limit: 20,
+          });
+          if (requestId !== searchRequestRef.current) return;
+          if (error) throw error;
+
+          const rows = (Array.isArray(data) ? data : []) as DropSearchRow[];
+          setSearchResults(
+            rows
+              .map((item) => ({
+                id: String(item.id ?? ''),
+                name: String(item.market_hash_name ?? item.name ?? ''),
+                price: Number(item.price ?? 0) || 0,
+                icon: String(item.icon_url ?? item.photo ?? ''),
+              }))
+              .filter((item) => Boolean(item.id)),
+          );
+          setSearchError(null);
+        } catch (err) {
+          if (requestId !== searchRequestRef.current) return;
+          console.error('Drop search error:', err);
+          setSearchResults([]);
+          setSearchError(getErrorMessage(err, 'Search failed. Try again.'));
+        } finally {
+          if (requestId === searchRequestRef.current) setIsSearching(false);
+        }
+      })();
+    }, 500);
+
+    return () => window.clearTimeout(timer);
+  }, [isOpen, trimmedSearch, selectedWeapon]);
+
   const handleSelectCase = (item: DropItem) => {
     setSelectedCase(item);
     setSubmitError(null);
@@ -139,6 +192,7 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
 
   const handleSelectWeapon = (item: DropItem) => {
     setSelectedWeapon(item);
+    setSearchResults([]);
     setSearchQuery(item.name);
     setSubmitError(null);
   };
@@ -333,7 +387,7 @@ export const LogDropModal = ({ isOpen, onClose, onSuccess }: LogDropModalProps) 
 
                   {canSearch && !isSearching && !selectedWeapon && searchResults.length === 0 && !searchError && (
                     <p className="mt-2 text-xs text-steam-tertiary px-1">
-                      No items found for &ldquo;{searchTrimmed}&rdquo;.
+                      No items found for &ldquo;{trimmedSearch}&rdquo;.
                     </p>
                   )}
 

@@ -178,11 +178,11 @@ const CollectionDetails = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-steam-surface text-steam-tertiary text-xs font-bold uppercase tracking-wider border-b border-steam-border">
-                  <th className="p-5 pl-6">Item</th>
-                  <th className="p-5">Category</th>
-                  <th className="p-5">Quantity</th>
-                  <th className="p-5">Unit Price</th>
-                  <th className="p-5 text-right pr-6">Total Value</th>
+                  <th className="p-5 pl-6 min-w-[28rem] w-[45%]">Item</th>
+                  <th className="p-5 whitespace-nowrap">Category</th>
+                  <th className="p-5 whitespace-nowrap">Quantity</th>
+                  <th className="p-5 whitespace-nowrap text-right">Unit Price</th>
+                  <th className="p-5 text-right pr-6 whitespace-nowrap">Total Value</th>
                 </tr>
               </thead>
                 <tbody className="divide-y divide-steam-border/50 text-sm">
@@ -210,8 +210,8 @@ const CollectionDetails = () => {
                                   wrapperClassName="w-full h-full"
                                 />
                             </div>
-                            <div className="flex flex-col">
-                                <span className="font-bold text-steam-text group-hover:text-steam-text truncate max-w-[200px]">{item.name}</span>
+                            <div className="flex flex-col min-w-0">
+                                <span className="font-bold text-steam-text group-hover:text-steam-text truncate max-w-[36rem]" title={item.name}>{item.name}</span>
                                 <span className={`text-[9px] uppercase font-bold tracking-wider ${rarityStyle.text}`}>{item.rarity || 'Common'}</span>
                             </div>
                             </div>
