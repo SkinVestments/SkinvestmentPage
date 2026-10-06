@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { Link } from 'react-router-dom';
-import { Lock, TrendingUp } from 'lucide-react';
-import { MANAGE_SUBSCRIPTION_SETTINGS_PATH } from '@/constants/settingsLinks';
+import { TrendingUp } from 'lucide-react';
 import { AreaChartSkeleton } from './AnalyticsSkeletons';
 import { CustomSelect } from '@/components/ui/CustomSelect';
+import { ProAnalyticsPaywall } from './ProAnalyticsPaywall';
 import {
   chartAxisLineStyle,
   chartAxisTickStyle,
@@ -119,23 +118,11 @@ export const DropsChart = ({ hasPremiumAccess }: DropsChartProps) => {
           </div>
         )}
 
-        {/* PAYWALL OVERLAY */}
         {!hasPremiumAccess && !loading && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-steam-card/50 rounded-xl">
-            <div className="bg-steam-bg p-6 rounded-2xl border border-steam-border shadow-2xl text-center max-w-sm w-full mx-4">
-               <div className="w-12 h-12 bg-steam-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lock className="w-6 h-6 text-steam-accent" />
-               </div>
-               <h4 className="text-steam-text font-bold text-lg mb-2">Pro Analytics Required</h4>
-               <p className="text-sm text-steam-secondary mb-6">Unlock deep insights into your drop history and advanced portfolio charting.</p>
-               <Link
-                 to={MANAGE_SUBSCRIPTION_SETTINGS_PATH}
-                 className="block w-full bg-steam-accent hover:opacity-90 text-white font-bold py-3 rounded-xl transition-colors text-center"
-               >
-                 Upgrade to PRO
-               </Link>
-            </div>
-          </div>
+          <ProAnalyticsPaywall
+            from="analytics_drops"
+            description="Unlock deep insights into your drop history and advanced portfolio charting."
+          />
         )}
       </div>
     </div>

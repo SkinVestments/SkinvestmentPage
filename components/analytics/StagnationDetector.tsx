@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabaseClient';
 import { useAuth } from '../../context/AuthContext';
 import { formatCurrency } from '@/utils/display';
-import { Link } from 'react-router-dom';
-import { AlertCircle, Clock, Lock, Moon, TrendingUp } from 'lucide-react';
-import { MANAGE_SUBSCRIPTION_SETTINGS_PATH } from '@/constants/settingsLinks';
+import { AlertCircle, Clock, Moon, TrendingUp } from 'lucide-react';
+import { ProAnalyticsPaywall } from './ProAnalyticsPaywall';
 import { StagnationListSkeleton } from './AnalyticsSkeletons';
 import { ItemImage } from '@/components/ui/ItemImage';
 
@@ -282,20 +281,10 @@ export const StagnationDetector = ({ hasPremiumAccess }: StagnationDetectorProps
         )}
 
         {!hasPremiumAccess && !loading && !errorMessage && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-steam-card/60 rounded-xl mx-4 sm:mx-6 mb-4 sm:mb-6 px-4">
-            <div className="inline-flex items-center gap-2 rounded-xl border border-steam-border bg-steam-bg/95 px-4 py-3 shadow-lg">
-              <Lock className="w-4 h-4 text-steam-accent shrink-0" />
-              <p className="text-sm text-steam-secondary">
-                PRO feature.{' '}
-                <Link
-                  to={MANAGE_SUBSCRIPTION_SETTINGS_PATH}
-                  className="font-bold text-steam-accent hover:underline"
-                >
-                  Upgrade
-                </Link>
-              </p>
-            </div>
-          </div>
+          <ProAnalyticsPaywall
+            from="analytics_stagnation"
+            description="Spot dead money before it drags your ROI — unlock stagnant asset detection."
+          />
         )}
       </div>
     </div>
