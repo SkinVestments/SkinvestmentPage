@@ -90,6 +90,12 @@ const SECTION_OPTIONS: Array<{
     icon: <PieChart className="w-4 h-4" />,
   },
   {
+    key: 'show_collections',
+    label: 'Collections',
+    hint: 'Named vaults and their values',
+    icon: <FolderKanban className="w-4 h-4" />,
+  },
+  {
     key: 'show_items',
     label: 'Holdings',
     hint: 'Item grid with market prices',
@@ -100,12 +106,6 @@ const SECTION_OPTIONS: Array<{
     label: 'Item history',
     hint: 'BUY / SELL / DROP for held items',
     icon: <History className="w-4 h-4" />,
-  },
-  {
-    key: 'show_collections',
-    label: 'Collections',
-    hint: 'Named vaults and their values',
-    icon: <FolderKanban className="w-4 h-4" />,
   },
 ];
 
@@ -388,6 +388,18 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
                 </div>
 
                 <PreviewBlock
+                  active={visibility.show_collections}
+                  label="Collections"
+                  onClick={() => void toggleSection('show_collections')}
+                  disabled={busy !== null}
+                >
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <div className="h-12 rounded-lg bg-steam-elevated/80" />
+                    <div className="h-12 rounded-lg bg-steam-elevated/80" />
+                  </div>
+                </PreviewBlock>
+
+                <PreviewBlock
                   active={visibility.show_items}
                   label="Holdings"
                   onClick={() => void toggleSection('show_items')}
@@ -397,18 +409,6 @@ export const PortfolioSharePanel: React.FC<PortfolioSharePanelProps> = ({
                     {[0, 1, 2, 3].map((i) => (
                       <div key={i} className="aspect-square rounded-md bg-steam-elevated/80" />
                     ))}
-                  </div>
-                </PreviewBlock>
-
-                <PreviewBlock
-                  active={visibility.show_collections}
-                  label="Collections"
-                  onClick={() => void toggleSection('show_collections')}
-                  disabled={busy !== null}
-                >
-                  <div className="grid grid-cols-2 gap-1.5">
-                    <div className="h-12 rounded-lg bg-steam-elevated/80" />
-                    <div className="h-12 rounded-lg bg-steam-elevated/80" />
                   </div>
                 </PreviewBlock>
 
