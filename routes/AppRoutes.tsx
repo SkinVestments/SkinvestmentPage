@@ -39,6 +39,7 @@ const Inventory = lazy(() => import('@/pages/dashboard/Inventory'));
 const Catalog = lazy(() => import('@/pages/dashboard/Catalog'));
 const Wishlist = lazy(() => import('@/pages/dashboard/Wishlist'));
 const Analytics = lazy(() => import('@/pages/dashboard/Analytics'));
+const PortfolioMap = lazy(() => import('@/pages/dashboard/PortfolioMap'));
 const CollectionDetails = lazy(() => import('@/pages/dashboard/CollectionDetails'));
 const ItemDetail = lazy(() => import('@/pages/dashboard/ItemDetail'));
 const Settings = lazy(() => import('@/pages/dashboard/Settings'));
@@ -85,6 +86,7 @@ export const AppRoutes = () => (
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/analytics" element={<Analytics />} />
+        <Route path="/analytics/portfolio-map" element={<PortfolioMap />} />
         <Route path="/collection/:id" element={<CollectionDetails />} />
         <Route path="/item/:itemId" element={<ItemDetail />} />
         <Route path="/settings" element={<Settings />} />

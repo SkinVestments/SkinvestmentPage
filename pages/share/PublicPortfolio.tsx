@@ -329,6 +329,40 @@ const PublicPortfolioPage: React.FC = () => {
         </div>
         )}
 
+        {visibility.show_collections && (
+        <section className="mb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <Wallet className="w-5 h-5 text-steam-secondary" />
+            <h2 className="text-lg font-bold text-steam-text">Collections</h2>
+            <span className="bg-steam-elevated text-steam-secondary text-xs font-bold px-2 py-0.5 rounded-full">
+              {collections.length}
+            </span>
+          </div>
+          {collections.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-steam-border bg-steam-card/50 p-8 text-center text-sm text-steam-secondary">
+              No collections to show.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {collections.map((col) => (
+                <div
+                  key={String(col.id)}
+                  className="bg-steam-card p-5 rounded-2xl border border-steam-border relative overflow-hidden"
+                >
+                  <h3 className="font-bold text-steam-text truncate pr-2">{String(col.name)}</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary mt-1">
+                    {Number(col.total_items_quantity ?? 0)} items
+                  </p>
+                  <p className="text-lg font-mono font-bold text-steam-text mt-4">
+                    {formatCurrency(Number(col.total_value ?? 0))}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+        )}
+
         {visibility.show_items && (
         <section className="mb-10">
           <div className="flex items-center justify-between gap-3 mb-4">
@@ -393,40 +427,6 @@ const PublicPortfolioPage: React.FC = () => {
                   </div>
                 );
               })}
-            </div>
-          )}
-        </section>
-        )}
-
-        {visibility.show_collections && (
-        <section className="mb-10">
-          <div className="flex items-center gap-2 mb-4">
-            <Wallet className="w-5 h-5 text-steam-secondary" />
-            <h2 className="text-lg font-bold text-steam-text">Collections</h2>
-            <span className="bg-steam-elevated text-steam-secondary text-xs font-bold px-2 py-0.5 rounded-full">
-              {collections.length}
-            </span>
-          </div>
-          {collections.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-steam-border bg-steam-card/50 p-8 text-center text-sm text-steam-secondary">
-              No collections to show.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {collections.map((col) => (
-                <div
-                  key={String(col.id)}
-                  className="bg-steam-card p-5 rounded-2xl border border-steam-border relative overflow-hidden"
-                >
-                  <h3 className="font-bold text-steam-text truncate pr-2">{String(col.name)}</h3>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary mt-1">
-                    {Number(col.total_items_quantity ?? 0)} items
-                  </p>
-                  <p className="text-lg font-mono font-bold text-steam-text mt-4">
-                    {formatCurrency(Number(col.total_value ?? 0))}
-                  </p>
-                </div>
-              ))}
             </div>
           )}
         </section>
