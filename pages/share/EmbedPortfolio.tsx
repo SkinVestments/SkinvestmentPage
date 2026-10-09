@@ -207,6 +207,22 @@ const EmbedPortfolioPage: React.FC = () => {
               </div>
             )}
 
+            {visibility.show_collections && (data.collections?.length ?? 0) > 0 && (
+              <div className="space-y-1">
+                {(data.collections ?? []).slice(0, 2).map((c) => (
+                  <div
+                    key={c.id}
+                    className="flex items-center justify-between rounded-lg bg-steam-elevated/40 px-2 py-1.5 text-[11px]"
+                  >
+                    <span className="font-semibold text-steam-text truncate">{c.name}</span>
+                    <span className="text-steam-secondary shrink-0 ml-2">
+                      {formatCurrency(Number(c.total_value ?? 0))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {visibility.show_items && (
               <div className="grid grid-cols-4 gap-1.5">
                 {topItems.slice(0, 4).map((item) => (
@@ -226,22 +242,6 @@ const EmbedPortfolioPage: React.FC = () => {
                     <Package className="w-3.5 h-3.5" /> No items
                   </div>
                 )}
-              </div>
-            )}
-
-            {visibility.show_collections && (data.collections?.length ?? 0) > 0 && (
-              <div className="space-y-1">
-                {(data.collections ?? []).slice(0, 2).map((c) => (
-                  <div
-                    key={c.id}
-                    className="flex items-center justify-between rounded-lg bg-steam-elevated/40 px-2 py-1.5 text-[11px]"
-                  >
-                    <span className="font-semibold text-steam-text truncate">{c.name}</span>
-                    <span className="text-steam-secondary shrink-0 ml-2">
-                      {formatCurrency(Number(c.total_value ?? 0))}
-                    </span>
-                  </div>
-                ))}
               </div>
             )}
 
