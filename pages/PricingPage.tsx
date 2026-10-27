@@ -29,6 +29,10 @@ export const PricingPage: React.FC = () => {
             Free CS2 portfolio tracker on Starter. No card needed to begin. Upgrade when you want
             deeper analytics and exports.
           </p>
+          <p className="text-steam-tertiary text-sm max-w-2xl mx-auto mt-3">
+            Monthly Pro / Pro Max match the mobile PLN targets (19.99 / 24.99). Yearly and lifetime
+            stay on the existing PLN list price for now.
+          </p>
         </div>
 
         <div className="flex justify-center mb-16 px-1">

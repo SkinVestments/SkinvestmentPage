@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Search,
   Filter,
@@ -9,13 +10,18 @@ import {
   ChevronLeft,
   ChevronRight,
   Heart,
+  Compass,
+  Library,
 } from 'lucide-react';
 import { ItemImage } from '@/components/ui/ItemImage';
+import { MarketMoversPair } from '@/components/catalog/MarketMoversSection';
 import { formatCurrency, getRarityStyle } from '@/utils/display';
 import { supabase } from '@/utils/supabaseClient';
 import { AdSlot } from '@/components/ads/AdSlot';
 import { usePublisherContentReady } from '@/hooks/usePublisherContentReady';
 import { searchCs2Catalog } from '@/utils/cs2CatalogSearch';
+
+type CatalogTab = 'discover' | 'browse';
 
 interface CatalogItem {
   id: string;
@@ -84,6 +90,20 @@ function sortCatalogItems(rows: CatalogItem[], sortBy: SortValue): CatalogItem[]
 
 const Catalog = () => {
   const adsContentReady = usePublisherContentReady();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab: CatalogTab = searchParams.get('tab') === 'browse' ? 'browse' : 'discover';
+  const setTab = (next: CatalogTab) => {
+    setSearchParams(
+      (prev) => {
+        const p = new URLSearchParams(prev);
+        if (next === 'browse') p.set('tab', 'browse');
+        else p.delete('tab');
+        return p;
+      },
+      { replace: true },
+    );
+  };
+
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCollection, setSelectedCollection] = useState(COLLECTION_ALL);
@@ -142,6 +162,8 @@ const Catalog = () => {
   }, []);
 
   useEffect(() => {
+    if (tab !== 'browse') return;
+
     const fetchCatalog = async () => {
       setLoading(true);
       setError(null);
@@ -243,7 +265,7 @@ const Catalog = () => {
     };
 
     void fetchCatalog();
-  }, [page, searchQuery, selectedCollection, sortBy, catalogReload, collectionNameById]);
+  }, [tab, page, searchQuery, selectedCollection, sortBy, catalogReload, collectionNameById]);
 
   useEffect(() => {
     const fetchWishlistIds = async () => {
@@ -317,24 +339,69 @@ const Catalog = () => {
 
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
         <div>
           <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1">Catalog</h1>
-          <p className="text-steam-secondary">Browse all CS2 skins with collection and name filters.</p>
+          <p className="text-steam-secondary">
+            {tab === 'discover'
+              ? 'Market movers and highlights from the CS2 economy.'
+              : 'Browse all CS2 skins with collection and name filters.'}
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 bg-steam-card p-3 rounded-xl border border-steam-border shadow-lg w-full sm:w-auto">
-          <div className="px-3 sm:px-4 border-r border-steam-border">
-            <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total</p>
-            <p className="text-xl font-bold text-steam-text">{totalCount}</p>
+        {tab === 'browse' ? (
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 bg-steam-card p-3 rounded-xl border border-steam-border shadow-lg w-full sm:w-auto">
+            <div className="px-3 sm:px-4 border-r border-steam-border">
+              <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Total</p>
+              <p className="text-xl font-bold text-steam-text">{totalCount}</p>
+            </div>
+            <div className="px-3 sm:px-4">
+              <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Visible</p>
+              <p className="text-xl font-bold text-steam-accent">{displayedItems.length}</p>
+            </div>
           </div>
-          <div className="px-3 sm:px-4">
-            <p className="text-[10px] text-steam-tertiary font-bold uppercase tracking-wider mb-1">Visible</p>
-            <p className="text-xl font-bold text-steam-accent">{displayedItems.length}</p>
-          </div>
-        </div>
+        ) : null}
       </div>
 
+      <div
+        className="mb-6 inline-flex rounded-xl border border-steam-border bg-steam-card p-1 shadow-lg"
+        role="tablist"
+        aria-label="Catalog views"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === 'discover'}
+          onClick={() => setTab('discover')}
+          className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] text-sm font-bold min-h-11 transition-colors ${
+            tab === 'discover'
+              ? 'bg-steam-accent text-white'
+              : 'text-steam-secondary hover:text-steam-text'
+          }`}
+        >
+          <Compass className="w-4 h-4" />
+          Discover
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === 'browse'}
+          onClick={() => setTab('browse')}
+          className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] text-sm font-bold min-h-11 transition-colors ${
+            tab === 'browse'
+              ? 'bg-steam-accent text-white'
+              : 'text-steam-secondary hover:text-steam-text'
+          }`}
+        >
+          <Library className="w-4 h-4" />
+          Browse
+        </button>
+      </div>
+
+      {tab === 'discover' ? <MarketMoversPair variant="discover" /> : null}
+
+      {tab === 'browse' ? (
+      <>
       <div className="bg-steam-card border border-steam-border rounded-2xl p-4 sm:p-5 mb-6 shadow-xl">
         <div className="flex flex-col lg:flex-row gap-3">
           <div className="relative flex-1">
@@ -540,6 +607,8 @@ const Catalog = () => {
           </div>
         </>
       )}
+      </>
+      ) : null}
     </div>
   );
 };

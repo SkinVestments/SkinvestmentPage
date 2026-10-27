@@ -37,6 +37,7 @@ const Panel = lazy(() => import('@/pages/dashboard/Panel'));
 const History = lazy(() => import('@/pages/dashboard/History'));
 const Inventory = lazy(() => import('@/pages/dashboard/Inventory'));
 const Catalog = lazy(() => import('@/pages/dashboard/Catalog'));
+const MarketMovers = lazy(() => import('@/pages/dashboard/MarketMovers'));
 const Wishlist = lazy(() => import('@/pages/dashboard/Wishlist'));
 const Analytics = lazy(() => import('@/pages/dashboard/Analytics'));
 const PortfolioMap = lazy(() => import('@/pages/dashboard/PortfolioMap'));
@@ -84,6 +85,7 @@ export const AppRoutes = () => (
         <Route path="/history" element={<History />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/catalog" element={<Catalog />} />
+        <Route path="/catalog/movers" element={<MarketMovers />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/analytics/portfolio-map" element={<PortfolioMap />} />
