@@ -1,4 +1,5 @@
 import { Crown, Shield, Zap, type LucideIcon } from 'lucide-react';
+import { DEFAULT_WEB_MONTHLY, formatWebMoney, getWebMonthlyForCountry } from '@/utils/webPricing';
 
 export type BillingCycle = 'monthly' | 'yearly' | 'lifetime';
 export type PlanId = 'free' | 'pro' | 'pro_max';
@@ -8,14 +9,26 @@ export interface PlanFeature {
   soon?: boolean;
 }
 
-/** Amounts in PLN - yearly is shown as per-month equivalent (billed annually). */
+/**
+ * Display amounts for Pricing / plan picker.
+ * Monthly Pro / Pro Max follow the Oct 2026 mobile→web proposal (PL default).
+ * Yearly / lifetime are not in the regional dump — keep existing PLN list prices.
+ */
 export const PLAN_PRICING: Record<
   PlanId,
   { monthly: number; yearlyPerMonth: number; lifetime: number }
 > = {
   free: { monthly: 0, yearlyPerMonth: 0, lifetime: 0 },
-  pro: { monthly: 21.99, yearlyPerMonth: 18.33, lifetime: 1309.99 },
-  pro_max: { monthly: 38.99, yearlyPerMonth: 32.92, lifetime: 1749.99 },
+  pro: {
+    monthly: 19.99,
+    yearlyPerMonth: 18.33,
+    lifetime: 1309.99,
+  },
+  pro_max: {
+    monthly: 24.99,
+    yearlyPerMonth: 32.92,
+    lifetime: 1749.99,
+  },
 };
 
 /** Max user collections by plan. null = unlimited (Pro Max). */
@@ -123,9 +136,16 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
 const formatPlnAmount = (value: number) =>
   value.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+/**
+ * Monthly display uses the PL dump row (19.99 / 24.99 PLN) until checkout
+ * has real geo / RevenueCat multi-currency. Locale guessing (en-US → USD)
+ * flipped currency in the plan modal while yearly stayed PLN.
+ * Pass `countryCode` only when you intentionally want another market.
+ */
 export const getPlanPriceDisplay = (
   planId: PlanId,
   cycle: BillingCycle,
+  options?: { countryCode?: string | null },
 ): { price: string; period: string; yearlyNote?: string } => {
   if (planId === 'free') {
     return { price: 'Free', period: 'forever' };
@@ -134,11 +154,17 @@ export const getPlanPriceDisplay = (
   const amounts = PLAN_PRICING[planId];
 
   switch (cycle) {
-    case 'monthly':
+    case 'monthly': {
+      const country = options?.countryCode?.trim()
+        ? options.countryCode.trim().toUpperCase()
+        : DEFAULT_WEB_MONTHLY.country;
+      const row = getWebMonthlyForCountry(country);
+      const amount = planId === 'pro_max' ? row.pro_max : row.pro;
       return {
-        price: `PLN ${formatPlnAmount(amounts.monthly)}`,
+        price: formatWebMoney(amount, row.currency),
         period: '/ monthly',
       };
+    }
     case 'yearly':
       return {
         price: `PLN ${formatPlnAmount(amounts.yearlyPerMonth)}`,
