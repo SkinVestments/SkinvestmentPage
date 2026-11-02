@@ -8,10 +8,19 @@ import {
   isMarketMoverCategory,
   type MarketMoverCategory,
 } from '@/utils/itemDisplayName';
+import {
+  loadStoredMarketMoverPeriod,
+  parseMarketMoverPeriod,
+  storeMarketMoverPeriod,
+  type MarketMoverPeriod,
+} from '@/utils/marketMovers';
 
 const MarketMoversPage: React.FC = () => {
   const [params, setParams] = useSearchParams();
   const initialCategory = params.get('category');
+  const initialPeriod = parseMarketMoverPeriod(
+    params.get('period') ?? loadStoredMarketMoverPeriod(),
+  );
 
   const [category, setCategory] = useState<MarketMoverCategory | ''>(() =>
     initialCategory && isMarketMoverCategory(initialCategory) ? initialCategory : '',
@@ -24,15 +33,13 @@ const MarketMoversPage: React.FC = () => {
           value={category}
           onChange={(e) => {
             const next = e.target.value;
-            const value =
-              next && isMarketMoverCategory(next) ? next : ('' as const);
+            const value = next && isMarketMoverCategory(next) ? next : ('' as const);
             setCategory(value);
             setParams(
               (prev) => {
                 const p = new URLSearchParams(prev);
                 if (value) p.set('category', value);
                 else p.delete('category');
-                p.delete('direction');
                 return p;
               },
               { replace: true },
@@ -70,14 +77,31 @@ const MarketMoversPage: React.FC = () => {
               Market movers
             </h1>
             <p className="text-sm text-steam-secondary">
-              Top gainers and losers over the last 7 days. Steam USD, 3-day median price.
+              Top gainers and losers. Steam USD, 3-day median price.
             </p>
           </div>
         </div>
-        {categoryFilter}
       </div>
 
-      <MarketMoversPair variant="page" category={category || null} limit={50} />
+      <MarketMoversPair
+        variant="page"
+        category={category || null}
+        limit={50}
+        initialPeriod={initialPeriod}
+        toolbarExtra={categoryFilter}
+        onPeriodChange={(period: MarketMoverPeriod) => {
+          storeMarketMoverPeriod(period);
+          setParams(
+            (prev) => {
+              const p = new URLSearchParams(prev);
+              if (period === '7d') p.delete('period');
+              else p.set('period', period);
+              return p;
+            },
+            { replace: true },
+          );
+        }}
+      />
     </div>
   );
 };

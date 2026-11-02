@@ -2,8 +2,16 @@ import { supabase } from '@/utils/supabaseClient';
 import type { MarketMoverCategory } from '@/utils/itemDisplayName';
 
 export type MarketMoverDirection = 'gainers' | 'losers';
+export type MarketMoverPeriod = '7d' | '30d' | '90d';
+
+export const MARKET_MOVER_PERIODS: Array<{ id: MarketMoverPeriod; label: string }> = [
+  { id: '7d', label: '7D' },
+  { id: '30d', label: '30D' },
+  { id: '90d', label: '90D' },
+];
 
 export interface MarketMoverRow {
+  period: MarketMoverPeriod | string | null;
   item_id: string;
   market_hash_name: string;
   icon_url: string | null;
@@ -11,7 +19,7 @@ export interface MarketMoverRow {
   rarity: string | null;
   exterior: string | null;
   price: number;
-  price_7d_ago: number;
+  price_start: number;
   change_pct: number;
   avg_daily_volume: number | null;
   computed_at: string | null;
@@ -22,15 +30,22 @@ type CacheEntry = {
   fetchedAt: number;
 };
 
+export type FetchMarketMoversResult =
+  | { ok: true; rows: MarketMoverRow[]; fromCache: boolean }
+  | { ok: false; error: unknown };
+
 const CACHE_TTL_MS = 10 * 60 * 1000;
+const PERIOD_LS_KEY = 'skinvestments.market_movers.period';
 const cache = new Map<string, CacheEntry>();
+const inflight = new Map<string, Promise<FetchMarketMoversResult>>();
 
 function cacheKey(
   direction: MarketMoverDirection,
   limit: number,
   category: string | null,
+  period: MarketMoverPeriod,
 ): string {
-  return `${direction}|${limit}|${category ?? ''}`;
+  return `${direction}|${limit}|${category ?? ''}|${period}`;
 }
 
 function num(raw: unknown): number {
@@ -51,12 +66,47 @@ function resolveIconUrl(raw: string | null | undefined): string | null {
   return trimmed;
 }
 
+export function parseMarketMoverPeriod(raw: string | null | undefined): MarketMoverPeriod {
+  if (raw === '30d' || raw === '90d' || raw === '7d') return raw;
+  return '7d';
+}
+
+export function loadStoredMarketMoverPeriod(): MarketMoverPeriod {
+  try {
+    return parseMarketMoverPeriod(localStorage.getItem(PERIOD_LS_KEY));
+  } catch {
+    return '7d';
+  }
+}
+
+export function storeMarketMoverPeriod(period: MarketMoverPeriod): void {
+  try {
+    localStorage.setItem(PERIOD_LS_KEY, period);
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
+
+export function periodFooterLabel(period: MarketMoverPeriod): string {
+  if (period === '30d') return '30D';
+  if (period === '90d') return '90D';
+  return '7D';
+}
+
 function mapRow(row: Record<string, unknown>): MarketMoverRow | null {
   const item_id = String(row.item_id ?? '').trim();
   const market_hash_name = String(row.market_hash_name ?? '').trim();
   if (!item_id || !market_hash_name) return null;
 
+  const periodRaw = row.period == null || row.period === '' ? null : String(row.period);
+  // Prefer price_start; ignore legacy price_7d_ago if present.
+  const priceStart =
+    row.price_start != null && row.price_start !== ''
+      ? num(row.price_start)
+      : 0;
+
   return {
+    period: periodRaw,
     item_id,
     market_hash_name,
     icon_url: resolveIconUrl(
@@ -66,7 +116,7 @@ function mapRow(row: Record<string, unknown>): MarketMoverRow | null {
     rarity: row.rarity == null || row.rarity === '' ? null : String(row.rarity),
     exterior: row.exterior == null || row.exterior === '' ? null : String(row.exterior),
     price: num(row.price),
-    price_7d_ago: num(row.price_7d_ago),
+    price_start: priceStart,
     change_pct: num(row.change_pct),
     avg_daily_volume:
       row.avg_daily_volume == null || row.avg_daily_volume === ''
@@ -79,46 +129,56 @@ function mapRow(row: Record<string, unknown>): MarketMoverRow | null {
   };
 }
 
-export type FetchMarketMoversResult =
-  | { ok: true; rows: MarketMoverRow[]; fromCache: boolean }
-  | { ok: false; error: unknown };
-
 export async function fetchMarketMovers(options: {
   direction: MarketMoverDirection;
   limit?: number;
-  category?: MarketMoverCategory | null;
+  category?: MarketMoverCategory | string | null;
+  period?: MarketMoverPeriod;
   /** Bypass in-memory cache (e.g. manual refresh). */
   force?: boolean;
 }): Promise<FetchMarketMoversResult> {
   const direction = options.direction;
   const limit = Math.max(1, Math.min(Math.trunc(options.limit ?? 10) || 10, 50));
   const category = options.category ?? null;
-  const key = cacheKey(direction, limit, category);
+  const period = options.period ?? '7d';
+  const key = cacheKey(direction, limit, category, period);
 
   if (!options.force) {
     const hit = cache.get(key);
     if (hit && Date.now() - hit.fetchedAt < CACHE_TTL_MS) {
       return { ok: true, rows: hit.rows, fromCache: true };
     }
+    const pending = inflight.get(key);
+    if (pending) return pending;
   }
 
+  const promise = (async (): Promise<FetchMarketMoversResult> => {
+    try {
+      const { data, error } = await supabase.rpc('get_market_movers', {
+        p_direction: direction,
+        p_limit: limit,
+        p_category: category,
+        p_period: period,
+      });
+
+      if (error) return { ok: false, error };
+
+      const rows = ((data as Record<string, unknown>[] | null) ?? [])
+        .map(mapRow)
+        .filter((r): r is MarketMoverRow => r != null);
+
+      cache.set(key, { rows, fetchedAt: Date.now() });
+      return { ok: true, rows, fromCache: false };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  })();
+
+  inflight.set(key, promise);
   try {
-    const { data, error } = await supabase.rpc('get_market_movers', {
-      p_direction: direction,
-      p_limit: limit,
-      p_category: category,
-    });
-
-    if (error) return { ok: false, error };
-
-    const rows = ((data as Record<string, unknown>[] | null) ?? [])
-      .map(mapRow)
-      .filter((r): r is MarketMoverRow => r != null);
-
-    cache.set(key, { rows, fetchedAt: Date.now() });
-    return { ok: true, rows, fromCache: false };
-  } catch (error) {
-    return { ok: false, error };
+    return await promise;
+  } finally {
+    inflight.delete(key);
   }
 }
 

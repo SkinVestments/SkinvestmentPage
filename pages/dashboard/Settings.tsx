@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -7,8 +7,6 @@ import {
   CreditCard, Bell, ShoppingCart, Loader2, CheckCircle2, AlertCircle
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
-import { useDashboardScrollRoot } from '@/context/DashboardScrollContext';
-import { useScrollEdge } from '@/hooks/useScrollEdge';
 import { ManageSubscriptionModal } from '@/components/dashboard/ManageSubscriptionModal';
 import { ChangePasswordModal } from '@/components/dashboard/ChangePasswordModal';
 import { SteamAccountsPanel } from '@/components/dashboard/SteamAccountsPanel';
@@ -20,15 +18,26 @@ import { getProfileDisplayName } from '@/utils/profile';
 import { ExportDataPanel } from '@/components/dashboard/ExportDataPanel';
 import { PortfolioSharePanel } from '@/components/dashboard/PortfolioSharePanel';
 import { CookiePreferencesPanel } from '@/components/consent/CookiePreferencesPanel';
-import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { trackSteamEvent } from '@/utils/steamAccounts';
+
+type SettingsTab = 'account' | 'app' | 'privacy';
+
+const SETTINGS_TABS: Array<{
+  id: SettingsTab;
+  label: string;
+  icon: React.ComponentType<{ className?: string; 'aria-hidden'?: boolean }>;
+}> = [
+  { id: 'account', label: 'Account', icon: User },
+  { id: 'app', label: 'App', icon: SettingsIcon },
+  { id: 'privacy', label: 'Privacy', icon: Shield },
+];
 
 const Settings = () => {
   const { user, signOut } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'account' | 'app' | 'privacy'>('account');
+  const [activeTab, setActiveTab] = useState<SettingsTab>('account');
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [steamFlash, setSteamFlash] = useState<{
     type: 'success' | 'error';
@@ -174,17 +183,11 @@ const Settings = () => {
     updateSubscription(_planId, billingCycle);
   };
 
-  const scrollRoot = useDashboardScrollRoot();
-  const tabSentinelRef = useRef<HTMLDivElement>(null);
-  const fallbackScrollRef = useRef<HTMLElement | null>(null);
-  const edgeRootRef = scrollRoot ?? fallbackScrollRef;
-  const tabsEdged = useScrollEdge(edgeRootRef, tabSentinelRef);
-
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
       
       {/* === HEADER STRONY === */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1">
           Settings
         </h1>
@@ -193,48 +196,32 @@ const Settings = () => {
         </p>
       </div>
 
-      {/* Sentinel for sticky switcher scroll-edge */}
-      <div ref={tabSentinelRef} className="h-px w-full pointer-events-none" aria-hidden />
-
       <div
-        className="sticky top-14 md:top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 mb-8 chrome-material py-2.5"
-        data-edge={tabsEdged ? 'on' : 'off'}
+        className="mb-8 inline-flex rounded-xl border border-steam-border bg-steam-card p-1 shadow-lg"
+        role="tablist"
+        aria-label="Settings sections"
       >
-        <SegmentedControl<'account' | 'app' | 'privacy'>
-          aria-label="Settings sections"
-          value={activeTab}
-          onChange={setActiveTab}
-          className="settings-section-switch !flex w-full [&>button]:flex-1 [&>button]:py-2.5 [&>button]:text-sm"
-          options={[
-            {
-              value: 'account',
-              label: (
-                <span className="inline-flex items-center justify-center gap-2">
-                  <User className="w-4 h-4 shrink-0" aria-hidden />
-                  Account
-                </span>
-              ),
-            },
-            {
-              value: 'app',
-              label: (
-                <span className="inline-flex items-center justify-center gap-2">
-                  <SettingsIcon className="w-4 h-4 shrink-0" aria-hidden />
-                  App
-                </span>
-              ),
-            },
-            {
-              value: 'privacy',
-              label: (
-                <span className="inline-flex items-center justify-center gap-2">
-                  <Shield className="w-4 h-4 shrink-0" aria-hidden />
-                  Privacy
-                </span>
-              ),
-            },
-          ]}
-        />
+        {SETTINGS_TABS.map((tab) => {
+          const Icon = tab.icon;
+          const selected = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setActiveTab(tab.id)}
+              className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] text-sm font-bold min-h-11 transition-colors ${
+                selected
+                  ? 'bg-steam-accent text-white'
+                  : 'text-steam-secondary hover:text-steam-text'
+              }`}
+            >
+              <Icon className="w-4 h-4 shrink-0" aria-hidden />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Full main width — same as Panel / Inventory */}

@@ -28,6 +28,7 @@ import {
   ItemPurchaseBatches,
   type PurchaseBatch,
 } from '@/components/item/ItemPurchaseBatches';
+import { ItemVariantSwitcher } from '@/components/item/ItemVariantSwitcher';
 import {
   normalizePortfolioItemDetail,
   type PortfolioItemDetail,
@@ -41,6 +42,7 @@ import {
   formatChartYAxis,
 } from '@/utils/chartTheme';
 import { MarketComparePanel } from '@/components/inventory/MarketComparePanel';
+import { MarketProviderIcon } from '@/components/icons/MarketProviderIcon';
 import { SegmentedControl } from '@/components/ui/SegmentedControl';
 import { useMarketPrices } from '@/hooks/useMarketPrices';
 
@@ -84,8 +86,14 @@ const ItemDetail = () => {
     error: marketError,
   } = useMarketPrices(marketItemIds);
 
-  const fetchBatches = useCallback(async () => {
-    if (!user || !itemId) return;
+  const fetchBatches = useCallback(async (signal?: { cancelled?: boolean }) => {
+    if (!user || !itemId) {
+      if (!signal?.cancelled) {
+        setBatches([]);
+        setBatchesLoading(false);
+      }
+      return;
+    }
     setBatchesLoading(true);
     try {
       let txQuery = supabase
@@ -101,7 +109,7 @@ const ItemDetail = () => {
       }
 
       const { data: txData, error: txError } = await txQuery;
-
+      if (signal?.cancelled) return;
       if (txError) throw txError;
 
       if (txData && txData.length > 0) {
@@ -133,7 +141,7 @@ const ItemDetail = () => {
       }
 
       const { data: holdings, error: holdError } = await holdQuery;
-
+      if (signal?.cancelled) return;
       if (holdError) throw holdError;
 
       setBatches(
@@ -149,14 +157,15 @@ const ItemDetail = () => {
         })),
       );
     } catch (err) {
+      if (signal?.cancelled) return;
       console.error('Error fetching purchase batches:', err);
       setBatches([]);
     } finally {
-      setBatchesLoading(false);
+      if (!signal?.cancelled) setBatchesLoading(false);
     }
   }, [user, itemId, filterCollectionId]);
 
-  const fetchDetail = useCallback(async () => {
+  const fetchDetail = useCallback(async (signal?: { cancelled?: boolean }) => {
     if (!itemId) return;
     setLoading(true);
     setErrorMessage(null);
@@ -164,11 +173,12 @@ const ItemDetail = () => {
       const { data, error } = await supabase.rpc('get_portfolio_item_detail', {
         p_item_id: itemId,
       });
+      if (signal?.cancelled) return;
       if (error) throw error;
 
       const parsed = normalizePortfolioItemDetail(data);
       if (!parsed?.item_id) {
-        setErrorMessage('Item not found in your portfolio.');
+        setErrorMessage('Item not found.');
         setDetail(null);
         return;
       }
@@ -179,12 +189,14 @@ const ItemDetail = () => {
         .select('type')
         .eq('id', itemId)
         .maybeSingle();
+      if (signal?.cancelled) return;
       setItemType(
         typeRow && typeof typeRow === 'object' && 'type' in typeRow
           ? (typeRow.type as string | null)
           : null,
       );
     } catch (err) {
+      if (signal?.cancelled) return;
       console.error('Error fetching item detail:', err);
       const message =
         err && typeof err === 'object' && 'message' in err
@@ -194,11 +206,11 @@ const ItemDetail = () => {
       setDetail(null);
       setItemType(null);
     } finally {
-      setLoading(false);
+      if (!signal?.cancelled) setLoading(false);
     }
   }, [itemId]);
 
-  const fetchItemChart = useCallback(async () => {
+  const fetchItemChart = useCallback(async (signal?: { cancelled?: boolean }) => {
     if (!itemId) return;
     setChartLoading(true);
     setChartError(null);
@@ -215,6 +227,7 @@ const ItemDetail = () => {
 
       for (const args of attempts) {
         const { data, error } = await supabase.rpc('get_chart_data', args);
+        if (signal?.cancelled) return;
         if (!error) {
           rpcData = data;
           lastError = null;
@@ -249,27 +262,68 @@ const ItemDetail = () => {
         })
         .filter((r): r is { chart_date: string; price: number } => Boolean(r));
 
+      if (signal?.cancelled) return;
       setChartData(normalized);
     } catch (err) {
+      if (signal?.cancelled) return;
       console.error('Error fetching item chart:', err);
       setChartData([]);
       setChartError('Could not load price chart.');
     } finally {
-      setChartLoading(false);
+      if (!signal?.cancelled) setChartLoading(false);
     }
   }, [itemId, chartPeriod]);
 
+  // Drop previous item data immediately so variant switches never flash stale stats.
   useEffect(() => {
-    fetchDetail();
+    setDetail(null);
+    setItemType(null);
+    setBatches([]);
+    setChartData([]);
+    setChartError(null);
+    setErrorMessage(null);
+    setLoading(true);
+    setBatchesLoading(true);
+    setChartLoading(true);
+  }, [itemId]);
+
+  useEffect(() => {
+    const signal = { cancelled: false };
+    void fetchDetail(signal);
+    return () => {
+      signal.cancelled = true;
+    };
   }, [fetchDetail]);
 
   useEffect(() => {
-    fetchBatches();
+    const signal = { cancelled: false };
+    void fetchBatches(signal);
+    return () => {
+      signal.cancelled = true;
+    };
   }, [fetchBatches]);
 
   useEffect(() => {
-    fetchItemChart();
+    const signal = { cancelled: false };
+    void fetchItemChart(signal);
+    return () => {
+      signal.cancelled = true;
+    };
   }, [fetchItemChart]);
+
+  const selectVariant = useCallback(
+    (nextItemId: string) => {
+      if (!nextItemId || nextItemId === itemId) return;
+      navigate(`/item/${nextItemId}`, {
+        replace: true,
+        state: {
+          from: backTo,
+          ...(filterCollectionId ? { collectionId: filterCollectionId } : {}),
+        },
+      });
+    },
+    [itemId, navigate, backTo, filterCollectionId],
+  );
 
   if (loading) {
     return (
@@ -299,6 +353,8 @@ const ItemDetail = () => {
   const isPositiveRoi = detail.roi_percentage >= 0;
   const isPositiveUnrealized = detail.unrealized_profit >= 0;
   const unitMarket = detail.current_market_price;
+  const ownsItem = detail.owned_quantity > 0;
+  const pageSubtitle = ownsItem ? 'Portfolio item overview' : 'Market overview';
 
   return (
     <div className="text-steam-text animate-fade-in pb-10 min-w-0 overflow-x-hidden">
@@ -316,7 +372,7 @@ const ItemDetail = () => {
             <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-steam-text mb-1 line-clamp-2">
               {detail.market_hash_name}
             </h1>
-            <p className="text-steam-secondary text-sm">Portfolio item overview</p>
+            <p className="text-steam-secondary text-sm">{pageSubtitle}</p>
           </div>
         </div>
       </div>
@@ -343,6 +399,13 @@ const ItemDetail = () => {
                 Updated {formatDateTime(detail.last_price_update)}
               </p>
             )}
+            {itemId ? (
+              <ItemVariantSwitcher
+                itemId={itemId}
+                onSelectVariant={selectVariant}
+                className="w-full self-stretch mt-5 pt-4 border-t border-steam-border/60 text-left"
+              />
+            ) : null}
           </div>
 
           <MarketComparePanel
@@ -426,10 +489,19 @@ const ItemDetail = () => {
 
           <div className="bg-steam-card rounded-2xl border border-steam-border shadow-lg overflow-hidden flex flex-col flex-1 min-h-[280px]">
             <div className="p-4 border-b border-steam-border bg-steam-elevated flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">
-                Price chart
-              </h2>
-              <SegmentedControl
+              <div className="min-w-0 flex flex-wrap items-center gap-2">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-steam-secondary">
+                  Price chart
+                </h2>
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-steam-border bg-steam-card px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-steam-secondary"
+                  title="Steam Community Market"
+                >
+                  <MarketProviderIcon source="steam" size={14} />
+                  Steam
+                </span>
+              </div>
+              <SegmentedControl<(typeof PERIOD_OPTIONS)[number]>
                 aria-label="Chart period"
                 value={chartPeriod}
                 onChange={setChartPeriod}
@@ -511,8 +583,8 @@ const ItemDetail = () => {
           marketPrice={unitMarket}
           ownedQuantity={detail.owned_quantity}
           onChanged={() => {
-            void fetchBatches();
-            void fetchDetail();
+            void fetchBatches({});
+            void fetchDetail({});
           }}
           onSold={() => {
             navigate('/inventory', {

@@ -1,11 +1,29 @@
-/** Wear codes used across catalog / movers UI. */
-const WEAR_MAP: Array<{ full: string; short: string }> = [
+/** Wear codes used across catalog / movers / variant switcher UI. */
+export const WEAR_MAP: Array<{ full: string; short: string }> = [
   { full: 'Factory New', short: 'FN' },
   { full: 'Minimal Wear', short: 'MW' },
   { full: 'Field-Tested', short: 'FT' },
   { full: 'Well-Worn', short: 'WW' },
   { full: 'Battle-Scarred', short: 'BS' },
 ];
+
+export function exteriorShortLabel(exterior: string | null | undefined): string | null {
+  if (exterior == null || exterior === '') return null;
+  const raw = String(exterior).trim();
+  const hit = WEAR_MAP.find(
+    (w) => w.full.toLowerCase() === raw.toLowerCase() || w.short.toLowerCase() === raw.toLowerCase(),
+  );
+  return hit?.short ?? null;
+}
+
+export function exteriorFullLabel(exterior: string | null | undefined): string | null {
+  if (exterior == null || exterior === '') return null;
+  const raw = String(exterior).trim();
+  const hit = WEAR_MAP.find(
+    (w) => w.full.toLowerCase() === raw.toLowerCase() || w.short.toLowerCase() === raw.toLowerCase(),
+  );
+  return hit?.full ?? raw;
+}
 
 const TYPE_PREFIXES = [
   'Sticker | ',
