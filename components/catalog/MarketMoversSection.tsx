@@ -4,35 +4,34 @@ import { ArrowDownRight, ArrowUpRight, ChevronRight, TrendingDown, TrendingUp } 
 import { ItemImage } from '@/components/ui/ItemImage';
 import { track } from '@/lib/analytics';
 import { formatCurrency } from '@/utils/display';
-import {
-  isMarketMoverCategory,
-  parseMarketHashName,
-  type MarketMoverCategory,
-} from '@/utils/itemDisplayName';
+import { parseMarketHashName, type MarketMoverCategory } from '@/utils/itemDisplayName';
 import {
   fetchMarketMovers,
   formatMoversUpdatedAt,
   formatSignedChangePct,
+  loadStoredMarketMoverPeriod,
+  MARKET_MOVER_PERIODS,
+  periodFooterLabel,
+  storeMarketMoverPeriod,
   type MarketMoverDirection,
+  type MarketMoverPeriod,
   type MarketMoverRow,
 } from '@/utils/marketMovers';
 
 const PREVIEW_LIMIT = 5;
 
 interface MarketMoversSectionProps {
-  /** Fixed column: one card = gainers or losers (no toggle). */
   direction: MarketMoverDirection;
-  /** Compact Discover card (hero + ranks 2-5 + footer link). */
+  period: MarketMoverPeriod;
   variant?: 'discover' | 'page';
-  /** When set, passes p_category to the RPC. */
-  category?: MarketMoverCategory | null;
+  category?: MarketMoverCategory | string | null;
   className?: string;
-  /** Full ranking uses limit 50. */
   limit?: number;
 }
 
 export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
   direction,
+  period,
   variant = 'discover',
   category = null,
   className = '',
@@ -46,8 +45,10 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
 
   const limit = limitProp ?? (variant === 'page' ? 50 : PREVIEW_LIMIT);
   const categoryParam =
-    category && isMarketMoverCategory(category) ? category : null;
+    typeof category === 'string' && category.trim() ? category.trim() : null;
   const isGainers = direction === 'gainers';
+  const periodHuman =
+    period === '30d' ? '30 days' : period === '90d' ? '90 days' : '7 days';
 
   useEffect(() => {
     let cancelled = false;
@@ -58,6 +59,7 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
       direction,
       limit,
       category: categoryParam,
+      period,
     }).then((result) => {
       if (cancelled) return;
       if (!result.ok) {
@@ -73,33 +75,33 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [direction, limit, categoryParam]);
+  }, [direction, limit, categoryParam, period]);
 
   useEffect(() => {
     if (loading || failed || !rows) return;
-    const key = `${direction}|${categoryParam ?? ''}|${variant}`;
+    const key = `${direction}|${period}|${categoryParam ?? ''}|${variant}`;
     if (viewedRef.current === key) return;
     viewedRef.current = key;
-    track('market_movers_viewed', { direction });
-  }, [loading, failed, rows, direction, categoryParam, variant]);
+    track('market_movers_viewed', { direction, period });
+  }, [loading, failed, rows, direction, period, categoryParam, variant]);
 
-  // Discover: hide this column on RPC failure (sibling may still show).
   if (failed && variant === 'discover') return null;
 
   const previewRows = variant === 'discover' ? (rows ?? []).slice(0, PREVIEW_LIMIT) : rows ?? [];
   const hero = previewRows[0] ?? null;
   const rest = previewRows.slice(1);
   const updatedLabel = formatMoversUpdatedAt(hero?.computed_at ?? previewRows[0]?.computed_at);
+  const periodLabel = periodFooterLabel(period);
 
   const onSelect = (item: MarketMoverRow, rank: number) => {
-    track('market_mover_clicked', { direction, rank });
+    track('market_mover_clicked', { direction, period, rank });
     navigate(`/item/${item.item_id}`);
   };
 
   return (
     <section
       className={`bg-steam-card border border-steam-border rounded-2xl shadow-xl overflow-hidden h-full flex flex-col ${className}`}
-      aria-label={isGainers ? 'Top gainers last 7 days' : 'Top losers last 7 days'}
+      aria-label={isGainers ? `Top gainers ${periodLabel}` : `Top losers ${periodLabel}`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-5 pt-4 sm:pt-5 pb-3 border-b border-steam-border/60">
         <div className="min-w-0">
@@ -114,7 +116,7 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
             </h2>
           </div>
           <p className="text-xs text-steam-tertiary mt-0.5">
-            Last 7 days
+            Last {periodHuman}
             {updatedLabel ? ` · ${updatedLabel}` : ''}
           </p>
         </div>
@@ -124,9 +126,7 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
         {loading ? (
           <MarketMoversSkeleton variant={variant} />
         ) : failed ? (
-          <p className="text-sm text-steam-secondary py-8 text-center">
-            Unavailable right now.
-          </p>
+          <p className="text-sm text-steam-secondary py-8 text-center">Unavailable right now.</p>
         ) : previewRows.length === 0 ? (
           <div className="py-10 text-center">
             <p className="text-sm font-bold text-steam-text mb-1">No movers yet</p>
@@ -137,11 +137,7 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
         ) : variant === 'discover' ? (
           <>
             {hero ? (
-              <HeroCard
-                item={hero}
-                direction={direction}
-                onClick={() => onSelect(hero, 1)}
-              />
+              <HeroCard item={hero} direction={direction} onClick={() => onSelect(hero, 1)} />
             ) : null}
             {rest.length > 0 ? (
               <ul className="mt-3 space-y-1.5">
@@ -158,10 +154,10 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
             ) : null}
             <div className="mt-auto pt-4 border-t border-steam-border/50 flex items-center justify-between gap-3">
               <p className="text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
-                Steam · USD
+                {periodLabel} · Steam · USD
               </p>
               <Link
-                to={`/catalog/movers?direction=${direction}`}
+                to={`/catalog/movers?direction=${direction}&period=${period}`}
                 className="inline-flex items-center gap-1 text-xs font-bold text-steam-accent hover:underline"
               >
                 View ranking
@@ -170,55 +166,119 @@ export const MarketMoversSection: React.FC<MarketMoversSectionProps> = ({
             </div>
           </>
         ) : (
-          <ul className="space-y-1.5">
-            {previewRows.map((item, i) =>
-              i === 0 ? (
-                <li key={item.item_id}>
-                  <HeroCard
+          <>
+            <ul className="space-y-1.5">
+              {previewRows.map((item, i) =>
+                i === 0 ? (
+                  <li key={item.item_id}>
+                    <HeroCard item={item} direction={direction} onClick={() => onSelect(item, 1)} />
+                  </li>
+                ) : (
+                  <RankRow
+                    key={item.item_id}
                     item={item}
+                    rank={i + 1}
                     direction={direction}
-                    onClick={() => onSelect(item, 1)}
+                    onClick={() => onSelect(item, i + 1)}
                   />
-                </li>
-              ) : (
-                <RankRow
-                  key={item.item_id}
-                  item={item}
-                  rank={i + 1}
-                  direction={direction}
-                  onClick={() => onSelect(item, i + 1)}
-                />
-              ),
-            )}
-          </ul>
+                ),
+              )}
+            </ul>
+            <p className="mt-4 pt-3 border-t border-steam-border/50 text-[10px] font-bold uppercase tracking-wider text-steam-tertiary">
+              {periodLabel} · Steam · USD
+              {updatedLabel ? ` · ${updatedLabel}` : ''}
+            </p>
+          </>
         )}
       </div>
     </section>
   );
 };
 
-/** Side-by-side Gainers + Losers for Discover / ranking. */
-export const MarketMoversPair: React.FC<{
-  variant?: 'discover' | 'page';
-  category?: MarketMoverCategory | null;
-  limit?: number;
-  className?: string;
-}> = ({ variant = 'discover', category = null, limit, className = '' }) => (
-  <div className={`grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 items-stretch ${className}`}>
-    <MarketMoversSection
-      direction="gainers"
-      variant={variant}
-      category={category}
-      limit={limit}
-    />
-    <MarketMoversSection
-      direction="losers"
-      variant={variant}
-      category={category}
-      limit={limit}
-    />
+const PeriodToggle: React.FC<{
+  period: MarketMoverPeriod;
+  onChange: (next: MarketMoverPeriod) => void;
+}> = ({ period, onChange }) => (
+  <div
+    className="inline-flex rounded-xl border border-steam-border bg-steam-card p-0.5"
+    role="group"
+    aria-label="Time period"
+  >
+    {MARKET_MOVER_PERIODS.map((p) => (
+      <button
+        key={p.id}
+        type="button"
+        onClick={() => onChange(p.id)}
+        className={`px-3 py-1.5 rounded-[10px] text-xs font-bold transition-colors min-h-9 ${
+          period === p.id
+            ? 'bg-steam-accent text-white'
+            : 'text-steam-tertiary hover:text-steam-secondary'
+        }`}
+        aria-pressed={period === p.id}
+      >
+        {p.label}
+      </button>
+    ))}
   </div>
 );
+
+/** Side-by-side Gainers + Losers with shared period control. */
+export const MarketMoversPair: React.FC<{
+  variant?: 'discover' | 'page';
+  category?: MarketMoverCategory | string | null;
+  limit?: number;
+  className?: string;
+  initialPeriod?: MarketMoverPeriod;
+  onPeriodChange?: (period: MarketMoverPeriod) => void;
+  /** Extra controls rendered next to the period toggle (e.g. category filter). */
+  toolbarExtra?: React.ReactNode;
+}> = ({
+  variant = 'discover',
+  category = null,
+  limit,
+  className = '',
+  initialPeriod,
+  onPeriodChange,
+  toolbarExtra,
+}) => {
+  const [period, setPeriod] = useState<MarketMoverPeriod>(
+    () => initialPeriod ?? loadStoredMarketMoverPeriod(),
+  );
+
+  const changePeriod = (next: MarketMoverPeriod) => {
+    setPeriod(next);
+    storeMarketMoverPeriod(next);
+    onPeriodChange?.(next);
+  };
+
+  return (
+    <div className={`space-y-4 ${className}`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm font-bold text-steam-text">Market movers</p>
+        <div className="flex flex-wrap items-center gap-2">
+          {toolbarExtra}
+          <PeriodToggle period={period} onChange={changePeriod} />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 items-stretch">
+        <MarketMoversSection
+          direction="gainers"
+          period={period}
+          variant={variant}
+          category={category}
+          limit={limit}
+        />
+        <MarketMoversSection
+          direction="losers"
+          period={period}
+          variant={variant}
+          category={category}
+          limit={limit}
+        />
+      </div>
+    </div>
+  );
+};
 
 const ChangeBadge: React.FC<{
   direction: MarketMoverDirection;
@@ -310,7 +370,6 @@ const RankRow: React.FC<{
   );
 };
 
-/** Fixed-height skeleton matching hero + 4 rows to avoid CLS. */
 export const MarketMoversSkeleton: React.FC<{ variant?: 'discover' | 'page' }> = ({
   variant = 'discover',
 }) => {
